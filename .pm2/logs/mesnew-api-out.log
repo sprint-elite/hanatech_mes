@@ -1,0 +1,259 @@
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node dist/server/index.js
+
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.cjs
+
+API listening on http://localhost:4000
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.js
+
+API listening on http://localhost:4000
+prisma:error 
+Invalid `prisma.productionPlan.findMany()` invocation:
+
+
+The table `production_plan` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workOrder.findMany()` invocation:
+
+
+The table `work_order` does not exist in the current database.
+prisma:error 
+Invalid `prisma.processResult.findMany()` invocation:
+
+
+The table `process_result` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workCenter.findMany()` invocation:
+
+
+The table `work_center` does not exist in the current database.
+prisma:error 
+Invalid `prisma.productionLot.findMany()` invocation:
+
+
+The table `production_lot` does not exist in the current database.
+prisma:error 
+Invalid `prisma.shipment.findMany()` invocation:
+
+
+The table `shipment` does not exist in the current database.
+prisma:error 
+Invalid `prisma.productionPlan.findMany()` invocation:
+
+
+The table `production_plan` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workOrder.findMany()` invocation:
+
+
+The table `work_order` does not exist in the current database.
+prisma:error 
+Invalid `prisma.productionLot.findMany()` invocation:
+
+
+The table `production_lot` does not exist in the current database.
+prisma:error 
+Invalid `prisma.processResult.findMany()` invocation:
+
+
+The table `process_result` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workCenter.findMany()` invocation:
+
+
+The table `work_center` does not exist in the current database.
+prisma:error 
+Invalid `prisma.shipment.findMany()` invocation:
+
+
+The table `shipment` does not exist in the current database.
+prisma:error 
+Invalid `prisma.productionPlan.findMany()` invocation:
+
+
+The table `production_plan` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workOrder.findMany()` invocation:
+
+
+The table `work_order` does not exist in the current database.
+prisma:error 
+Invalid `prisma.processResult.findMany()` invocation:
+
+
+The table `process_result` does not exist in the current database.
+prisma:error 
+Invalid `prisma.productionLot.findMany()` invocation:
+
+
+The table `production_lot` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workCenter.findMany()` invocation:
+
+
+The table `work_center` does not exist in the current database.
+prisma:error 
+Invalid `prisma.shipment.findMany()` invocation:
+
+
+The table `shipment` does not exist in the current database.
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.js
+
+API listening on http://localhost:4000
+prisma:error 
+Invalid `prisma.customer.findMany()` invocation:
+
+
+The table `customers` does not exist in the current database.
+prisma:error 
+Invalid `prisma.product.findMany()` invocation:
+
+
+The table `products` does not exist in the current database.
+prisma:error 
+Invalid `prisma.customer.findMany()` invocation:
+
+
+The table `customers` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workCenter.findMany()` invocation:
+
+
+The table `work_center` does not exist in the current database.
+prisma:error 
+Invalid `prisma.customer.findMany()` invocation:
+
+
+The table `customers` does not exist in the current database.
+prisma:error 
+Invalid `prisma.product.findMany()` invocation:
+
+
+The table `products` does not exist in the current database.
+prisma:error 
+Invalid `prisma.productionPlan.findMany()` invocation:
+
+
+The table `production_plan` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workOrder.findMany()` invocation:
+
+
+The table `work_order` does not exist in the current database.
+prisma:error 
+Invalid `prisma.productionLot.findMany()` invocation:
+
+
+The table `production_lot` does not exist in the current database.
+prisma:error 
+Invalid `prisma.processResult.findMany()` invocation:
+
+
+The table `process_result` does not exist in the current database.
+prisma:error 
+Invalid `prisma.workCenter.findMany()` invocation:
+
+
+The table `work_center` does not exist in the current database.
+prisma:error 
+Invalid `prisma.shipment.findMany()` invocation:
+
+
+The table `shipment` does not exist in the current database.
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.js
+
+API listening on http://localhost:4000
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.js
+
+API listening on http://localhost:4000
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.js
+
+API listening on http://localhost:4000
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.js
+
+API listening on http://localhost:4000
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.js
+
+API listening on http://localhost:4000
+
+> mesnew@1.0.0 start
+> node --env-file=.env dist/server/index.js
+
+API listening on http://localhost:4000

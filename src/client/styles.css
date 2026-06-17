@@ -1,0 +1,4256 @@
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #07080b;
+  --bg-elev: #0b0d12;
+  --panel: #0f1218;
+  --panel2: #0c0e14;
+  --text: #e4e6eb;
+  --muted: #7c8496;
+  --border: #232833;
+  --border2: #323946;
+  --accent: #d4a524;
+  --accent-dim: rgba(212, 165, 36, 0.14);
+  --accent-glow: rgba(212, 165, 36, 0.35);
+  --side-bg: #2c313c;
+  --side-bg-nested: #252a34;
+  --side-border: #1e232b;
+  --side-text: #e8eaed;
+  --ok: #2fa36b;
+  --warn: #d9a321;
+  --alarm: #d64545;
+  --grid-line: rgba(255, 255, 255, 0.028);
+  --input-bg: #08090c;
+  --mono-fg: #c9cdd6;
+  --error-text: #f0a8a8;
+  --hover-subtle: rgba(255, 255, 255, 0.035);
+  --hover-mid: rgba(255, 255, 255, 0.05);
+  --hover-strong: rgba(255, 255, 255, 0.06);
+  --row-alt: rgba(255, 255, 255, 0.02);
+  --row-alt2: rgba(255, 255, 255, 0.01);
+  --table-head-bg: #0a0c10;
+  --side-top-start: #323844;
+  --side-shadow-inset: rgba(0, 0, 0, 0.2);
+  --side-divider: rgba(0, 0, 0, 0.22);
+  --status-strip-border: rgba(255, 255, 255, 0.06);
+  --accordion-border: rgba(0, 0, 0, 0.2);
+  --accordion-border-top: rgba(0, 0, 0, 0.12);
+  --accordion-panel-inset: rgba(255, 255, 255, 0.04);
+  --nav-active-sub-text: #fff;
+  --nav-active-sub-bg: rgba(212, 165, 36, 0.14);
+  --nav-sub-text: #9aa1ac;
+  --icon-muted: #8b95a8;
+  --icon-muted2: #b4bcc9;
+  --icon-chevron: #6d7685;
+  --icon-chevron-open: #8f98a8;
+  --tile-hover-bg: #12151e;
+  --surface-hover: #151922;
+  --overlay-backdrop: rgba(0, 0, 0, 0.62);
+  --modal-shadow: 0 20px 56px rgba(0, 0, 0, 0.5);
+  --stat-card-bg: rgba(255, 255, 255, 0.02);
+  --chart-grid: rgba(255, 255, 255, 0.06);
+  --chart-border: rgba(255, 255, 255, 0.05);
+  --ops-surface: #090d16;
+  --ops-surface2: #0d111b;
+  --ops-surface3: #111726;
+  --ops-surface4: #0c1018;
+  --ops-surface-hover: #111828;
+  --ops-surface-tab: #0b0f18;
+  --ops-surface-summary: #111827;
+  --ops-border: #2f3440;
+  --ops-border2: #2f3a4f;
+  --ops-border3: #273043;
+  --ops-border4: #3d4a63;
+  --ops-border-cell: #2a2f3a;
+  --ops-text: #dce4f2;
+  --ops-text-muted: #8f9ab0;
+  --ops-text-muted2: #9aa8bf;
+  --ops-text-accent: #c9b058;
+  --ops-text-type: #9fb0cc;
+  --ops-text-inv: #8fa6c8;
+  --ops-table-head-text: #a5b0c2;
+  --dash-card-bg: #0b0f16;
+  --dash-card-bg-hover: #101624;
+  --dash-card-border-hover: #3d4a63;
+  --dash-panel-bg: #0d1017;
+  --dash-schedule-bg: #0c0f14;
+  --dash-cal-toolbar-bg: rgba(0, 0, 0, 0.32);
+  --dash-cal-toolbar-border: rgba(255, 255, 255, 0.1);
+  --dash-cal-divider: rgba(255, 255, 255, 0.08);
+  --dash-cal-input-bg: rgba(255, 255, 255, 0.03);
+  --dash-cal-btn-text: #aeb9cc;
+  --dash-cal-btn-hover-text: #f2f4f8;
+  --dash-cal-input-text: #e8ecf4;
+  --dash-cal-today-text: #d4b030;
+  --dash-cal-today-hover: #f0d78a;
+  --dash-situation-cell-bg: rgba(0, 0, 0, 0.2);
+  --dash-situation-cell-border: rgba(255, 255, 255, 0.06);
+  --dash-legend-dot-border: rgba(255, 255, 255, 0.12);
+  --dash-bar-label: #c8d4e8;
+  --dash-bar-stack-border: rgba(255, 255, 255, 0.08);
+  --dash-wo-title: #9fb2d4;
+  --dash-pill-ok: #8fd4a8;
+  --dash-pill-progress: #e8d18a;
+  --dash-pill-wait: #9ec8f0;
+  --dash-pill-hold: #e8b0b0;
+  --dash-alert-danger: #e8a0a0;
+  --dash-alert-warn: #e8d18a;
+  --dash-today-date: #e8d18a;
+  --input-color-scheme: dark;
+  --modal-section-bg: #0b0e14;
+  --modal-foot-bg: rgba(0, 0, 0, 0.22);
+  --modal-inset-bg: rgba(0, 0, 0, 0.15);
+  --modal-panel-bg: rgba(7, 10, 18, 0.86);
+  --modal-panel-bg-soft: rgba(7, 10, 18, 0.82);
+  --modal-row-bg: rgba(2, 5, 10, 0.45);
+  --modal-summary-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(4, 7, 14, 0.6) 100%);
+  --modal-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(4, 7, 14, 0.65) 100%);
+  --modal-table-head-bg: #121826;
+  --modal-table-head-text: #c6d3ee;
+  --modal-table-label: #b3c3df;
+  --modal-table-border: rgba(255, 255, 255, 0.08);
+  --modal-panel-title: #a8b9d7;
+  --modal-card-title: #9fb2d4;
+  --modal-chip-text: #f1d57b;
+  --r: 2px;
+  --font: 'Segoe UI', system-ui, -apple-system, Roboto, 'Malgun Gothic', sans-serif;
+  --mono: ui-monospace, 'Cascadia Mono', 'Consolas', 'Courier New', monospace;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f2f3f6;
+  --bg-elev: #ffffff;
+  --panel: #ffffff;
+  --panel2: #f8f9fb;
+  --text: #141820;
+  --muted: #5f6775;
+  --border: #dde1e8;
+  --border2: #c9ced8;
+  --accent: #9a7b0a;
+  --accent-dim: rgba(154, 123, 10, 0.12);
+  --accent-glow: rgba(154, 123, 10, 0.22);
+  --side-bg: #e8ebf0;
+  --side-bg-nested: #dfe3ea;
+  --side-border: #c5cad3;
+  --side-text: #141820;
+  --ok: #1d7a4a;
+  --warn: #a67c00;
+  --alarm: #c62828;
+  --grid-line: rgba(0, 0, 0, 0.04);
+  --input-bg: #ffffff;
+  --mono-fg: #3d4450;
+  --error-text: #b42318;
+  --hover-subtle: rgba(0, 0, 0, 0.04);
+  --hover-mid: rgba(0, 0, 0, 0.06);
+  --hover-strong: rgba(0, 0, 0, 0.08);
+  --row-alt: rgba(0, 0, 0, 0.025);
+  --row-alt2: rgba(0, 0, 0, 0.015);
+  --table-head-bg: #eef0f4;
+  --side-top-start: #f5f6f9;
+  --side-shadow-inset: rgba(0, 0, 0, 0.06);
+  --side-divider: rgba(0, 0, 0, 0.08);
+  --status-strip-border: rgba(0, 0, 0, 0.08);
+  --accordion-border: rgba(0, 0, 0, 0.08);
+  --accordion-border-top: rgba(0, 0, 0, 0.06);
+  --accordion-panel-inset: rgba(0, 0, 0, 0.03);
+  --nav-active-sub-text: #141820;
+  --nav-active-sub-bg: rgba(154, 123, 10, 0.14);
+  --nav-sub-text: #6b7380;
+  --icon-muted: #6b7380;
+  --icon-muted2: #5f6775;
+  --icon-chevron: #8a919c;
+  --icon-chevron-open: #5f6775;
+  --tile-hover-bg: #f0f2f5;
+  --surface-hover: #eef0f4;
+  --overlay-backdrop: rgba(0, 0, 0, 0.35);
+  --modal-shadow: 0 20px 56px rgba(0, 0, 0, 0.15);
+  --stat-card-bg: rgba(0, 0, 0, 0.02);
+  --chart-grid: rgba(0, 0, 0, 0.08);
+  --chart-border: rgba(0, 0, 0, 0.06);
+  --ops-surface: #ffffff;
+  --ops-surface2: #f8f9fb;
+  --ops-surface3: #eef0f4;
+  --ops-surface4: #f5f6f9;
+  --ops-surface-hover: #eef0f4;
+  --ops-surface-tab: #f8f9fb;
+  --ops-surface-summary: #f0f2f5;
+  --ops-border: #c9ced8;
+  --ops-border2: #c5cad3;
+  --ops-border3: #dde1e8;
+  --ops-border4: #b8bec8;
+  --ops-border-cell: #dde1e8;
+  --ops-text: #141820;
+  --ops-text-muted: #5f6775;
+  --ops-text-muted2: #6b7380;
+  --ops-text-accent: #7a6208;
+  --ops-text-type: #5f6775;
+  --ops-text-inv: #4a5568;
+  --ops-table-head-text: #5f6775;
+  --dash-card-bg: #ffffff;
+  --dash-card-bg-hover: #f8f9fb;
+  --dash-card-border-hover: #b8bec8;
+  --dash-panel-bg: #ffffff;
+  --dash-schedule-bg: #ffffff;
+  --dash-cal-toolbar-bg: #f0f2f5;
+  --dash-cal-toolbar-border: #c9ced8;
+  --dash-cal-divider: #dde1e8;
+  --dash-cal-input-bg: #ffffff;
+  --dash-cal-btn-text: #5f6775;
+  --dash-cal-btn-hover-text: #141820;
+  --dash-cal-input-text: #141820;
+  --dash-cal-today-text: #9a7b0a;
+  --dash-cal-today-hover: #7a6208;
+  --dash-situation-cell-bg: rgba(0, 0, 0, 0.02);
+  --dash-situation-cell-border: #dde1e8;
+  --dash-legend-dot-border: #c9ced8;
+  --dash-bar-label: #5f6775;
+  --dash-bar-stack-border: #c9ced8;
+  --dash-wo-title: #5f6775;
+  --dash-pill-ok: #1d7a4a;
+  --dash-pill-progress: #7a6208;
+  --dash-pill-wait: #2b6cb0;
+  --dash-pill-hold: #b42318;
+  --dash-alert-danger: #b42318;
+  --dash-alert-warn: #7a6208;
+  --dash-today-date: #9a7b0a;
+  --input-color-scheme: light;
+  --modal-section-bg: #f8f9fb;
+  --modal-foot-bg: #f0f2f5;
+  --modal-inset-bg: #f5f6f9;
+  --modal-panel-bg: #f8f9fb;
+  --modal-panel-bg-soft: #f5f6f9;
+  --modal-row-bg: #ffffff;
+  --modal-summary-bg: linear-gradient(180deg, #ffffff 0%, #f0f2f5 100%);
+  --modal-card-bg: linear-gradient(180deg, #ffffff 0%, #f5f6f9 100%);
+  --modal-table-head-bg: #eef0f4;
+  --modal-table-head-text: #5f6775;
+  --modal-table-label: #5f6775;
+  --modal-table-border: #dde1e8;
+  --modal-panel-title: #5f6775;
+  --modal-card-title: #5f6775;
+  --modal-chip-text: #7a6208;
+}
+
+html {
+  height: 100%;
+}
+
+#root {
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  height: 100%;
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.45;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-attachment: fixed;
+  color: var(--text);
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 18px 40px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+}
+
+.title {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: 18px;
+}
+
+.subtitle {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.badge {
+  font-size: 11px;
+  font-family: var(--mono);
+  border: 1px solid var(--border2);
+  padding: 4px 8px;
+  border-radius: var(--r);
+  background: var(--accent-dim);
+  color: var(--text);
+}
+
+.grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+  padding: 12px 14px;
+}
+
+.cardTitle {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+  margin: 0;
+  color: var(--mono-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--error-text);
+}
+
+.small {
+  font-size: 11px;
+}
+
+/* —— MES shell (현장/SCADA 톤) —— */
+.mesShell {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.mesSide {
+  width: 260px;
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 100vh;
+  min-height: 100dvh;
+  border-right: 1px solid var(--side-border);
+  background: var(--side-bg);
+  box-shadow: inset -1px 0 0 var(--side-shadow-inset);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.mesSideTop {
+  padding: 14px 12px 12px;
+  border-bottom: 1px solid var(--side-divider);
+  background: linear-gradient(180deg, var(--side-top-start) 0%, var(--side-bg) 100%);
+}
+
+.mesThemeToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 7px 10px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--side-bg-nested);
+  color: var(--side-text);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.mesThemeToggle:hover {
+  background: var(--hover-mid);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.mesThemeToggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.mesThemeToggleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.mesThemeToggleLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.mesBrand {
+  border-left: 3px solid var(--accent);
+  padding: 2px 0 2px 10px;
+}
+
+.mesBrandTitle {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesBrandMes {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.18em;
+  color: var(--text);
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+.mesBrandSub {
+  margin-top: 6px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesStatusStrip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--status-strip-border);
+}
+
+.mesStatusLed {
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  flex-shrink: 0;
+}
+
+.mesStatusText {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesSideBody {
+  padding: 4px 8px 16px;
+  flex: 1;
+}
+
+.mesSideBodyAccordion {
+  padding: 0 0 12px;
+}
+
+/* 아코디언 사이드 (산업용 MES 톤) */
+.mesAccordionGroup {
+  border-bottom: 1px solid var(--accordion-border);
+}
+
+.mesAccordionGroup:first-child {
+  border-top: 1px solid var(--accordion-border-top);
+}
+
+.mesAccordionTrigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 8px 9px 8px;
+  margin: 0;
+  border: none;
+  background: transparent;
+  color: var(--side-text);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease;
+}
+
+.mesAccordionTrigger:hover {
+  background: var(--hover-strong);
+}
+
+.mesAccordionTrigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.mesAccordionIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-muted);
+}
+
+.mesAccordionTrigger[aria-expanded='true'] .mesAccordionIcon {
+  color: var(--icon-muted2);
+}
+
+.mesAccordionTitle {
+  flex: 1;
+  min-width: 0;
+}
+
+.mesAccordionChevron {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--icon-chevron);
+  transition: transform 0.2s ease;
+}
+
+.mesAccordionTrigger[aria-expanded='true'] .mesAccordionChevron {
+  transform: rotate(90deg);
+  color: var(--icon-chevron-open);
+}
+
+.mesAccordionPanel {
+  background: var(--side-bg-nested);
+  padding: 2px 0 6px;
+  box-shadow: inset 0 1px 0 var(--accordion-panel-inset);
+}
+
+.mesNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mesNavSub {
+  gap: 0;
+}
+
+.mesNavLink {
+  display: block;
+  padding: 7px 10px 7px 11px;
+  border-radius: 0;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  transition:
+    background 0.1s,
+    color 0.1s,
+    border-color 0.1s;
+}
+
+.mesNavLinkSub {
+  padding: 5px 10px 5px 36px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nav-sub-text);
+  border-left: 3px solid transparent;
+}
+
+.mesNavLink:hover {
+  color: var(--text);
+  background: var(--hover-subtle);
+}
+
+.mesNavLinkSub:hover {
+  color: var(--side-text);
+  background: var(--hover-strong);
+}
+
+.mesNavLinkActive,
+.mesNavLink.mesNavLinkActive {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  border-color: transparent;
+}
+
+.mesNavLinkSub.mesNavLinkActive {
+  color: var(--nav-active-sub-text);
+  background: var(--nav-active-sub-bg);
+  border-left-color: var(--accent);
+}
+
+.mesMain {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.mesMainBar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, rgba(212, 165, 36, 0.2) 48%, var(--border2) 100%);
+  flex-shrink: 0;
+}
+
+.mesMainInner {
+  flex: 1;
+  padding: 16px 18px 28px;
+  min-width: 0;
+}
+
+.mesPage {
+  max-width: 1200px;
+}
+
+.mesPageHead {
+  margin-bottom: 14px;
+}
+
+.mesPageTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--accent);
+  display: inline-block;
+  font-family: var(--font);
+}
+
+.mesPageDesc {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  max-width: 52rem;
+}
+
+.mesTiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(188px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mesTile {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+  padding: 12px 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.12s;
+  border-left: 3px solid var(--border);
+}
+
+.mesTile:hover {
+  border-color: var(--border2);
+  border-left-color: var(--accent);
+  background: var(--tile-hover-bg);
+}
+
+.mesTileTitle {
+  font-weight: 800;
+  font-size: 13px;
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
+}
+
+.mesTileDesc {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.mesCard {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+  padding: 12px 14px;
+}
+
+.mesCardNarrow {
+  max-width: 480px;
+}
+
+.mesCardTitle {
+  font-weight: 800;
+  margin-bottom: 8px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesBanner {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: var(--r);
+  border: 1px solid rgba(214, 69, 69, 0.45);
+  background: rgba(60, 20, 20, 0.45);
+}
+
+.mesTableWrap {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.mesTableScroll {
+  overflow-x: auto;
+}
+
+.mesTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.mesTable th,
+.mesTable td {
+  padding: 7px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.mesTable th:last-child,
+.mesTable td:last-child {
+  border-right: none;
+}
+
+.mesTable tbody tr:nth-child(even) {
+  background: var(--row-alt);
+}
+
+.mesTable th {
+  font-weight: 800;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--table-head-bg);
+}
+
+.mesTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesCalendarHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mesCalendarHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesCalendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.mesCalendarDow {
+  padding: 8px 6px;
+  text-align: center;
+  border-right: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--row-alt);
+}
+
+.mesCalendarDow:nth-child(7) {
+  border-right: none;
+}
+
+.mesCalendarCell {
+  min-height: 114px;
+  padding: 6px;
+  border-right: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  background: var(--row-alt2);
+}
+
+.mesCalendarCell:nth-child(7n) {
+  border-right: none;
+}
+
+.mesCalendarCell.isOutside {
+  opacity: 0.45;
+}
+
+.mesCalendarDate {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.mesCalendarItems {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mesCalendarItem {
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesCalendarItem.isPlan {
+  background: rgba(28, 143, 255, 0.16);
+  border: 1px solid rgba(28, 143, 255, 0.35);
+}
+
+.mesCalendarItem.isWo {
+  background: rgba(212, 165, 36, 0.16);
+  border: 1px solid rgba(212, 165, 36, 0.35);
+}
+
+.mesCalendarMore {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.mesDashGrid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.mesDashCleanGrid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* —— 대시보드 (의사결정형 3단) —— */
+.mesDashFlowHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mesDashFlowHeadMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mesDashFlow {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mesDashKpiStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 1020px) {
+  .mesDashKpiStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .mesDashKpiStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesDashKpiFlowCard {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border2);
+  background: var(--dash-card-bg);
+  border-left: 3px solid #5b6a85;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.mesDashKpiFlowCard:hover {
+  background: var(--dash-card-bg-hover);
+  border-color: var(--dash-card-border-hover);
+}
+
+.mesDashKpiFlowCard--ok {
+  border-left-color: #3d9a5f;
+}
+
+.mesDashKpiFlowCard--warn {
+  border-left-color: #c9a227;
+}
+
+.mesDashKpiFlowCard--danger {
+  border-left-color: #c94a4a;
+}
+
+.mesDashKpiFlowCard--info {
+  border-left-color: #3b82c4;
+}
+
+.mesDashKpiFlowLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesDashKpiFlowValue {
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.mesDashKpiFlowHint {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.mesDashMidRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(220px, 0.85fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .mesDashMidRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesDashSituationCard,
+.mesDashTrendCard {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--dash-panel-bg);
+  padding: 10px 12px;
+}
+
+.mesDashSituationTitle,
+.mesDashTrendTitle {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ops-text-inv);
+  margin-bottom: 8px;
+}
+
+.mesDashTrendHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mesDashTrendTitle--tight {
+  margin-bottom: 0;
+}
+
+.mesDashTrendLegend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  opacity: 0.92;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.mesDashTrendLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mesDashTrendLegendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid var(--dash-legend-dot-border);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
+}
+
+.mesDashTrendLegendDot--volume {
+  background: linear-gradient(180deg, rgba(143, 166, 200, 0.65) 0%, rgba(143, 166, 200, 0.25) 100%);
+}
+
+.mesDashTrendLegendDot--good {
+  background: linear-gradient(180deg, rgba(61, 154, 95, 0.7) 0%, rgba(61, 154, 95, 0.32) 100%);
+}
+
+.mesDashTrendLegendDot--defect {
+  background: linear-gradient(180deg, rgba(180, 90, 90, 0.62) 0%, rgba(180, 90, 90, 0.3) 100%);
+}
+
+.mesDashSituationGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .mesDashSituationGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.mesDashSituationCell {
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+  border: 1px solid var(--dash-situation-cell-border);
+  background: var(--dash-situation-cell-bg);
+}
+
+.mesDashSituationCell--ok {
+  border-color: rgba(61, 154, 95, 0.45);
+  background: rgba(61, 154, 95, 0.08);
+}
+
+.mesDashSituationCell--progress {
+  border-color: rgba(212, 165, 36, 0.45);
+  background: rgba(212, 165, 36, 0.08);
+}
+
+.mesDashSituationCell--wait {
+  border-color: rgba(59, 130, 196, 0.45);
+  background: rgba(59, 130, 196, 0.08);
+}
+
+.mesDashSituationCell--hold {
+  border-color: rgba(180, 90, 90, 0.45);
+  background: rgba(180, 90, 90, 0.08);
+}
+
+.mesDashSituationCount {
+  display: block;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.mesDashSituationLabel {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.mesDashSituationAlerts {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border2);
+}
+
+.mesDashSituationAlertsTitle {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.mesDashSituationAlertsEmpty {
+  margin: 0;
+}
+
+.mesDashSituationAlertList {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.mesDashSituationAlertItem--danger {
+  color: var(--dash-alert-danger);
+}
+
+.mesDashSituationAlertItem--warn {
+  color: var(--dash-alert-warn);
+}
+
+.mesDashBarsCompact {
+  height: 108px;
+}
+
+.mesDashBottomRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 10px;
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .mesDashBottomRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesDashWoTableCard {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--dash-panel-bg);
+  padding: 10px 12px 12px;
+  min-width: 0;
+}
+
+.mesDashWoTableHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mesDashWoTableTitle {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dash-wo-title);
+}
+
+.mesDashWoTable th,
+.mesDashWoTable td {
+  font-size: 12px;
+}
+
+.mesDashWoPill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesDashWoPill--ok {
+  background: rgba(61, 154, 95, 0.15);
+  color: var(--dash-pill-ok);
+}
+
+.mesDashWoPill--progress {
+  background: rgba(212, 165, 36, 0.15);
+  color: var(--dash-pill-progress);
+}
+
+.mesDashWoPill--wait {
+  background: rgba(59, 130, 196, 0.15);
+  color: var(--dash-pill-wait);
+}
+
+.mesDashWoPill--hold {
+  background: rgba(180, 90, 90, 0.15);
+  color: var(--dash-pill-hold);
+}
+
+.mesDashMiniSchedule {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--dash-schedule-bg);
+  padding: 10px 10px 12px;
+}
+
+.mesDashMiniScheduleTitle {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.mesDashCalToolbar {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 10px;
+  border: 1px solid var(--dash-cal-toolbar-border);
+  border-radius: 8px;
+  background: var(--dash-cal-toolbar-bg);
+  overflow: hidden;
+}
+
+.mesDashCalToolBtn {
+  flex: 0 0 auto;
+  min-width: 40px;
+  margin: 0;
+  padding: 0 4px;
+  border: none;
+  background: transparent;
+  color: var(--dash-cal-btn-text);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.mesDashCalToolBtn:hover {
+  background: rgba(212, 165, 36, 0.1);
+  color: var(--dash-cal-btn-hover-text);
+}
+
+.mesDashCalToolBtn--today {
+  min-width: auto;
+  padding: 0 14px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dash-cal-today-text);
+  border-left: 1px solid var(--dash-cal-divider);
+}
+
+.mesDashCalToolBtn--today:hover {
+  background: rgba(212, 165, 36, 0.14);
+  color: var(--dash-cal-today-hover);
+}
+
+.mesDashCalMonthInput {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 8px 10px;
+  border: none;
+  border-left: 1px solid var(--dash-cal-divider);
+  border-right: 1px solid var(--dash-cal-divider);
+  background: var(--dash-cal-input-bg);
+  color: var(--dash-cal-input-text);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  cursor: pointer;
+  color-scheme: var(--input-color-scheme);
+}
+
+.mesDashCalMonthInput:hover {
+  background: var(--hover-mid);
+}
+
+.mesDashCalMonthInput:focus {
+  outline: none;
+  background: rgba(212, 165, 36, 0.08);
+  box-shadow: 0 0 0 2px rgba(212, 165, 36, 0.25) inset;
+}
+
+.mesDashCalDowRow {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.mesDashCalDowCell {
+  text-align: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.mesDashMonthGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.mesDashMonthPad {
+  min-height: 30px;
+}
+
+.mesDashMonthCell {
+  appearance: none;
+  position: relative;
+  border: 1px solid var(--border2);
+  background: var(--row-alt);
+  border-radius: 6px;
+  padding: 5px 2px;
+  min-height: 30px;
+  cursor: pointer;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mesDashMonthCell:hover {
+  background: rgba(212, 165, 36, 0.06);
+}
+
+.mesDashMonthCell.isSelected {
+  border-color: rgba(212, 165, 36, 0.55);
+  box-shadow: 0 0 0 1px rgba(212, 165, 36, 0.2) inset;
+}
+
+.mesDashMonthCell.isToday .mesDashMonthDate {
+  color: var(--dash-today-date);
+  font-weight: 800;
+}
+
+.mesDashMonthDate {
+  font-size: 11px;
+}
+
+.mesDashMonthDot {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(59, 130, 196, 0.85);
+}
+
+.mesDashWeekStrip {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.mesDashWeekCell {
+  appearance: none;
+  border: 1px solid var(--border2);
+  background: var(--row-alt);
+  border-radius: 6px;
+  padding: 6px 4px;
+  cursor: pointer;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+  min-height: 52px;
+}
+
+.mesDashWeekCell:hover {
+  background: rgba(212, 165, 36, 0.06);
+}
+
+.mesDashWeekCell.isSelected {
+  border-color: rgba(212, 165, 36, 0.55);
+  box-shadow: 0 0 0 1px rgba(212, 165, 36, 0.2) inset;
+}
+
+.mesDashWeekCell.isToday .mesDashWeekDate {
+  color: var(--dash-today-date);
+  font-weight: 800;
+}
+
+.mesDashWeekDow {
+  font-size: 9px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.mesDashWeekDate {
+  font-size: 11px;
+}
+
+.mesDashWeekDot {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(59, 130, 196, 0.85);
+}
+
+.mesDashMiniDay {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border2);
+}
+
+.mesDashMiniDayHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.mesDashMiniDayYmd {
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.mesDashMiniDayList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mesDashMiniDayRow {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+  font-size: 11px;
+  padding: 5px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--dash-situation-cell-border);
+}
+
+.mesDashMiniDayRow.isPlan {
+  border-color: rgba(59, 130, 196, 0.35);
+  background: rgba(59, 130, 196, 0.06);
+}
+
+.mesDashMiniDayRow.isWo {
+  border-color: rgba(212, 165, 36, 0.35);
+  background: rgba(212, 165, 36, 0.06);
+}
+
+.mesDashMiniDayKind {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.mesDashMiniDayText {
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.mesDashOrphanMini {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border2);
+}
+
+.mesDashOrphanMiniTitle {
+  font-size: 10px;
+  font-weight: 800;
+  color: #c9a227;
+  margin-bottom: 4px;
+}
+
+.mesDashOrphanMiniList {
+  margin: 0;
+  padding-left: 16px;
+  color: var(--muted);
+}
+
+.mesDashCleanStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mesDashCleanStat {
+  border: 1px solid var(--border2);
+  background: var(--dash-panel-bg);
+  border-radius: var(--r);
+  padding: 10px 12px;
+}
+
+.mesDashCleanLabel {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.mesDashCleanValue {
+  margin-top: 7px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.mesDashCleanSub {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.mesDashMiniChartCard {
+  border: 1px solid var(--border2);
+  background: var(--dash-panel-bg);
+  border-radius: var(--r);
+  padding: 10px 12px;
+}
+
+.mesDashMiniChartCard .mesDashBars {
+  margin-top: 8px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  height: 96px;
+}
+
+.mesDashCards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 980px) {
+  .mesDashCleanStats,
+  .mesDashCards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesDashKpiCard,
+.mesDashChartCard {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+  padding: 12px 14px;
+}
+
+.mesDashKpiLabel {
+  font-weight: 800;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.mesDashKpiValue {
+  margin-top: 8px;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.mesDashKpiMeta {
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+.mesDashBars {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(14, minmax(0, 1fr));
+  gap: 6px;
+  height: 120px;
+  align-items: end;
+  padding-top: 8px;
+}
+
+.mesDashBarWrap {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 6px;
+  align-items: end;
+  min-width: 0;
+}
+
+.mesDashBarWrapLabeled {
+  grid-template-rows: auto 1fr auto;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.mesDashBarDataLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0;
+  line-height: 1.1;
+  min-height: 26px;
+  font-size: 10px;
+  color: var(--dash-bar-label);
+}
+
+.mesDashBarDataLabelSum {
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--text);
+}
+
+.mesDashBarDataLabelSub {
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.mesDashBarChart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 0;
+}
+
+.mesDashBarStack {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 22px;
+  margin: 0 auto;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid var(--dash-bar-stack-border);
+  box-sizing: border-box;
+}
+
+.mesDashBarSeg {
+  min-height: 0;
+  width: 100%;
+}
+
+.mesDashBarSeg--good {
+  background: linear-gradient(180deg, rgba(61, 154, 95, 0.45) 0%, rgba(61, 154, 95, 0.2) 100%);
+}
+
+.mesDashBarSeg--defect {
+  background: linear-gradient(180deg, rgba(180, 90, 90, 0.55) 0%, rgba(180, 90, 90, 0.25) 100%);
+}
+
+.mesDashBar {
+  width: 100%;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(212, 165, 36, 0.35) 0%, rgba(212, 165, 36, 0.15) 100%);
+  border: 1px solid rgba(212, 165, 36, 0.35);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+}
+
+.mesDashBarTick {
+  font-size: 10px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.mesDashCalendarCard {
+  padding: 12px 14px;
+}
+
+.mesDashCalendarSplit {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 10px;
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .mesDashCalendarSplit {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesCalendarGridCompact {
+  border-radius: var(--r);
+}
+
+.mesCalendarCellBtn {
+  appearance: none;
+  border: none;
+  background: var(--row-alt2);
+  border-right: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  padding: 6px;
+  min-height: 48px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  position: relative;
+}
+
+.mesCalendarCellBtn:nth-child(7n) {
+  border-right: none;
+}
+
+.mesCalendarCellBtn.isOutside {
+  opacity: 0.45;
+}
+
+.mesCalendarCellBtn:hover {
+  background: rgba(212, 165, 36, 0.06);
+}
+
+.mesCalendarCellBtn.isSelected {
+  background: rgba(212, 165, 36, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(212, 165, 36, 0.45);
+}
+
+.mesCalendarDot {
+  position: absolute;
+  right: 8px;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: rgba(28, 143, 255, 0.7);
+  box-shadow: 0 0 0 2px rgba(28, 143, 255, 0.18);
+}
+
+.mesDashDayPanel {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--row-alt2);
+  padding: 10px 10px 12px;
+}
+
+.mesDashDayHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  border-bottom: 1px dashed var(--border2);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.mesDashDayTitle {
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.mesDashDayList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesDashDayItem {
+  border-radius: var(--r);
+  padding: 8px 9px;
+  border: 1px solid var(--dash-situation-cell-border);
+  background: var(--modal-inset-bg);
+}
+
+.mesDashDayItem.isPlan {
+  border-color: rgba(28, 143, 255, 0.35);
+  background: rgba(28, 143, 255, 0.1);
+}
+
+.mesDashDayItem.isWo {
+  border-color: rgba(212, 165, 36, 0.35);
+  background: rgba(212, 165, 36, 0.1);
+}
+
+.mesDashDayItemTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesDashPill {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--modal-inset-bg);
+}
+
+.mesDashDayStatus {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.mesDashDayLabel {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.mesOrphanWo {
+  margin-top: 12px;
+  border-top: 1px dashed var(--border2);
+  padding-top: 10px;
+}
+
+.mesOrphanWoList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px 10px;
+}
+
+.mesOrphanWoItem {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.mesOpsTop {
+  margin-top: 8px;
+}
+
+.mesOpsTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.mesOpsTabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.mesOpsTab {
+  border: 1px solid var(--ops-border2);
+  background: var(--ops-surface-tab);
+  color: var(--ops-text-muted2);
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.mesOpsTab:hover {
+  color: var(--ops-text);
+  border-color: var(--ops-border4);
+  background: var(--ops-surface-summary);
+}
+
+.mesOpsTabActive {
+  color: #1a1406;
+  background: linear-gradient(180deg, #e8c24a 0%, var(--accent) 100%);
+  border-color: #a8841c;
+}
+
+.mesOpsPlanSplit {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+  min-height: 320px;
+}
+
+.mesOpsProductList {
+  border: 1px solid var(--ops-border);
+  border-radius: 6px;
+  background: var(--ops-surface);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mesOpsProductListHead {
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ops-text-muted);
+  border-bottom: 1px solid var(--ops-border);
+  background: var(--ops-surface3);
+}
+
+.mesOpsProductListTools {
+  padding: 8px;
+  border-bottom: 1px solid var(--ops-border);
+  background: var(--ops-surface4);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesOpsProductSearch {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  font-size: 12px;
+}
+
+.mesOpsProductListToolsRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.mesOpsProductFilterSelect {
+  min-width: 0;
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.mesOpsProductFilterReset {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.mesOpsProductListBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.mesOpsProductListEmpty {
+  padding: 12px;
+}
+
+.mesOpsProductRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  background: var(--ops-surface2);
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.mesOpsProductRowTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.mesOpsProductTypeLabel {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--ops-text-type);
+  white-space: nowrap;
+}
+
+.mesOpsProductRow:hover {
+  border-color: var(--ops-border4);
+  background: var(--ops-surface-hover);
+}
+
+.mesOpsProductRowActive {
+  border-color: rgba(212, 165, 36, 0.65);
+  background: linear-gradient(90deg, rgba(232, 194, 74, 0.16) 0%, rgba(232, 194, 74, 0.05) 55%, rgba(13, 17, 27, 0.4) 100%);
+  box-shadow: inset 3px 0 0 #c9a227, 0 0 0 1px rgba(212, 165, 36, 0.2) inset;
+}
+
+.mesOpsProductCode {
+  font-size: 11px;
+  color: var(--ops-text-accent);
+}
+
+.mesOpsProductName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ops-text);
+  line-height: 1.35;
+}
+
+.mesOpsProductMeta {
+  font-size: 10px;
+}
+
+.mesOpsPlanPickRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  background: var(--ops-surface2);
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.mesOpsPlanPickRow:hover {
+  border-color: var(--ops-border4);
+  background: var(--ops-surface-hover);
+}
+
+.mesOpsPlanPickMeta {
+  font-size: 10px;
+}
+
+.mesOpsPagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  border-top: 1px solid var(--ops-border);
+  background: var(--ops-surface4);
+}
+
+.mesOpsPaginationInList {
+  border-top: 1px solid var(--ops-border);
+  border-radius: 0 0 6px 6px;
+}
+
+.mesOpsPaginationBelowTable {
+  margin-top: 0;
+  border-top: 1px solid var(--ops-border);
+}
+
+.mesOpsPaginationBtns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mesOpsTableToolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.mesOpsTableToolbarSearch {
+  flex: 1;
+  min-width: 160px;
+  padding: 7px 9px;
+  font-size: 12px;
+}
+
+.mesOpsTableToolbarSelect {
+  width: 140px;
+  flex-shrink: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.mesOpsPlanMain {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 900px) {
+  .mesOpsPlanSplit {
+    grid-template-columns: 1fr;
+  }
+
+  .mesOpsProductList {
+    max-height: 220px;
+  }
+}
+
+.mesOpsSummaryBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+}
+
+.mesOpsSummaryKey {
+  color: var(--ops-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.mesOpsSummaryVal {
+  color: var(--ops-text);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.mesOpsSummaryGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid var(--ops-border3);
+  background: var(--ops-surface-summary);
+  border-radius: 2px;
+  flex: 0 0 auto;
+}
+
+.mesOpsSummaryPair {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 6px;
+  margin-right: 2px;
+  border-right: 1px solid var(--ops-border2);
+}
+
+.mesOpsSummaryPair:last-child {
+  border-right: none;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.mesOpsSectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+
+.mesOpsPlanTitleRow {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 0;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: inherit;
+}
+
+.mesOpsPlanTitleBase {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesOpsPlanContextChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px 5px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(201, 162, 39, 0.55);
+  background: linear-gradient(180deg, rgba(232, 194, 74, 0.16), rgba(232, 194, 74, 0.05));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.28) inset,
+    0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.mesOpsPlanContextChipName {
+  font-size: 13px;
+  font-weight: 800;
+  color: #e8d18a;
+  letter-spacing: 0.02em;
+  min-width: 0;
+  max-width: min(420px, 55vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesOpsSection {
+  padding: 0;
+}
+
+.mesOpsInvStack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mesOpsInvSubHead {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ops-text-inv);
+}
+
+.mesOpsSplit {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mesOpsTableWrap {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.mesOpsTable {
+  border-top: 1px solid var(--ops-border);
+}
+
+.mesOpsTable th,
+.mesOpsTable td {
+  border-right: 1px solid var(--ops-border-cell);
+  border-bottom: 1px solid var(--ops-border-cell);
+  padding: 8px 10px;
+}
+
+.mesOpsTable th {
+  background: var(--ops-surface3);
+  color: var(--ops-table-head-text);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.mesOpsTable tbody tr:nth-child(odd) td {
+  background: var(--ops-surface);
+}
+
+.mesOpsTable tbody tr:nth-child(even) td {
+  background: var(--ops-surface2);
+}
+
+.mesOpsTable tbody tr:hover td {
+  background: var(--ops-surface-hover);
+}
+
+@media (max-width: 980px) {
+  .mesOpsSplit {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesForm {
+  max-width: 720px;
+}
+
+.mesFieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 640px) {
+  .mesFieldRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesFieldRow3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 720px) {
+  .mesFieldRow3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesInput {
+  border-radius: var(--r);
+  border: 1px solid var(--border2);
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.mesInput:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim);
+}
+
+.mesInput:disabled {
+  opacity: 0.5;
+}
+
+.mesFormActions {
+  margin-top: 14px;
+}
+
+.mesBtnPrimary {
+  border: 1px solid #a8841c;
+  border-radius: var(--r);
+  padding: 8px 16px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: linear-gradient(180deg, #e8c24a 0%, var(--accent) 100%);
+  color: #1a1406;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesBtnPrimary:hover {
+  filter: brightness(1.05);
+}
+
+.mesBtnPrimary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.mesFormMsg {
+  margin-top: 12px;
+}
+
+.mesToolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.mesToolbarWrap {
+  justify-content: space-between;
+}
+
+/* 툴바: 주요 버튼은 왼쪽 묶음, 보조(새로고침 등)는 오른쪽 — space-between + wrap 깨짐 방지 */
+.mesToolbarSplit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 14px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 520px) {
+  .mesToolbarSplit {
+    grid-template-columns: 1fr;
+  }
+
+  .mesToolbarSplitEnd {
+    justify-content: flex-start;
+  }
+}
+
+.mesToolbarSplitMain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesToolbarSplitEnd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.mesPageHint {
+  margin: 8px 0 0;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel2);
+  font-size: 12px;
+}
+
+.mesPageHint summary {
+  cursor: pointer;
+  padding: 7px 10px;
+  font-weight: 700;
+  color: var(--muted);
+  list-style: none;
+}
+
+.mesPageHint summary::-webkit-details-marker {
+  display: none;
+}
+
+.mesPageHint[open] summary {
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.mesPageHintBody {
+  margin: 0;
+  padding: 8px 10px 10px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.mesSelectionBar {
+  font-size: 12px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--row-alt);
+  color: var(--text);
+}
+
+.mesTableColShipNo {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.mesTableColDate,
+.mesTableColStatus {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.mesTableColLines {
+  max-width: 18rem;
+  min-width: 0;
+}
+
+.mesShipLineList {
+  font-size: 12px;
+  line-height: 1.35;
+  max-height: 4.6em;
+  overflow-y: auto;
+}
+
+.mesFormPanel {
+  margin-bottom: 0;
+}
+
+.mesLabelInline {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.mesInputShort {
+  min-width: 200px;
+}
+
+.mesBtnSecondary {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: var(--panel);
+  color: var(--text);
+}
+
+.mesBtnSecondary:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.mesBtnSm {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: var(--panel2);
+  color: var(--text);
+  margin-right: 4px;
+  font-family: var(--mono);
+}
+
+.mesBtnSm:hover {
+  background: var(--surface-hover);
+  border-color: var(--border2);
+}
+
+.mesBtnDanger {
+  border-color: rgba(214, 69, 69, 0.55);
+  color: #f5bcbc;
+  background: rgba(80, 24, 24, 0.5);
+}
+
+.mesBtnDanger:hover {
+  background: rgba(120, 32, 32, 0.55);
+}
+
+.mesThActions {
+  width: 100px;
+  text-align: right !important;
+}
+
+.mesTdActions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* CRUD split */
+.mesPageWide {
+  max-width: 1320px;
+}
+
+.mesPageOps {
+  max-width: min(1480px, 100%);
+}
+
+.mesPageOps .mesOpsPlanSplit {
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+}
+
+.mesOpsWoKpiStrip {
+  margin-bottom: 10px;
+}
+
+.mesWoKpiSub {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.mesPageHeadRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.mesCountPill {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--mono);
+  padding: 5px 10px;
+  border-radius: var(--r);
+  border: 1px solid var(--border2);
+  background: var(--table-head-bg);
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.mesNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--r);
+  margin-bottom: 10px;
+  border: 1px solid var(--border2);
+  border-left: 4px solid var(--alarm);
+  background: rgba(40, 16, 16, 0.55);
+}
+
+.mesNoticeError {
+  border-left-color: var(--alarm);
+}
+
+.mesNoticeBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.mesNoticeTitle {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--error-text);
+  margin-bottom: 2px;
+}
+
+.mesNoticeText {
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.88);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.mesNoticeDismiss {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 4px;
+  cursor: pointer;
+  border-radius: var(--r);
+}
+
+.mesNoticeDismiss:hover {
+  color: var(--text);
+  background: var(--hover-strong);
+}
+
+.mesCrudSplit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(272px, 320px);
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .mesCrudSplit {
+    grid-template-columns: 1fr;
+  }
+
+  .mesCrudAside {
+    position: static;
+  }
+}
+
+.mesCrudMain {
+  min-width: 0;
+}
+
+.mesCrudAside {
+  position: sticky;
+  top: 8px;
+}
+
+.mesToolbarCompact {
+  margin-bottom: 8px;
+}
+
+.mesTableViewport {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+  max-height: min(520px, calc(100vh - 200px));
+  overflow: auto;
+}
+
+.mesTableSticky thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 1px 0 var(--border2);
+  background: var(--table-head-bg);
+}
+
+.mesTableClick tbody tr {
+  cursor: pointer;
+  transition: background 0.08s ease;
+}
+
+.mesTableClick tbody tr:hover {
+  background: rgba(212, 165, 36, 0.06);
+}
+
+.mesRowSelected {
+  background: rgba(212, 165, 36, 0.12) !important;
+}
+
+.mesPanelCard {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+  padding: 12px 14px 14px;
+  border-top: 2px solid var(--accent);
+}
+
+.mesPanelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.mesPanelTitle {
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesPanelMeta {
+  margin-top: 4px;
+  font-family: var(--mono);
+}
+
+.mesPanelHint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.mesStack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesStack .mesLabel {
+  margin: 0;
+}
+
+.mesPanelActions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.mesBtnBlock {
+  width: 100%;
+}
+
+.mesBtnGhost {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 8px;
+  border-radius: var(--r);
+  cursor: pointer;
+}
+
+.mesBtnGhost:hover {
+  color: var(--text);
+  background: var(--hover-mid);
+  border-color: var(--border2);
+}
+
+/* —— 모달 (신규·수정 폼) —— */
+.mesModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mesModalRoot > * {
+  pointer-events: auto;
+}
+
+.mesModalBackdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: var(--overlay-backdrop);
+  cursor: pointer;
+}
+
+.mesModalDialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  max-height: min(90vh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+  box-shadow: var(--modal-shadow);
+  border-top: 2px solid var(--accent);
+}
+
+.mesModalDialogWide {
+  max-width: 720px;
+}
+
+.mesWoStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 560px) {
+  .mesWoStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.mesWoStatCard {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 10px 12px;
+  text-align: center;
+  background: var(--row-alt);
+}
+
+.mesWoStatLabel {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.mesWoStatVal {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.mesWoWorkerBlock {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border2);
+}
+
+.mesWoWorkerTitle {
+  font-weight: 800;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.mesWoWorkerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 6px 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--modal-inset-bg);
+}
+
+.mesWoWorkerItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mesWoWorkerItem input {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.mesWoWorkbench {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 10px;
+}
+
+.mesWoFormPanel,
+.mesWoAssignPanel,
+.mesWoSelectedPanel,
+.mesWoProductPanel {
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  background: var(--modal-panel-bg);
+  padding: 10px;
+}
+
+.mesWoPanelTitle {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--modal-panel-title);
+}
+
+.mesWoCompactGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.mesWoCompactGrid .mesLabel {
+  gap: 3px;
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.mesWoCompactGrid .mesInput {
+  border-radius: 6px;
+  padding: 7px 9px;
+}
+
+.mesWoProductPanel {
+  display: flex;
+  flex-direction: column;
+}
+
+.mesWoInfoTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--dash-bar-stack-border);
+  font-size: 12px;
+}
+
+.mesWoInfoTable th,
+.mesWoInfoTable td {
+  border-bottom: 1px solid var(--modal-table-border);
+  padding: 7px 8px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.mesWoInfoTable th {
+  width: 94px;
+  color: var(--modal-table-label);
+  background: var(--row-alt);
+  font-weight: 700;
+}
+
+.mesWoAssignTableWrap {
+  border: 1px solid var(--dash-bar-stack-border);
+  border-radius: 6px;
+  overflow: hidden;
+  max-height: 272px;
+  overflow-y: auto;
+}
+
+.mesWoAssignTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.mesWoAssignTable th,
+.mesWoAssignTable td {
+  border-bottom: 1px solid var(--modal-table-border);
+  padding: 6px 7px;
+  white-space: nowrap;
+}
+
+.mesWoAssignTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--modal-table-head-bg);
+  color: var(--modal-table-head-text);
+  font-weight: 700;
+}
+
+.mesWoAssignTable tbody tr:nth-child(even) {
+  background: var(--row-alt);
+}
+
+.mesWoAssignTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesWoSelectedPanel {
+  margin-top: 10px;
+}
+
+.mesWoSelectedList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mesWoSelectedChip {
+  border: 1px solid rgba(232, 194, 74, 0.34);
+  background: rgba(232, 194, 74, 0.1);
+  color: var(--modal-chip-text);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.mesWoModalDialog {
+  max-width: min(980px, 95vw);
+}
+
+.mesOpsFormModalDialog {
+  max-width: min(980px, 95vw);
+}
+
+.mesWoModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mesOpsFormModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mesWoBadge {
+  flex-shrink: 0;
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.12);
+  color: var(--modal-chip-text);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.mesWoSummaryStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mesOpsSummaryStrip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mesWoSummaryItem {
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--modal-summary-bg);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mesWoSummaryItem span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.mesWoSummaryItem strong {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.mesWoModalGrid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 10px;
+}
+
+.mesWoModalCard {
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  background: var(--modal-panel-bg-soft);
+  padding: 10px;
+}
+
+.mesWoModalCardTitle {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--modal-card-title);
+}
+
+.mesWoInfoList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mesWoInfoRow {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 7px 8px;
+  border: 1px solid var(--dash-situation-cell-border);
+  border-radius: 8px;
+  background: var(--modal-row-bg);
+}
+
+.mesWoInfoRow span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.mesWoInfoRow strong {
+  font-size: 12px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesWoInfoValMultiline {
+  white-space: normal !important;
+  word-break: break-word;
+  overflow: visible !important;
+}
+
+.mesWoWorkerBlockRich {
+  margin-top: 0;
+  border-top: none;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  background: var(--modal-panel-bg-soft);
+  padding: 10px;
+}
+
+.mesWoWorkerBlockRich .mesWoWorkerGrid {
+  border-radius: 8px;
+  max-height: 180px;
+}
+
+.mesWoWorkerTools {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto auto auto;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.mesWoWorkerTools .mesInput {
+  padding: 6px 8px;
+}
+
+.mesWoWorkerToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+@media (max-width: 980px) {
+  .mesWoWorkbench {
+    grid-template-columns: 1fr;
+  }
+
+  .mesWoCompactGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesWoModalGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesWoWorkerTools {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .mesWoSummaryStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mesOpsSummaryStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.mesTdEllipsis {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesModalHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.mesModalHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mesModalHeadActions .mesBtnPrimary,
+.mesModalHeadActions .mesBtnSecondary,
+.mesModalHeadActions .mesBtnGhost {
+  padding: 7px 12px;
+}
+
+.mesModalTitle {
+  margin: 0;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.mesModalMeta {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.mesModalBody {
+  padding: 14px 16px 16px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.mesModalFoot {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border2);
+  background: var(--modal-foot-bg);
+}
+
+.mesModalFoot .mesBtnPrimary,
+.mesModalFoot .mesBtnSecondary {
+  padding: 8px 16px;
+}
+
+.mesModalActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.mesProductModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesProductFormGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.mesProductCard {
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--modal-section-bg);
+  padding: 8px;
+  min-width: 0;
+}
+
+.mesProductCardFull {
+  grid-column: 1 / -1;
+}
+
+.mesProductCardTitle {
+  margin: 0 0 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesProductModalBody .mesLabel {
+  gap: 3px;
+  font-size: 9px;
+}
+
+.mesProductModalBody .mesInput {
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.mesProductModalBody .mesFieldRow {
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mesProductCard .mesLabel {
+  min-width: 0;
+}
+
+.mesProductCard .mesInput {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mesProductCard .mesFieldRow3 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mesEbomPanelHeadText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mesEbomContextChip {
+  max-width: 100%;
+}
+
+.mesEbomContextChip .mesOpsPlanContextChipName {
+  max-width: min(560px, 78vw);
+}
+
+/* EBOM split layout */
+.mesEbomLayout {
+  display: grid;
+  grid-template-columns: 420px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.mesEbomTree {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mesEbomMain {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mesEbomTreeTable {
+  max-height: min(420px, calc(100vh - 320px));
+  overflow: auto;
+}
+
+.mesEbomLinesTable {
+  max-height: min(520px, calc(100vh - 360px));
+  overflow: auto;
+}
+
+.mesEbomMain .mesFieldRow3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mesEbomMain .mesFieldRow,
+.mesEbomMain .mesLabel,
+.mesEbomMain .mesInput {
+  min-width: 0;
+}
+
+.mesEbomRow4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.mesEbomFormGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mesEbomFormGrid .mesLabel,
+.mesEbomFormGrid .mesInput {
+  min-width: 0;
+}
+
+.mesEbomSpan1 { grid-column: span 1; }
+.mesEbomSpan2 { grid-column: span 2; }
+.mesEbomSpan3 { grid-column: span 3; }
+
+.mesEbomTreeTable table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.mesEbomTreeGrid .mesEbomColCount {
+  width: 56px;
+}
+
+.mesEbomTreeTable td:first-child {
+  max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesEbomLinesTable table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 0;
+}
+
+.mesEbomLinesTable td,
+.mesEbomLinesTable th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesEbomLinesTable th {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.mesEbomLinesGrid .mesEbomColCode {
+  width: 86px;
+}
+
+.mesEbomLinesGrid .mesEbomColName {
+  width: 180px;
+}
+
+.mesEbomLinesGrid .mesEbomColSpec {
+  width: 48px;
+}
+
+.mesEbomLinesGrid .mesEbomColQty,
+.mesEbomLinesGrid .mesEbomColPath,
+.mesEbomLinesGrid .mesEbomColUseYn {
+  width: 58px;
+}
+
+.mesEbomLinesGrid .mesEbomColPrice {
+  width: 72px;
+}
+
+.mesEbomLinesGrid .mesEbomColAction {
+  width: 56px;
+}
+
+.mesEbomLinesGrid .mesEbomColRemark {
+  width: 120px;
+}
+
+.mesEbomLinesTable .mesTable th,
+.mesEbomLinesTable .mesTable td {
+  padding: 5px 6px;
+  font-size: 11px;
+}
+
+.mesEbomLinesTable td:nth-child(1),
+.mesEbomLinesTable td:nth-child(2),
+.mesEbomLinesTable td:nth-child(9) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesEbomLinesGrid th,
+.mesEbomLinesGrid td {
+  text-align: center !important;
+}
+
+.mesEbomLinesGrid th:nth-child(5),
+.mesEbomLinesGrid th:nth-child(6),
+.mesEbomLinesGrid th:nth-child(7),
+.mesEbomLinesGrid th:nth-child(8),
+.mesEbomLinesGrid th:nth-child(9),
+.mesEbomLinesGrid th:nth-child(10),
+.mesEbomLinesGrid td:nth-child(5),
+.mesEbomLinesGrid td:nth-child(6),
+.mesEbomLinesGrid td:nth-child(7),
+.mesEbomLinesGrid td:nth-child(10) {
+  text-align: center !important;
+}
+
+.mesEbomLinesGrid td:nth-child(7),
+.mesEbomLinesGrid td:nth-child(8) {
+  text-align: right !important;
+}
+
+.mesEbomLinesGrid td.mesEbomNum {
+  text-align: right !important;
+  padding-right: 10px !important;
+}
+
+.mesEbomLinesGrid .mesThActions {
+  text-align: center !important;
+}
+
+.mesEbomLinesGrid .mesTdActions {
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (max-width: 1200px) {
+  .mesEbomLayout {
+    grid-template-columns: 360px minmax(0, 1fr);
+  }
+
+  .mesEbomMain .mesFieldRow3 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mesEbomRow4 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mesEbomFormGrid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .mesEbomSpan3,
+  .mesEbomSpan2,
+  .mesEbomSpan1 {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 820px) {
+  .mesEbomLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .mesEbomMain .mesFieldRow3 {
+    grid-template-columns: 1fr;
+  }
+
+  .mesEbomRow4 {
+    grid-template-columns: 1fr;
+  }
+
+  .mesEbomFormGrid {
+    grid-template-columns: 1fr;
+  }
+  .mesEbomSpan3,
+  .mesEbomSpan2,
+  .mesEbomSpan1 {
+    grid-column: span 1;
+  }
+}
+
+.mesFieldRowTight {
+  margin: 0;
+  gap: 6px;
+}
+
+.mesInlineCheck {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.mesProductSpecInput {
+  min-height: 136px;
+  font-family: var(--mono);
+}
+
+.mesProductModalActions {
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: 0;
+}
+
+.mesModalDialog {
+  max-width: min(1120px, 96vw);
+  max-height: min(96vh, 920px);
+}
+
+.mesModalDialog.mesWoModalDialog {
+  max-width: min(980px, 95vw);
+}
+
+@media (max-width: 980px) {
+  .mesProductFormGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesProductCardFull {
+    grid-column: auto;
+  }
+
+  .mesProductModalActions {
+    flex-direction: column;
+  }
+
+  .mesProductCard .mesFieldRow3 {
+    grid-template-columns: 1fr;
+  }
+
+  .mesModalHeadActions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .mesModalFoot {
+    justify-content: stretch;
+  }
+
+  .mesModalFoot .mesBtnPrimary,
+  .mesModalFoot .mesBtnSecondary {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* ——— 불량 이력 ——— */
+
+.mesDhFilterBar {
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.mesDhFilterSelect {
+  width: min(200px, 100%);
+  flex: 1;
+  min-width: 140px;
+}
+
+.mesDhFilterMeta {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.mesDhStats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mesDhKpiRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mesDhChartGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mesDhChartTitle {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.mesDhTrendBars {
+  height: 140px;
+}
+
+.mesDhHBarChart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesDhHBarRow {
+  display: grid;
+  grid-template-columns: minmax(72px, 28%) 1fr auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.mesDhHBarLabel {
+  font-size: 11px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesDhHBarTrack {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--hover-strong);
+  overflow: hidden;
+  border: 1px solid var(--dash-situation-cell-border);
+}
+
+.mesDhHBarFill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #c45c5c 0%, #e87878 100%);
+  box-shadow: 0 0 8px rgba(232, 120, 120, 0.25);
+  min-width: 2px;
+}
+
+.mesDhHBarVal {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e8a0a0;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.mesDhEmptyChart {
+  padding: 24px 8px;
+  text-align: center;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .mesDhKpiRow,
+  .mesDhChartGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesDhFilterMeta {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+.mesDhCardList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesDhCard {
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  background: var(--modal-card-bg);
+  padding: 12px 14px;
+}
+
+.mesDhCardHead {
+  margin-bottom: 10px;
+}
+
+.mesDhCardTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.mesDhCardMeta {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesDhCardTag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.mesDhCardSep {
+  opacity: 0.5;
+}
+
+.mesDhCardKpi {
+  margin-bottom: 10px;
+}
+
+.mesDhGood {
+  color: #5ecf9a;
+}
+
+.mesDhBad {
+  color: #e87878;
+}
+
+.mesDhCardLines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border2);
+}
+
+.mesDhCardLines li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 2px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.mesDhCardLines li:last-child {
+  border-bottom: none;
+}
+
+.mesDhCardRemark {
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border2);
+}
+
+.mesTdMatLot {
+  min-width: 9rem;
+  max-width: 14rem;
+  vertical-align: top;
+}
+
+.mesDhMatLotCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  cursor: help;
+}
+
+.mesDhMatLotChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  padding: 2px 6px 2px 4px;
+  border-radius: 5px;
+  border: 1px solid var(--dash-bar-stack-border);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.mesDhMatLotOrd {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(212, 165, 36, 0.2);
+  color: var(--accent);
+  font-size: 9px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mesDhMatLotNo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  color: var(--text);
+}
+
+.mesDhMatLotQty {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.mesDhMatLotQty::before {
+  content: '·';
+  margin-right: 4px;
+  opacity: 0.5;
+}
+
+.mesDhMatLotMore {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 0 4px;
+}
+
+.mesWorkerAbility {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesWorkerAbilityToolbar {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 0 2px 4px;
+}
+
+.mesWorkerAbilityFilterLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: min(280px, 100%);
+}
+
+.mesWorkerAbilitySelect {
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.mesWorkerAbilityFilterHint {
+  padding-bottom: 6px;
+}
+
+.mesWorkerAbilityGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 10px;
+}
+
+.mesWorkerAbilityCard {
+  padding: 12px 14px;
+  margin: 0;
+}
+
+.mesWorkerChartTitle {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mesWorkerAbilityEmpty {
+  padding: 20px 8px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.mesWorkerStackBar {
+  display: flex;
+  height: 28px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--dash-bar-stack-border);
+}
+
+.mesWorkerStackSeg {
+  min-width: 2px;
+  transition: flex 0.2s ease;
+}
+
+.mesWorkerStackSeg--good {
+  background: linear-gradient(180deg, #3d9a5f 0%, #2d7a4a 100%);
+}
+
+.mesWorkerStackSeg--defect {
+  background: linear-gradient(180deg, #c45c5c 0%, #9a4545 100%);
+}
+
+.mesWorkerStackSeg--rest {
+  background: var(--hover-strong);
+}
+
+.mesWorkerStackLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text);
+}
+
+.mesWorkerLegendDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.mesWorkerLegendDot--good {
+  background: #3d9a5f;
+}
+
+.mesWorkerLegendDot--defect {
+  background: #c45c5c;
+}
+
+.mesWorkerGauges {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  align-items: start;
+}
+
+.mesWorkerGauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.mesWorkerGaugeRing {
+  position: relative;
+  width: 88px;
+  height: 88px;
+}
+
+.mesWorkerGaugeVal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.mesWorkerGaugeLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mesWorkerGaugeSub {
+  font-size: 9px;
+  line-height: 1.2;
+  max-width: 7rem;
+}
+
+.mesWorkerProductBars .mesDhHBarFill.mesWorkerBarFill--good,
+.mesDhHBarFill.mesWorkerBarFill--good {
+  background: linear-gradient(90deg, #2d7a4a 0%, #5ecf9a 100%);
+  box-shadow: 0 0 8px rgba(94, 207, 154, 0.2);
+}
+
+.mesDhHBarFill.mesWorkerBarFill--defect {
+  background: linear-gradient(90deg, #9a4545 0%, #e87878 100%);
+  box-shadow: 0 0 8px rgba(232, 120, 120, 0.2);
+}
+
+.mesWorkerBarSub {
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.mesWorkerBarFill--eff {
+  background: linear-gradient(90deg, #a8841c 0%, #e8c24a 100%);
+  box-shadow: 0 0 8px rgba(232, 194, 74, 0.25);
+}
+
+.mesWorkerStats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesWorkerStatsBest {
+  margin: -4px 0 10px;
+}
+
+.mesWorkerStatsBest strong {
+  color: var(--accent);
+}
+
+.mesDhHBarRow--best .mesDhHBarLabel {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.mesWorkerStatsTableWrap {
+  max-height: 280px;
+  overflow: auto;
+}
+
+.mesTableCompact th,
+.mesTableCompact td {
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.mesWorkerMinutesInput {
+  width: 5.5rem;
+  padding: 5px 8px;
+  font-size: 12px;
+  text-align: right;
+}
+
+.mesTrHighlight td {
+  background: rgba(212, 165, 36, 0.06) !important;
+}
+
+@media (max-width: 720px) {
+  .mesWorkerAbilityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesWorkerGauges {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 재고 페이지 — 일별 추이 차트 */
+.mesInvTrendCard {
+  margin-top: 12px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--panel);
+  padding: 12px 14px 10px;
+}
+
+.mesInvTrendFilters {
+  margin-bottom: 8px;
+}
+
+.mesInvTrendChartWrap {
+  height: 420px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--chart-border);
+  padding: 8px 6px 4px;
+}
+
+.mesInvTrendSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mesInvTrendGridLine {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.mesInvTrendAxisLabel {
+  fill: var(--muted);
+  font-size: 9px;
+  font-family: ui-monospace, monospace;
+}
+
+.mesInvTrendLine {
+  fill: none;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.92;
+}
+
+.mesInvTrendDot {
+  stroke: rgba(0, 0, 0, 0.35);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.mesInvTrendEmpty {
+  margin: 0;
+  padding: 160px 12px;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .mesInvTrendChartWrap {
+    height: 320px;
+  }
+}
+
+.mesInvTrendHint {
+  margin: 8px 0 0;
+  line-height: 1.45;
+}
+
+[data-theme='light'] .mesOpsProductRowActive {
+  background: linear-gradient(
+    90deg,
+    rgba(154, 123, 10, 0.14) 0%,
+    rgba(154, 123, 10, 0.05) 55%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+  box-shadow: inset 3px 0 0 var(--accent), 0 0 0 1px var(--accent-dim) inset;
+}
+
+[data-theme='light'] .mesOpsPlanContextChip {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.06) inset,
+    0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme='light'] .mesOpsPlanContextChipName {
+  color: var(--accent);
+}
+
+[data-theme='light'] .mesTableClick tbody tr:hover {
+  background: var(--hover-mid);
+}
+
+[data-theme='light'] select.mesInput,
+[data-theme='light'] textarea.mesInput {
+  background: var(--input-bg);
+  color: var(--text);
+}

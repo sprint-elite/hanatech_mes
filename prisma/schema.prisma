@@ -1,0 +1,958 @@
+// HANA-TECH MES — 전체 도메인 (MariaDB / Prisma)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UseYn {
+  Y
+  N
+}
+
+enum CustomerType {
+  CUSTOMER     // 고객사(발주처)
+  SUPPLIER     // 공급업체(구매처)
+  OUTSOURCING  // 외주업체
+}
+
+enum LotStatus {
+  CREATED
+  IN_PROGRESS
+  DONE
+  OUTSOURCING
+}
+
+enum InventoryStatus {
+  AVAILABLE
+  HOLD
+  DEFECT
+}
+
+enum InventoryTxType {
+  IN
+  OUT
+  MOVE
+  ADJUST
+}
+
+enum InventoryTxRefType {
+  WO
+  LOT
+  SHIPMENT
+  OUTSOURCING
+  ADJUST
+}
+
+enum PlanStatus {
+  PLANNED
+  CONFIRMED
+  CLOSED
+}
+
+enum WorkOrderStatus {
+  READY
+  IN_PROGRESS
+  DONE
+  HOLD
+}
+
+enum MaterialLotStatus {
+  AVAILABLE
+  USED
+  HOLD
+}
+
+enum LotHistoryEventType {
+  CREATE
+  MOVE
+  SPLIT
+  MERGE
+  CLOSE
+}
+
+enum ShipmentStatus {
+  READY
+  SHIPPED
+  CANCEL
+}
+
+enum OutsourcingStatus {
+  REQUEST
+  OUT
+  IN
+  DONE
+}
+
+enum UserAccountStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+}
+
+enum SystemLogLevel {
+  SYSTEM
+  ERROR
+  WARNING
+  DATA
+}
+
+enum LineRunStatus {
+  RUN
+  STOP
+  WAIT
+}
+
+enum BarcodeType {
+  PRODUCT
+  LOT
+  MATERIAL_LOT
+  LOCATION
+  WO
+}
+
+enum BarcodeRecordStatus {
+  ACTIVE
+  DISABLED
+}
+
+// ——— 기준정보 ———
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  roleName    String   @map("role_name")
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  users       User[]
+
+  @@map("roles")
+}
+
+model User {
+  id           Int               @id @default(autoincrement())
+  loginId      String            @unique @map("user_id")
+  userName     String            @map("user_name")
+  passwordHash String            @map("password_hash") @db.VarChar(255)
+  roleId       Int               @map("role_id")
+  workerId     Int?              @unique @map("worker_id")
+  email        String?
+  phone        String?
+  status       UserAccountStatus @default(ACTIVE)
+  lastLoginAt  DateTime?         @map("last_login_at")
+  createdAt    DateTime          @default(now()) @map("created_at")
+
+  role         Role              @relation(fields: [roleId], references: [id])
+  worker       Worker?           @relation(fields: [workerId], references: [id])
+
+  productsCreated Product[]      @relation("ProductCreatedBy")
+  productsUpdated Product[]      @relation("ProductUpdatedBy")
+  plansCreated    ProductionPlan[] @relation("PlanCreatedBy")
+  ordersCreated   WorkOrder[]    @relation("WoCreatedBy")
+
+  @@map("users")
+}
+
+model Location {
+  id           Int        @id @default(autoincrement())
+  locationCode String     @unique @map("location_code")
+  locationName String     @map("location_name")
+  parentId     Int?       @map("parent_id")
+  locationType String     @map("location_type") // WAREHOUSE / RACK / ZONE
+  useYn        UseYn      @default(Y) @map("use_yn")
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  parent       Location?  @relation("LocationTree", fields: [parentId], references: [id])
+  children     Location[] @relation("LocationTree")
+
+  inventories              Inventory[]
+  inventoryTxFrom          InventoryTransaction[] @relation("InvTxFromLoc")
+  inventoryTxTo            InventoryTransaction[] @relation("InvTxToLoc")
+  inventoryTxAt            InventoryTransaction[] @relation("InvTxAtLoc")
+  outsourcingOut           Outsourcing[]          @relation("OutsourceOutLoc")
+  outsourcingIn            Outsourcing[]          @relation("OutsourceInLoc")
+
+  @@map("location")
+}
+
+model Product {
+  id                Int       @id @default(autoincrement())
+  productCode       String    @unique @map("product_code")
+  productName       String    @map("product_name")
+  itemType          String    @map("item_type")
+  itemNumber        String?   @map("item_number") @db.VarChar(64)
+  unit              String
+  standardPackQty   Int?      @map("standard_pack_qty")
+  unitWeight        Decimal?  @map("unit_weight") @db.Decimal(12, 4)
+  unitVolume        Decimal?  @map("unit_volume") @db.Decimal(12, 4)
+  safetyStock       Int?      @map("safety_stock")
+  maxStock          Int?      @map("max_stock")
+  barcode           String?   @unique
+  specJson          Json?     @map("spec_json")
+  status            String    @default("ACTIVE")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdBy         Int?      @map("created_by")
+  updatedBy         Int?      @map("updated_by")
+
+  creator           User?     @relation("ProductCreatedBy", fields: [createdBy], references: [id])
+  updater           User?     @relation("ProductUpdatedBy", fields: [updatedBy], references: [id])
+
+  ebomAsParent      Ebom[]    @relation("EbomParent")
+  ebomAsChild       Ebom[]    @relation("EbomChild")
+  lots              ProductionLot[]
+  processes         MbomProcess[]
+  processMaterials  MbomProcessMaterial[] @relation("MbomMatProduct")
+  inventories       Inventory[]
+  inventoryTx       InventoryTransaction[]
+  productionPlans   ProductionPlan[]
+  workOrders        WorkOrder[]
+  workOrderMaterials WorkOrderMaterial[] @relation("WoMatProduct")
+  materialLots      MaterialLot[]
+  lotMaterialUsagesLoose LotMaterialUsage[] @relation("LotUsageLooseProduct")
+  productionStatuses ProductionStatus[]
+  inventorySnapshots InventorySnapshot[]
+  shipmentDetails   ShipmentDetail[]
+  processRoutings   ProcessRouting[]
+  defectTypes       DefectType[]
+  productionProfile ProductProduction?
+  purchaseProfile   ProductPurchase?
+  qualityProfile    ProductQuality?
+  inventoryProfile  ProductInventory?
+  outsourcingProfile ProductOutsourcing?
+  workerProductWorkTimes WorkerProductWorkTime[]
+
+  @@map("products")
+}
+
+model ProductProduction {
+  productId            Int        @id @map("product_id")
+  isProduction         UseYn      @default(Y) @map("is_production")
+  createdAt            DateTime   @default(now()) @map("created_at")
+
+  product              Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_production")
+}
+
+model ProductPurchase {
+  productId            Int       @id @map("product_id")
+  isPurchasable        UseYn     @default(N) @map("is_purchasable")
+  defaultSupplier      String?   @map("default_supplier")
+  defaultSupplierId    Int?      @map("default_supplier_id")
+  purchaseUnit         String?   @map("purchase_unit")
+  purchasePrice        Decimal?  @map("purchase_price") @db.Decimal(14, 4)
+  moq                  Int?      @map("moq")
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  product              Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  defaultSupplierRef   Customer? @relation("ProductPurchaseDefaultSupplier", fields: [defaultSupplierId], references: [id])
+
+  @@map("product_purchase")
+}
+
+model ProductQuality {
+  productId             Int       @id @map("product_id")
+  inspectionRequiredYn  UseYn     @default(N) @map("inspection_required_yn")
+  inspectionType        String?   @map("inspection_type")
+  defectToleranceRate   Decimal?  @map("defect_tolerance_rate") @db.Decimal(6, 3)
+  createdAt             DateTime  @default(now()) @map("created_at")
+
+  product               Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_quality")
+}
+
+model ProductInventory {
+  productId             Int       @id @map("product_id")
+  lotControlYn          UseYn     @default(Y) @map("lot_control_yn")
+  purchaserCustomerId   Int?      @map("purchaser_customer_id")
+  createdAt             DateTime  @default(now()) @map("created_at")
+
+  product               Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  purchaserCustomer     Customer? @relation("ProductInventoryPurchaser", fields: [purchaserCustomerId], references: [id])
+
+  @@map("product_inventory")
+}
+
+model ProductOutsourcing {
+  productId            Int       @id @map("product_id")
+  isOutsourcing        UseYn     @default(N) @map("is_outsourcing")
+  defaultVendor        String?   @map("default_vendor")
+  defaultVendorId      Int?      @map("default_vendor_id")
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  product              Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  defaultVendorRef     Customer? @relation("ProductOutsourcingDefaultVendor", fields: [defaultVendorId], references: [id])
+
+  @@map("product_outsourcing")
+}
+
+model Customer {
+  id           Int          @id @default(autoincrement())
+  customerCode String       @unique @map("customer_code")
+  customerName String       @map("customer_name")
+  type         CustomerType @map("type")
+  useYn        UseYn        @default(Y) @map("use_yn")
+  contactName  String?      @map("contact_name")
+  phone        String?      @map("phone")
+  email        String?      @map("email")
+  address      String?      @db.Text
+  remark       String?      @db.Text
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  purchaseDefaults    ProductPurchase[]    @relation("ProductPurchaseDefaultSupplier")
+  outsourcingDefaults ProductOutsourcing[] @relation("ProductOutsourcingDefaultVendor")
+  inventoryPurchasers ProductInventory[]   @relation("ProductInventoryPurchaser")
+
+  @@index([type])
+  @@map("customers")
+}
+
+model Ebom {
+  id               Int      @id @default(autoincrement())
+  parentProductId  Int      @map("parent_product_id")
+  childProductId   Int      @map("child_product_id")
+  qty              Decimal  @db.Decimal(14, 4)
+  unit             String
+  spec             String?  @db.VarChar(255)
+  lossRate         Decimal? @map("loss_rate") @db.Decimal(6, 3)
+  sequence         Int      @default(0)
+  pathSequence     Int?     @map("path_sequence")
+  remark           String?  @map("remark") @db.Text
+  inUnitPrice      Decimal? @map("in_unit_price") @db.Decimal(14, 4)
+  outUnitPrice     Decimal? @map("out_unit_price") @db.Decimal(14, 4)
+  useYn            UseYn    @default(Y) @map("use_yn")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  parentProduct    Product  @relation("EbomParent", fields: [parentProductId], references: [id])
+  childProduct     Product  @relation("EbomChild", fields: [childProductId], references: [id])
+
+  @@index([parentProductId])
+  @@map("ebom")
+}
+
+model WorkCenter {
+  id                Int          @id @default(autoincrement())
+  centerCode        String       @unique @map("center_code")
+  centerName        String       @map("center_name")
+  centerType        String       @map("center_type")
+  parentId          Int?         @map("parent_id")
+  location          String?
+  capacityPerHour   Int?         @map("capacity_per_hour")
+  useYn             UseYn        @default(Y) @map("use_yn")
+  createdAt         DateTime     @default(now()) @map("created_at")
+
+  parent            WorkCenter?  @relation("WcTree", fields: [parentId], references: [id])
+  children          WorkCenter[] @relation("WcTree")
+
+  lots              ProductionLot[]
+  results           ProcessResult[]
+  processes         MbomProcess[]
+  defects           DefectHistory[]
+  workOrders        WorkOrder[]
+  processStatuses   ProcessStatus[]
+
+  @@map("work_center")
+}
+
+model Worker {
+  id         Int       @id @default(autoincrement())
+  workerCode String    @unique @map("worker_code")
+  workerName String    @map("worker_name")
+  team       String?
+  position   String?
+  skillLevel String?   @map("skill_level")
+  phone      String?
+  hireDate   DateTime? @map("hire_date") @db.Date
+  status     String    @default("ACTIVE")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  userAccount User?
+  results     ProcessResult[]
+  defects     DefectHistory[]
+  workerProcesses       WorkerProcess[]
+  workOrderAssignments  WorkOrderWorker[]
+  productWorkTimes      WorkerProductWorkTime[]
+
+  @@map("workers")
+}
+
+model MbomProcess {
+  id                Int       @id @default(autoincrement())
+  productId         Int       @map("product_id")
+  processCode       String    @map("process_code")
+  processName       String    @map("process_name")
+  sequence          Int
+  workCenterId      Int?      @map("work_center_id")
+  standardTime      Int?      @map("standard_time")
+  setupTime         Int?      @map("setup_time")
+  capacityPerHour   Int?      @map("capacity_per_hour")
+  isOutsourcing     UseYn     @default(N) @map("is_outsourcing")
+  useYn             UseYn     @default(Y) @map("use_yn")
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  product           Product   @relation(fields: [productId], references: [id])
+  workCenter        WorkCenter? @relation(fields: [workCenterId], references: [id])
+  materials         MbomProcessMaterial[]
+  results           ProcessResult[]
+  defects           DefectHistory[]
+  routingsFrom      ProcessRouting[] @relation("RouteFrom")
+  routingsTo        ProcessRouting[] @relation("RouteTo")
+  processStatuses   ProcessStatus[]
+  productionHourly  ProductionHourly[]
+  outsourcing       Outsourcing[]
+  visionLogs        VisionRawLog[]
+  workerProcesses   WorkerProcess[]
+
+  @@index([productId, sequence])
+  @@map("mbom_process")
+}
+
+model MbomProcessMaterial {
+  id                Int      @id @default(autoincrement())
+  processId         Int      @map("process_id")
+  materialProductId Int      @map("material_product_id")
+  qty               Decimal  @db.Decimal(14, 4)
+  unit              String
+  lossRate          Decimal? @map("loss_rate") @db.Decimal(6, 3)
+  isKeyMaterial     UseYn    @default(N) @map("is_key_material")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  process           MbomProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+  materialProduct   Product     @relation("MbomMatProduct", fields: [materialProductId], references: [id])
+
+  @@index([processId])
+  @@map("mbom_process_material")
+}
+
+model ProcessRouting {
+  id             Int    @id @default(autoincrement())
+  productId      Int    @map("product_id")
+  fromProcessId  Int?   @map("from_process_id")
+  toProcessId    Int?   @map("to_process_id")
+  conditionType  String? @map("condition_type")
+
+  product        Product      @relation(fields: [productId], references: [id])
+  fromProcess    MbomProcess? @relation("RouteFrom", fields: [fromProcessId], references: [id])
+  toProcess      MbomProcess? @relation("RouteTo", fields: [toProcessId], references: [id])
+
+  @@index([productId])
+  @@map("process_routing")
+}
+
+// ——— 계획·지시 ———
+
+model ProductionPlan {
+  id         Int         @id @default(autoincrement())
+  planNo     String      @unique @map("plan_no")
+  productId  Int         @map("product_id")
+  planQty    Int         @map("plan_qty")
+  startDate  DateTime    @map("start_date") @db.Date
+  endDate    DateTime    @map("end_date") @db.Date
+  priority   String?
+  status     PlanStatus  @default(PLANNED)
+  remark     String?     @db.Text
+  createdAt  DateTime    @default(now()) @map("created_at")
+  createdBy  Int?        @map("created_by")
+
+  product    Product     @relation(fields: [productId], references: [id])
+  creator    User?       @relation("PlanCreatedBy", fields: [createdBy], references: [id])
+  workOrders WorkOrder[]
+
+  @@map("production_plan")
+}
+
+model WorkOrder {
+  id             Int              @id @default(autoincrement())
+  woNo           String           @unique @map("wo_no")
+  planId         Int?             @map("plan_id")
+  productId      Int              @map("product_id")
+  orderQty       Int              @map("order_qty")
+  completedQty   Int              @default(0) @map("completed_qty")
+  startDatetime  DateTime?        @map("start_datetime")
+  endDatetime    DateTime?        @map("end_datetime")
+  workCenterId   Int?             @map("work_center_id")
+  status         WorkOrderStatus  @default(READY)
+  holdReason     String?          @map("hold_reason") @db.Text
+  priority       String?
+  remark         String?          @db.Text
+  createdAt      DateTime         @default(now()) @map("created_at")
+  createdBy      Int?             @map("created_by")
+
+  plan           ProductionPlan?  @relation(fields: [planId], references: [id])
+  product        Product          @relation(fields: [productId], references: [id])
+  workCenter     WorkCenter?      @relation(fields: [workCenterId], references: [id])
+  creator        User?            @relation("WoCreatedBy", fields: [createdBy], references: [id])
+  materials         WorkOrderMaterial[]
+  lots              ProductionLot[]
+  assignedWorkers   WorkOrderWorker[]
+
+  @@index([productId])
+  @@map("work_order")
+}
+
+/// 작업지시에 배정된 작업자 (다대다)
+model WorkOrderWorker {
+  woId     Int @map("wo_id")
+  workerId Int @map("worker_id")
+
+  workOrder WorkOrder @relation(fields: [woId], references: [id], onDelete: Cascade)
+  worker    Worker    @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@id([woId, workerId])
+  @@index([workerId])
+  @@map("work_order_worker")
+}
+
+model WorkOrderMaterial {
+  id                Int     @id @default(autoincrement())
+  woId              Int     @map("wo_id")
+  materialProductId Int     @map("material_product_id")
+  requiredQty       Decimal @map("required_qty") @db.Decimal(14, 4)
+  issuedQty         Decimal @default(0) @map("issued_qty") @db.Decimal(14, 4)
+
+  workOrder         WorkOrder @relation(fields: [woId], references: [id], onDelete: Cascade)
+  materialProduct   Product   @relation("WoMatProduct", fields: [materialProductId], references: [id])
+
+  @@index([woId])
+  @@map("work_order_material")
+}
+
+// ——— LOT ———
+
+model ProductionLot {
+  id               Int        @id @default(autoincrement())
+  lotNo            String     @unique @map("lot_no")
+  woId             Int?       @map("wo_id")
+  productId        Int        @map("product_id")
+  lotQty           Int        @map("lot_qty")
+  goodQty          Int        @default(0) @map("good_qty")
+  defectQty        Int        @default(0) @map("defect_qty")
+  status           LotStatus  @default(CREATED)
+  workCenterId     Int?       @map("work_center_id")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  currentProcessId Int?       @map("current_process_id")
+  currentStatus    String?    @map("current_status")
+  versionNo        Int        @default(0) @map("version_no")
+
+  workOrder        WorkOrder? @relation(fields: [woId], references: [id])
+  product          Product    @relation(fields: [productId], references: [id])
+  workCenter       WorkCenter? @relation(fields: [workCenterId], references: [id])
+  results          ProcessResult[]
+  defects          DefectHistory[]
+  inventory        Inventory[] @relation("InvProdLot")
+  inventoryTx      InventoryTransaction[] @relation("InvTxProdLot")
+  materialUsages   LotMaterialUsage[]
+  histories        LotHistory[]
+  outsourcing      Outsourcing[]
+  shipmentDetails  ShipmentDetail[]
+  visionLogs       VisionRawLog[]
+
+  @@index([productId])
+  @@index([woId])
+  @@map("production_lot")
+}
+
+model MaterialLot {
+  id           Int               @id @default(autoincrement())
+  lotNo        String            @unique @map("lot_no")
+  productId    Int               @map("product_id")
+  supplier     String?
+  receivedQty  Decimal           @map("received_qty") @db.Decimal(14, 4)
+  remainQty    Decimal           @map("remain_qty") @db.Decimal(14, 4)
+  receivedDate DateTime          @map("received_date") @db.Date
+  status       MaterialLotStatus @default(AVAILABLE)
+  createdAt    DateTime          @default(now()) @map("created_at")
+
+  product      Product           @relation(fields: [productId], references: [id])
+  usages       LotMaterialUsage[]
+  inventory    Inventory[]       @relation("InvMatLot")
+  inventoryTx  InventoryTransaction[] @relation("InvTxMatLot")
+
+  @@index([productId])
+  @@map("material_lot")
+}
+
+model LotMaterialUsage {
+  id                Int      @id @default(autoincrement())
+  productionLotId   Int      @map("production_lot_id")
+  materialLotId     Int?     @map("material_lot_id")
+  /// 자재 LOT 없이 LOT·자재LOT 미지정 재고만 차감한 백플러시일 때 품목
+  materialProductId Int?     @map("material_product_id")
+  usedQty           Decimal  @map("used_qty") @db.Decimal(14, 4)
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  productionLot     ProductionLot @relation(fields: [productionLotId], references: [id])
+  materialLot       MaterialLot?   @relation(fields: [materialLotId], references: [id])
+  materialProduct   Product?       @relation("LotUsageLooseProduct", fields: [materialProductId], references: [id])
+
+  @@index([productionLotId])
+  @@index([materialProductId])
+  @@map("lot_material_usage")
+}
+
+model LotHistory {
+  id                Int                  @id @default(autoincrement())
+  productionLotId   Int                  @map("production_lot_id")
+  eventType         LotHistoryEventType  @map("event_type")
+  eventDesc         String?              @map("event_desc") @db.Text
+  createdAt         DateTime             @default(now()) @map("created_at")
+
+  productionLot     ProductionLot        @relation(fields: [productionLotId], references: [id])
+
+  @@index([productionLotId, createdAt])
+  @@map("lot_history")
+}
+
+model ProcessResult {
+  id              Int       @id @default(autoincrement())
+  productionLotId Int       @map("production_lot_id")
+  processId       Int       @map("process_id")
+  processSequence Int       @map("process_sequence")
+  workerId        Int?      @map("worker_id")
+  workCenterId    Int?      @map("work_center_id")
+  inputQty        Int       @map("input_qty")
+  goodQty         Int       @map("good_qty")
+  defectQty       Int       @map("defect_qty")
+  startTime       DateTime? @map("start_time")
+  endTime         DateTime? @map("end_time")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  lot             ProductionLot @relation(fields: [productionLotId], references: [id])
+  process         MbomProcess   @relation(fields: [processId], references: [id])
+  worker          Worker?       @relation(fields: [workerId], references: [id])
+  workCenter      WorkCenter?   @relation(fields: [workCenterId], references: [id])
+  defectDetails   DefectHistory[]
+
+  @@index([productionLotId, processId, createdAt])
+  @@map("process_result")
+}
+
+model DefectType {
+  id             Int      @id @default(autoincrement())
+  productId      Int      @map("product_id")
+  defectCode     String   @map("defect_code")
+  defectName     String   @map("defect_name")
+  defectCategory String?  @map("defect_category")
+  severity       String?
+  useYn          UseYn    @default(Y) @map("use_yn")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  product        Product  @relation(fields: [productId], references: [id])
+  defects        DefectHistory[]
+
+  @@unique([productId, defectCode])
+  @@index([productId])
+  @@map("defect_type")
+}
+
+model DefectHistory {
+  id              Int       @id @default(autoincrement())
+  productionLotId Int       @map("production_lot_id")
+  processId       Int       @map("process_id")
+  defectTypeId    Int       @map("defect_type_id")
+  qty             Int
+  workerId        Int?      @map("worker_id")
+  workCenterId    Int?      @map("work_center_id")
+  detectedAt      DateTime? @map("detected_at")
+  processResultId Int?      @map("process_result_id")
+  remark          String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  lot             ProductionLot @relation(fields: [productionLotId], references: [id])
+  process         MbomProcess   @relation(fields: [processId], references: [id])
+  defectType      DefectType    @relation(fields: [defectTypeId], references: [id])
+  worker          Worker?       @relation(fields: [workerId], references: [id])
+  workCenter      WorkCenter?   @relation(fields: [workCenterId], references: [id])
+  processResult   ProcessResult? @relation(fields: [processResultId], references: [id])
+
+  @@index([productionLotId, processId, createdAt])
+  @@map("defect_history")
+}
+
+// ——— 재고 ———
+
+model Inventory {
+  id             Int             @id @default(autoincrement())
+  productId      Int             @map("product_id")
+  lotId          Int?            @map("lot_id")
+  materialLotId  Int?            @map("material_lot_id")
+  locationId     Int?            @map("location_id")
+  qty            Int
+  reservedQty    Int             @default(0) @map("reserved_qty")
+  status         InventoryStatus @default(AVAILABLE)
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  product        Product         @relation(fields: [productId], references: [id])
+  lot            ProductionLot?  @relation("InvProdLot", fields: [lotId], references: [id])
+  materialLot    MaterialLot?    @relation("InvMatLot", fields: [materialLotId], references: [id])
+  location       Location?       @relation(fields: [locationId], references: [id])
+
+  @@index([productId, lotId])
+  @@index([productId, materialLotId])
+  @@map("inventory")
+}
+
+model InventoryTransaction {
+  id              Int                  @id @default(autoincrement())
+  productId       Int                  @map("product_id")
+  lotId           Int?                 @map("lot_id")
+  materialLotId   Int?                 @map("material_lot_id")
+  locationId      Int?                 @map("location_id")
+  transactionType InventoryTxType      @map("transaction_type")
+  qty             Int
+  refType         InventoryTxRefType?  @map("ref_type")
+  refId           Int?                 @map("ref_id")
+  fromLocationId  Int?                 @map("from_location_id")
+  toLocationId    Int?                 @map("to_location_id")
+  beforeQty       Int?                 @map("before_qty")
+  afterQty        Int?                 @map("after_qty")
+  remark          String?              @map("remark")
+  createdAt       DateTime             @default(now()) @map("created_at")
+  createdBy       Int?                 @map("created_by")
+
+  product         Product              @relation(fields: [productId], references: [id])
+  lot             ProductionLot?       @relation("InvTxProdLot", fields: [lotId], references: [id])
+  materialLot     MaterialLot?         @relation("InvTxMatLot", fields: [materialLotId], references: [id])
+  location        Location?            @relation("InvTxAtLoc", fields: [locationId], references: [id])
+  fromLocation    Location?            @relation("InvTxFromLoc", fields: [fromLocationId], references: [id])
+  toLocation      Location?            @relation("InvTxToLoc", fields: [toLocationId], references: [id])
+
+  @@index([productId, lotId, createdAt])
+  @@map("inventory_transaction")
+}
+
+model InventorySnapshot {
+  id         Int      @id @default(autoincrement())
+  date       DateTime @db.Date
+  productId  Int      @map("product_id")
+  qty        Int
+
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@unique([date, productId])
+  @@map("inventory_snapshot")
+}
+
+// ——— 출하·외주 ———
+
+model Shipment {
+  id            Int            @id @default(autoincrement())
+  shipmentNo    String         @unique @map("shipment_no")
+  customerName  String         @map("customer_name")
+  shipmentDate  DateTime?      @map("shipment_date") @db.Date
+  status        ShipmentStatus @default(READY)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  createdBy     Int?           @map("created_by")
+
+  details       ShipmentDetail[]
+
+  @@map("shipment")
+}
+
+model ShipmentDetail {
+  id          Int     @id @default(autoincrement())
+  shipmentId  Int     @map("shipment_id")
+  productId   Int     @map("product_id")
+  lotId       Int?    @map("lot_id")
+  qty         Int
+
+  shipment    Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  product     Product        @relation(fields: [productId], references: [id])
+  lot         ProductionLot? @relation(fields: [lotId], references: [id])
+
+  @@index([shipmentId])
+  @@map("shipment_detail")
+}
+
+model Outsourcing {
+  id               Int                @id @default(autoincrement())
+  outsourcingNo    String             @unique @map("outsourcing_no")
+  productionLotId  Int                @map("production_lot_id")
+  processId        Int                @map("process_id")
+  vendorName       String             @map("vendor_name")
+  requestQty       Int                @map("request_qty")
+  outDate          DateTime?          @map("out_date") @db.Date
+  expectedInDate   DateTime?          @map("expected_in_date") @db.Date
+  status           OutsourcingStatus  @default(REQUEST)
+  outLocationId    Int?               @map("out_location_id")
+  inLocationId     Int?               @map("in_location_id")
+  createdAt        DateTime           @default(now()) @map("created_at")
+
+  productionLot    ProductionLot      @relation(fields: [productionLotId], references: [id])
+  process          MbomProcess        @relation(fields: [processId], references: [id])
+  outLocation      Location?          @relation("OutsourceOutLoc", fields: [outLocationId], references: [id])
+  inLocation       Location?          @relation("OutsourceInLoc", fields: [inLocationId], references: [id])
+  results          OutsourcingResult[]
+
+  @@index([productionLotId])
+  @@map("outsourcing")
+}
+
+model OutsourcingResult {
+  id             Int      @id @default(autoincrement())
+  outsourcingId  Int      @map("outsourcing_id")
+  goodQty        Int      @map("good_qty")
+  defectQty      Int      @default(0) @map("defect_qty")
+  inDate         DateTime? @map("in_date") @db.Date
+
+  outsourcing    Outsourcing @relation(fields: [outsourcingId], references: [id], onDelete: Cascade)
+
+  @@map("outsourcing_result")
+}
+
+// ——— 바코드·감사·로그·기타 ———
+
+model Barcode {
+  id            Int                 @id @default(autoincrement())
+  barcodeValue  String              @unique @map("barcode_value")
+  barcodeType   BarcodeType         @map("barcode_type")
+  refTable      String              @map("ref_table")
+  refId         Int                 @map("ref_id")
+  isPrimary     UseYn               @default(N) @map("is_primary")
+  status        BarcodeRecordStatus @default(ACTIVE)
+  printedAt     DateTime?           @map("printed_at")
+  expiredAt     DateTime?           @map("expired_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  createdBy     Int?                @map("created_by")
+
+  @@index([refTable, refId])
+  @@map("barcode")
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  tableName  String   @map("table_name")
+  recordId   Int      @map("record_id")
+  actionType String   @map("action_type")
+  oldValue   Json?    @map("old_value")
+  newValue   Json?    @map("new_value")
+  changedAt  DateTime @default(now()) @map("changed_at")
+  changedBy  Int?     @map("changed_by")
+  ipAddress  String?  @map("ip_address")
+
+  @@index([tableName, recordId])
+  @@map("audit_log")
+}
+
+model ProductionStatus {
+  id            Int      @id @default(autoincrement())
+  date          DateTime @db.Date
+  productId     Int      @map("product_id")
+  targetQty     Int      @map("target_qty")
+  actualQty     Int      @default(0) @map("actual_qty")
+  goodQty       Int      @default(0) @map("good_qty")
+  defectQty     Int      @default(0) @map("defect_qty")
+  progressRate  Decimal? @map("progress_rate") @db.Decimal(5, 2)
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  product       Product  @relation(fields: [productId], references: [id])
+
+  @@unique([date, productId])
+  @@map("production_status")
+}
+
+model ProcessStatus {
+  id            Int           @id @default(autoincrement())
+  processId     Int           @map("process_id")
+  workCenterId  Int           @map("work_center_id")
+  targetQty     Int           @map("target_qty")
+  actualQty     Int           @default(0) @map("actual_qty")
+  progressRate  Decimal?      @map("progress_rate") @db.Decimal(5, 2)
+  status        LineRunStatus @default(WAIT)
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  process       MbomProcess   @relation(fields: [processId], references: [id])
+  workCenter    WorkCenter    @relation(fields: [workCenterId], references: [id])
+
+  @@unique([processId, workCenterId])
+  @@map("process_status")
+}
+
+model SystemLog {
+  id        Int           @id @default(autoincrement())
+  logType   SystemLogLevel @map("log_type")
+  message   String        @db.Text
+  refType   String?       @map("ref_type")
+  refId     Int?          @map("ref_id")
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("system_log")
+}
+
+model WorkerProcess {
+  workerId  Int @map("worker_id")
+  processId Int @map("process_id")
+
+  worker    Worker      @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  process   MbomProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+
+  @@id([workerId, processId])
+  @@map("worker_process")
+}
+
+/// 작업자·품목별 관리자 수동 입력 작업시간(분)
+model WorkerProductWorkTime {
+  workerId    Int      @map("worker_id")
+  productId   Int      @map("product_id")
+  workMinutes Int      @default(0) @map("work_minutes")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  worker      Worker   @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([workerId, productId])
+  @@index([productId])
+  @@map("worker_product_work_time")
+}
+
+model ProductionHourly {
+  id         Int      @id @default(autoincrement())
+  datetime   DateTime
+  processId  Int      @map("process_id")
+  qty        Int
+
+  process    MbomProcess @relation(fields: [processId], references: [id])
+
+  @@unique([datetime, processId])
+  @@map("production_hourly")
+}
+
+model Notice {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String   @db.Text
+  noticeType  String   @map("notice_type")
+  priority    String   @default("NORMAL")
+  startDate   DateTime @map("start_date") @db.Date
+  endDate     DateTime @map("end_date") @db.Date
+  isPopup     UseYn    @default(N) @map("is_popup")
+  useYn       UseYn    @default(Y) @map("use_yn")
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   Int?     @map("created_by")
+
+  @@map("notice")
+}
+
+model VisionRawLog {
+  id              Int      @id @default(autoincrement())
+  lotId           Int      @map("lot_id")
+  processId       Int      @map("process_id")
+  imagePath       String   @map("image_path") @db.VarChar(512)
+  resultJson      Json?    @map("result_json")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  lot             ProductionLot @relation(fields: [lotId], references: [id])
+  process         MbomProcess   @relation(fields: [processId], references: [id])
+
+  @@index([lotId, processId])
+  @@map("vision_raw_log")
+}

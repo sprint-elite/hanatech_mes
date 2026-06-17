@@ -1,0 +1,471 @@
+2026-05-29T07:38:54: PM2 log: ===============================================================================
+2026-05-29T07:38:54: PM2 log: --- New PM2 Daemon started ----------------------------------------------------
+2026-05-29T07:38:54: PM2 log: Time                 : Fri May 29 2026 07:38:54 GMT+0000 (Coordinated Universal Time)
+2026-05-29T07:38:54: PM2 log: PM2 version          : 7.0.1
+2026-05-29T07:38:54: PM2 log: Node.js version      : 20.20.2
+2026-05-29T07:38:54: PM2 log: Current arch         : x64
+2026-05-29T07:38:54: PM2 log: PM2 home             : /home/ec2-user/.pm2
+2026-05-29T07:38:54: PM2 log: PM2 PID file         : /home/ec2-user/.pm2/pm2.pid
+2026-05-29T07:38:54: PM2 log: RPC socket file      : /home/ec2-user/.pm2/rpc.sock
+2026-05-29T07:38:54: PM2 log: BUS socket file      : /home/ec2-user/.pm2/pub.sock
+2026-05-29T07:38:54: PM2 log: Application log path : /home/ec2-user/.pm2/logs
+2026-05-29T07:38:54: PM2 log: Worker Interval      : 30000
+2026-05-29T07:38:54: PM2 log: Process dump file    : /home/ec2-user/.pm2/dump.pm2
+2026-05-29T07:38:54: PM2 log: Concurrent actions   : 2
+2026-05-29T07:38:54: PM2 log: SIGTERM timeout      : 1600
+2026-05-29T07:38:54: PM2 log: Runtime Binary       : /usr/bin/node-20
+2026-05-29T07:38:54: PM2 log: ===============================================================================
+2026-05-29T07:39:00: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:00: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:04: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:04: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:04: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:07: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:07: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:07: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:10: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:10: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:10: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:13: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:13: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:13: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:16: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:16: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:16: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:20: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:20: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:20: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:23: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:23: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:23: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:26: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:26: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:26: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:29: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:29: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:29: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:32: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:32: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:32: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:35: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:35: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:35: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:39: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:39: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:39: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:42: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:42: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:42: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:45: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:45: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:45: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:48: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:48: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:48: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:51: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:51: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:51: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:55: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:55: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:55: PM2 log: App [mes-api:0] online
+2026-05-29T07:39:58: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:39:58: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:39:58: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:01: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:01: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:01: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:05: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:05: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:05: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:08: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:08: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:08: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:11: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:11: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:11: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:14: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:14: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:14: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:17: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:17: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:17: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:21: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:21: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:21: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:24: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:24: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:24: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:27: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:27: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:27: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:30: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:30: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:30: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:33: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:33: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:33: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:37: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:37: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:37: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:40: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:40: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:40: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:43: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:43: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:43: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:46: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:46: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:46: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:49: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:49: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:49: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:53: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:53: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:53: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:56: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:56: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:56: PM2 log: App [mes-api:0] online
+2026-05-29T07:40:59: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:40:59: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:40:59: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:02: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:02: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:02: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:05: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:05: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:05: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:08: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:08: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:08: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:12: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:12: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:12: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:15: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:15: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:15: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:18: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:18: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:18: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:21: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:21: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:21: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:24: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:24: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:24: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:28: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:28: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:28: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:31: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:31: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:31: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:34: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:34: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:34: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:37: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:37: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:37: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:40: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:40: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:40: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:43: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:43: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:43: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:47: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:47: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:47: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:50: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:50: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:50: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:53: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:53: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:53: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:56: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:56: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:56: PM2 log: App [mes-api:0] online
+2026-05-29T07:41:59: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:41:59: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:41:59: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:03: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:03: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:03: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:06: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:06: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:06: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:09: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:09: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:09: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:12: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:12: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:12: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:16: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:16: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:16: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:19: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:19: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:19: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:22: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:22: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:22: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:25: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:25: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:25: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:28: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:28: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:28: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:31: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:31: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:31: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:35: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:35: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:35: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:38: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:38: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:38: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:41: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:41: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:41: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:44: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:44: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:44: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:47: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:47: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:47: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:51: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:51: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:51: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:54: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:54: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:54: PM2 log: App [mes-api:0] online
+2026-05-29T07:42:57: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:42:57: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:42:57: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:00: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:00: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:00: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:03: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:03: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:03: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:07: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:07: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:07: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:10: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:10: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:10: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:13: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:13: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:13: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:16: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:16: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:16: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:19: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:19: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:19: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:22: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:22: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:23: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:26: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:26: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:26: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:29: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:29: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:29: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:32: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:32: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:32: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:35: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:35: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:35: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:38: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:38: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:38: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:42: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:42: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:42: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:45: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:45: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:45: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:48: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:48: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:48: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:51: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:51: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:51: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:54: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:54: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:54: PM2 log: App [mes-api:0] online
+2026-05-29T07:43:58: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:43:58: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:43:58: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:01: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:01: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:01: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:04: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:04: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:04: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:07: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:07: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:07: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:10: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:10: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:10: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:14: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:14: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:14: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:17: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:17: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:17: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:20: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:20: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:20: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:23: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:23: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:23: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:26: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:26: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:26: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:29: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:29: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:29: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:33: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:33: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:33: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:36: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:36: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:36: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:39: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:39: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:39: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:42: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:42: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:42: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:45: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:45: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:45: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:49: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:49: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:49: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:52: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:52: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:52: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:55: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:55: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:55: PM2 log: App [mes-api:0] online
+2026-05-29T07:44:58: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:44:58: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:44:58: PM2 log: App [mes-api:0] online
+2026-05-29T07:45:02: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:45:02: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:45:02: PM2 log: App [mes-api:0] online
+2026-05-29T07:45:05: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:45:05: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:45:05: PM2 log: App [mes-api:0] online
+2026-05-29T07:45:14: PM2 log: Stopping app:mes-api id:0
+2026-05-29T07:45:14: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-05-29T07:45:14: PM2 log: pid=31672 msg=process tree killed (1 pids)
+2026-05-29T07:45:18: PM2 log: App [mes-api:0] starting in -fork mode-
+2026-05-29T07:45:18: PM2 log: App [mes-api:0] online
+2026-06-02T07:04:38: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:38: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:39: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:39: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:39: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:40: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:40: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:40: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:41: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:41: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:41: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:42: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:42: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:42: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:42: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:42: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:42: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:43: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:43: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:43: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:44: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:44: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:44: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:45: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:45: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:45: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:46: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:46: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:46: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:46: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:46: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:46: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:47: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:47: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:47: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:48: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:48: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:48: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:49: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:49: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:49: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:50: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:50: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:50: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:51: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:51: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:04:51: PM2 log: App [mesnew-api:1] online
+2026-06-02T07:04:51: PM2 log: App [mesnew-api:1] exited with code [1] via signal [SIGINT]
+2026-06-02T07:04:51: PM2 log: Script /usr/lib/nodejs20/bin/npm had too many unstable restarts (16). Stopped. "errored"
+2026-06-02T07:06:03: PM2 log: Stopping app:mes-api id:0
+2026-06-02T07:06:03: PM2 log: pid=31713 msg=failed to kill - retrying in 100ms
+2026-06-02T07:06:03: PM2 log: App [mes-api:0] exited with code [0] via signal [SIGINT]
+2026-06-02T07:06:03: PM2 log: pid=31713 msg=process tree killed (2 pids)
+2026-06-02T07:16:27: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-02T07:16:28: PM2 log: App [mesnew-api:1] online
+2026-06-10T09:15:38: PM2 log: Stopping app:mesnew-api id:1
+2026-06-10T09:15:38: PM2 log: pid=182900 msg=failed to kill - retrying in 100ms
+2026-06-10T09:15:38: PM2 log: pid=182900 msg=failed to kill - retrying in 100ms
+2026-06-10T09:15:39: PM2 log: App [mesnew-api:1] exited with code [0] via signal [SIGINT]
+2026-06-10T09:15:39: PM2 log: pid=182900 msg=process tree killed (2 pids)
+2026-06-10T09:17:50: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-10T09:17:50: PM2 log: App [mesnew-api:1] online
+2026-06-10T09:37:18: PM2 log: Stopping app:mesnew-api id:1
+2026-06-10T09:37:18: PM2 log: App [mesnew-api:1] exited with code [0] via signal [SIGINT]
+2026-06-10T09:37:18: PM2 log: pid=513652 msg=process tree killed (2 pids)
+2026-06-10T09:37:18: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-10T09:37:18: PM2 log: App [mesnew-api:1] online
+2026-06-10T09:39:17: PM2 log: Stopping app:mesnew-api id:1
+2026-06-10T09:39:18: PM2 log: App [mesnew-api:1] exited with code [0] via signal [SIGINT]
+2026-06-10T09:39:18: PM2 log: pid=518137 msg=process tree killed (2 pids)
+2026-06-10T09:39:18: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-10T09:39:18: PM2 log: App [mesnew-api:1] online
+2026-06-15T01:37:11: PM2 log: Stopping app:mesnew-api id:1
+2026-06-15T01:37:11: PM2 log: pid=518371 msg=failed to kill - retrying in 100ms
+2026-06-15T01:37:11: PM2 log: pid=518371 msg=failed to kill - retrying in 100ms
+2026-06-15T01:37:11: PM2 log: App [mesnew-api:1] exited with code [0] via signal [SIGINT]
+2026-06-15T01:37:11: PM2 log: pid=518371 msg=process tree killed (2 pids)
+2026-06-15T01:37:11: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-15T01:37:11: PM2 log: App [mesnew-api:1] online
+2026-06-15T07:58:41: PM2 log: Stopping app:mesnew-api id:1
+2026-06-15T07:58:41: PM2 log: pid=943320 msg=failed to kill - retrying in 100ms
+2026-06-15T07:58:41: PM2 log: pid=943320 msg=failed to kill - retrying in 100ms
+2026-06-15T07:58:41: PM2 log: App [mesnew-api:1] exited with code [0] via signal [SIGINT]
+2026-06-15T07:58:41: PM2 log: pid=943320 msg=process tree killed (2 pids)
+2026-06-15T07:58:41: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-15T07:58:41: PM2 log: App [mesnew-api:1] online
+2026-06-15T08:02:54: PM2 log: Stopping app:mesnew-api id:1
+2026-06-15T08:02:54: PM2 log: App [mesnew-api:1] exited with code [0] via signal [SIGINT]
+2026-06-15T08:02:54: PM2 log: pid=1031175 msg=process tree killed (2 pids)
+2026-06-15T08:02:54: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-15T08:02:54: PM2 log: App [mesnew-api:1] online
+2026-06-15T08:08:25: PM2 log: Stopping app:mesnew-api id:1
+2026-06-15T08:08:25: PM2 log: pid=1032341 msg=failed to kill - retrying in 100ms
+2026-06-15T08:08:25: PM2 log: pid=1032341 msg=failed to kill - retrying in 100ms
+2026-06-15T08:08:25: PM2 log: App [mesnew-api:1] exited with code [0] via signal [SIGINT]
+2026-06-15T08:08:25: PM2 log: pid=1032341 msg=process tree killed (2 pids)
+2026-06-15T08:08:25: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-15T08:08:25: PM2 log: App [mesnew-api:1] online
+2026-06-15T08:12:39: PM2 log: Stopping app:mesnew-api id:1
+2026-06-15T08:12:39: PM2 log: pid=1033826 msg=failed to kill - retrying in 100ms
+2026-06-15T08:12:39: PM2 log: pid=1033826 msg=failed to kill - retrying in 100ms
+2026-06-15T08:12:39: PM2 log: App [mesnew-api:1] exited with code [0] via signal [SIGINT]
+2026-06-15T08:12:39: PM2 log: pid=1033826 msg=process tree killed (2 pids)
+2026-06-15T08:12:39: PM2 log: App [mesnew-api:1] starting in -fork mode-
+2026-06-15T08:12:39: PM2 log: App [mesnew-api:1] online

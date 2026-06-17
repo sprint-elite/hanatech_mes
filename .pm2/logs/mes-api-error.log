@@ -1,0 +1,912 @@
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Error: Dynamic require of "fs" is not supported
+    at file:///var/www/mesnew/dist/server/index.js:6:9
+    at node_modules/dotenv/lib/main.js (/var/www/mesnew/node_modules/dotenv/lib/main.js:1:12)
+    at __require2 (file:///var/www/mesnew/dist/server/index.js:9:50)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:2:3)
+    at <anonymous> (/var/www/mesnew/node_modules/dotenv/config.js:9:1)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
