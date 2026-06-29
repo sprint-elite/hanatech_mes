@@ -65,7 +65,16 @@ const navGroups: { label: string; items: NavItem[] }[] = [
       { to: '/erp/expense-reports', label: '지출결의서' },
       { to: '/erp/annual-leave', label: '연차관리' },
       { to: '/erp/schedules', label: '일정관리' },
-      { to: '/erp/pay-stubs', label: '급여명세서' },
+    ],
+  },
+  {
+    label: '급여',
+    items: [
+      { to: '/payroll/allowance-items', label: '수당항목' },
+      { to: '/payroll/deduction-items', label: '공제항목' },
+      { to: '/payroll/employee-profiles', label: '직원정보' },
+      { to: '/payroll/work-records', label: '근무입력' },
+      { to: '/payroll/pay-stubs', label: '급여명세서' },
     ],
   },
   {
@@ -150,6 +159,15 @@ function groupIcon(label: string) {
           <rect x="2" y="7" width="20" height="14" rx="2" />
           <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
           <path d="M2 12h20" />
+        </Svg>
+      )
+    case '급여':
+      return (
+        <Svg>
+          <rect x="2" y="5" width="20" height="14" rx="2" />
+          <path d="M2 10h20" />
+          <path d="M6 15h4" />
+          <path d="M14 15h4" />
         </Svg>
       )
     case '시스템':

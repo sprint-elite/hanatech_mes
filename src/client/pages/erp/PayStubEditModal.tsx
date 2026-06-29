@@ -12,8 +12,10 @@ type Props = {
   users: UserOption[]
   editMode: boolean
   saving: boolean
+  yearMonth?: string | null
   onChange: (patch: Partial<PayStubFormDraft>) => void
   onUpdateLines: (type: 'EARNING' | 'DEDUCTION', lines: PayStubLine[]) => void
+  onAutoCalculate?: () => void | Promise<void>
   onSave: () => void
   onClose: () => void
 }
@@ -94,8 +96,10 @@ export function PayStubEditModal({
   users,
   editMode,
   saving,
+  yearMonth,
   onChange,
   onUpdateLines,
+  onAutoCalculate,
   onSave,
   onClose,
 }: Props) {
@@ -137,6 +141,20 @@ export function PayStubEditModal({
                 ))}
               </select>
             </label>
+          ) : null}
+
+          {onAutoCalculate && yearMonth && form.userId ? (
+            <div className="mesPsAutoCalcBar">
+              <button
+                type="button"
+                className="mesPsBtn mesPsBtn--blue"
+                disabled={saving}
+                onClick={() => void onAutoCalculate()}
+              >
+                자동 계산 (직원정보·근무·수당/공제항목)
+              </button>
+              <span className="mesPsAutoCalcHint">{yearMonth} 기준</span>
+            </div>
           ) : null}
 
           <div className="mesPsFormGrid">

@@ -160,6 +160,8 @@ model User {
   erpSchedulesCreated ErpSchedule[]        @relation("ErpScheduleCreatedBy")
   payStubRunsCreated  PayStubRun[]           @relation("PayStubRunCreatedBy")
   payStubs            PayStub[]
+  payEmployeeProfile  PayEmployeeProfile?
+  payWorkRecords      PayWorkRecord[]
 
   @@map("users")
 }
@@ -1161,4 +1163,102 @@ model PayStubLine {
 
   @@index([payStubId, lineType, sortOrder])
   @@map("pay_stub_line")
+}
+
+enum PayItemStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PayPaymentType {
+  FIXED
+  VARIABLE_TIME
+  VARIABLE_DAY
+}
+
+model PayAllowanceItem {
+  id              Int            @id @default(autoincrement())
+  itemCode        String         @unique @map("item_code") @db.VarChar(10)
+  itemName        String         @map("item_name") @db.VarChar(64)
+  displayOrder    Int            @default(0) @map("display_order")
+  multiplier      Decimal?       @db.Decimal(10, 4)
+  taxExemptType   String?        @map("tax_exempt_type") @db.VarChar(32)
+  paymentType     PayPaymentType @default(FIXED) @map("payment_type")
+  calcFormula     String?        @map("calc_formula") @db.VarChar(500)
+  calcDescription String?        @map("calc_description") @db.VarChar(500)
+  status          PayItemStatus  @default(ACTIVE)
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  @@index([status, displayOrder])
+  @@map("pay_allowance_item")
+}
+
+model PayDeductionItem {
+  id              Int           @id @default(autoincrement())
+  itemCode        String        @unique @map("item_code") @db.VarChar(10)
+  itemName        String        @map("item_name") @db.VarChar(64)
+  displayOrder    Int           @default(0) @map("display_order")
+  calcFormula     String?       @map("calc_formula") @db.VarChar(500)
+  calcDescription String?       @map("calc_description") @db.VarChar(500)
+  status          PayItemStatus @default(ACTIVE)
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  @@index([status, displayOrder])
+  @@map("pay_deduction_item")
+}
+
+enum PayEmployeeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model PayEmployeeProfile {
+  id            Int               @id @default(autoincrement())
+  userId        Int               @unique @map("user_id")
+  employeeNo    String?           @map("employee_no") @db.VarChar(20)
+  dept          String?           @db.VarChar(64)
+  position      String?           @db.VarChar(64)
+  hireDate      DateTime?         @map("hire_date") @db.Date
+  baseSalary    Decimal           @default(0) @map("base_salary") @db.Decimal(14, 0)
+  hourlyWage    Decimal?          @map("hourly_wage") @db.Decimal(10, 0)
+  ordinaryWage  Decimal?          @map("ordinary_wage") @db.Decimal(14, 0)
+  paymentDay    Int?              @map("payment_day")
+  bankName      String?           @map("bank_name") @db.VarChar(32)
+  bankAccount   String?           @map("bank_account") @db.VarChar(32)
+  accountHolder String?           @map("account_holder") @db.VarChar(64)
+  dependants    Int               @default(1)
+  status        PayEmployeeStatus @default(ACTIVE)
+  remark        String?           @db.VarChar(500)
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("pay_employee_profile")
+}
+
+model PayWorkRecord {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @map("user_id")
+  yearMonth       String   @map("year_month") @db.VarChar(7)
+  workDays        Decimal  @default(0) @map("work_days") @db.Decimal(5, 1)
+  paidLeaveDays   Decimal  @default(0) @map("paid_leave_days") @db.Decimal(5, 1)
+  unpaidLeaveDays Decimal  @default(0) @map("unpaid_leave_days") @db.Decimal(5, 1)
+  regularHours    Decimal  @default(0) @map("regular_hours") @db.Decimal(6, 1)
+  overtimeHours   Decimal  @default(0) @map("overtime_hours") @db.Decimal(6, 1)
+  nightHours      Decimal  @default(0) @map("night_hours") @db.Decimal(6, 1)
+  holidayHours    Decimal  @default(0) @map("holiday_hours") @db.Decimal(6, 1)
+  annualLeaveDays Decimal  @default(0) @map("annual_leave_days") @db.Decimal(5, 1)
+  remark          String?  @db.VarChar(500)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, yearMonth])
+  @@index([yearMonth])
+  @@map("pay_work_record")
 }

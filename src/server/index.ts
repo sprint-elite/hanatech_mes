@@ -15,6 +15,8 @@ import { authRouter } from './routes/auth'
 import { annualLeaveRouter } from './routes/annualLeave'
 import { erpSchedulesRouter } from './routes/erpSchedules'
 import { payStubsRouter } from './routes/payStubs'
+import { payrollItemsRouter } from './routes/payrollItems'
+import { payrollEmployeesRouter } from './routes/payrollEmployees'
 import { smartFactoryLogRouter } from './routes/smartFactoryLog'
 import { smartFactoryLogMiddleware } from './middleware/smartFactoryLog'
 import { startSmartFactoryLogFlusher } from './lib/smartFactoryLog/sender'
@@ -34,6 +36,8 @@ app.use('/api', authRouter)
 app.use('/api', annualLeaveRouter)
 app.use('/api', erpSchedulesRouter)
 app.use('/api', payStubsRouter)
+app.use('/api', payrollItemsRouter)
+app.use('/api', payrollEmployeesRouter)
 app.use('/api', smartFactoryLogRouter)
 app.use('/api', workCentersRouter)
 app.use('/api', workersRouter)

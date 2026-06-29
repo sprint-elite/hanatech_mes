@@ -5,6 +5,8 @@ import { prisma } from '../db/prisma'
 import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
 import { canManagePayStubs, getRequestUser, type RequestUser } from '../lib/requestUser'
+import { calculatePayrollForUser } from '../lib/payrollCalc'
+import { buildPayStubDetail, buildPayrollLedger } from '../lib/payrollDetail'
 
 const yearMonthStr = z.string().regex(/^\d{4}-\d{2}$/)
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -195,19 +197,21 @@ payStubsRouter.get('/pay-stubs/users-options', async (req, res) => {
       res.status(403).json({ ok: false, error: 'forbidden' })
       return
     }
-    const users = await prisma.user.findMany({
+    const profiles = await prisma.payEmployeeProfile.findMany({
       where: { status: 'ACTIVE' },
-      select: userSelect,
-      orderBy: { userName: 'asc' },
+      include: {
+        user: { select: userSelect },
+      },
+      orderBy: [{ user: { userName: 'asc' } }],
     })
     res.json({
       ok: true,
-      items: users.map((u) => ({
-        id: u.id,
-        userName: u.userName,
-        dept: u.worker?.team ?? '',
-        position: u.worker?.position ?? '',
-        hireDate: u.worker?.hireDate ? ymd(u.worker.hireDate) : null,
+      items: profiles.map((p) => ({
+        id: p.userId,
+        userName: p.user.userName,
+        dept: p.dept ?? p.user.worker?.team ?? '',
+        position: p.position ?? p.user.worker?.position ?? '',
+        hireDate: p.user.worker?.hireDate ? ymd(p.user.worker.hireDate) : null,
       })),
     })
   } catch (e) {
@@ -455,6 +459,271 @@ payStubsRouter.get('/pay-stubs/my', async (req, res) => {
     })
     res.json({ ok: true, items: rows.map(serializeStub) })
   } catch (e) {
+    prismaFail(res, e)
+  }
+})
+
+async function saveStubFromCalc(
+  runId: number,
+  userId: number,
+  calc: Awaited<ReturnType<typeof calculatePayrollForUser>>,
+  existingId?: number,
+) {
+  const earnings = calc.earnings.filter((l) => l.amount > 0 || l.label)
+  const deductions = calc.deductions.filter((l) => l.amount > 0 || l.label)
+  const totals = calcTotals(earnings, deductions)
+  const lineData = [
+    ...earnings.map((l, i) => ({
+      lineType: 'EARNING' as const,
+      label: l.label,
+      amount: l.amount,
+      sortOrder: i,
+    })),
+    ...deductions.map((l, i) => ({
+      lineType: 'DEDUCTION' as const,
+      label: l.label,
+      amount: l.amount,
+      sortOrder: i,
+    })),
+  ]
+
+  if (existingId) {
+    return prisma.$transaction(async (tx) => {
+      await tx.payStubLine.deleteMany({ where: { payStubId: existingId } })
+      if (lineData.length > 0) {
+        await tx.payStubLine.createMany({
+          data: lineData.map((l) => ({ ...l, payStubId: existingId })),
+        })
+      }
+      return tx.payStub.update({
+        where: { id: existingId },
+        data: {
+          dept: calc.dept || null,
+          position: calc.position || null,
+          workDays: calc.workDays,
+          totalEarning: totals.totalEarning,
+          totalDeduction: totals.totalDeduction,
+          netPay: totals.netPay,
+        },
+        include: {
+          user: { select: userSelect },
+          lines: { orderBy: [{ lineType: 'asc' }, { sortOrder: 'asc' }] },
+          run: true,
+        },
+      })
+    })
+  }
+
+  return prisma.payStub.create({
+    data: {
+      runId,
+      userId,
+      dept: calc.dept || null,
+      position: calc.position || null,
+      workDays: calc.workDays,
+      totalEarning: totals.totalEarning,
+      totalDeduction: totals.totalDeduction,
+      netPay: totals.netPay,
+      lines: { create: lineData },
+    },
+    include: {
+      user: { select: userSelect },
+      lines: { orderBy: [{ lineType: 'asc' }, { sortOrder: 'asc' }] },
+      run: true,
+    },
+  })
+}
+
+payStubsRouter.post('/pay-stubs/calculate-preview', async (req, res) => {
+  try {
+    const me = await requireUser(req, res)
+    if (!me) return
+    if (!canManagePayStubs(me.roleName)) {
+      res.status(403).json({ ok: false, error: 'forbidden' })
+      return
+    }
+    const body = z
+      .object({ userId: z.number().int().positive(), yearMonth: yearMonthStr })
+      .parse(req.body)
+    const calc = await calculatePayrollForUser(body.userId, body.yearMonth)
+    res.json({ ok: true, ...calc })
+  } catch (e) {
+    if ((e as { status?: number }).status === 400) {
+      res.status(400).json({ ok: false, error: (e as Error).message })
+      return
+    }
+    prismaFail(res, e)
+  }
+})
+
+payStubsRouter.post('/pay-stubs/runs/:runId/auto-calculate', async (req, res) => {
+  try {
+    const me = await requireUser(req, res)
+    if (!me) return
+    if (!canManagePayStubs(me.roleName)) {
+      res.status(403).json({ ok: false, error: 'forbidden' })
+      return
+    }
+    const runId = parsePositiveIntParam(req.params.runId)
+    const body = z.object({ overwrite: z.boolean().optional() }).parse(req.body ?? {})
+    const overwrite = body.overwrite ?? false
+
+    const run = await prisma.payStubRun.findUnique({ where: { id: runId } })
+    if (!run) {
+      res.status(404).json({ ok: false, error: 'run not found' })
+      return
+    }
+    if (run.status === 'PUBLISHED') {
+      res.status(400).json({ ok: false, error: 'published run cannot be edited' })
+      return
+    }
+
+    const workRecords = await prisma.payWorkRecord.findMany({
+      where: { yearMonth: run.yearMonth },
+      select: { userId: true },
+    })
+    const workUserIds = new Set(workRecords.map((w) => w.userId))
+
+    const profiles = await prisma.payEmployeeProfile.findMany({
+      where: { status: 'ACTIVE' },
+      select: { userId: true },
+    })
+
+    const missingWork = profiles.filter((p) => !workUserIds.has(p.userId))
+    if (missingWork.length > 0) {
+      await prisma.payWorkRecord.createMany({
+        data: missingWork.map((p) => ({ userId: p.userId, yearMonth: run.yearMonth })),
+        skipDuplicates: true,
+      })
+    }
+
+    const profileUserIds = profiles.map((p) => p.userId)
+
+    const existingStubs = await prisma.payStub.findMany({
+      where: { runId },
+      select: { id: true, userId: true },
+    })
+    const stubByUser = new Map(existingStubs.map((s) => [s.userId, s.id]))
+
+    let created = 0
+    let updated = 0
+    let skipped = 0
+    const errors: string[] = []
+
+    for (const userId of profileUserIds) {
+      try {
+        const calc = await calculatePayrollForUser(userId, run.yearMonth)
+        const existingId = stubByUser.get(userId)
+        if (existingId && !overwrite) {
+          skipped++
+          continue
+        }
+        await saveStubFromCalc(runId, userId, calc, existingId)
+        if (existingId) updated++
+        else created++
+      } catch (e) {
+        errors.push(`${userId}: ${e instanceof Error ? e.message : 'error'}`)
+      }
+    }
+
+    res.json({ ok: true, created, updated, skipped, errors })
+  } catch (e) {
+    prismaFail(res, e)
+  }
+})
+
+payStubsRouter.post('/pay-stubs/:id/recalculate', async (req, res) => {
+  try {
+    const me = await requireUser(req, res)
+    if (!me) return
+    if (!canManagePayStubs(me.roleName)) {
+      res.status(403).json({ ok: false, error: 'forbidden' })
+      return
+    }
+    const id = parsePositiveIntParam(req.params.id)
+    const existing = await prisma.payStub.findUnique({
+      where: { id },
+      include: { run: true },
+    })
+    if (!existing) {
+      res.status(404).json({ ok: false, error: 'not found' })
+      return
+    }
+    if (existing.run.status === 'PUBLISHED') {
+      res.status(400).json({ ok: false, error: 'published run cannot be edited' })
+      return
+    }
+
+    const calc = await calculatePayrollForUser(existing.userId, existing.run.yearMonth)
+    const row = await saveStubFromCalc(existing.runId, existing.userId, calc, id)
+    res.json({ ok: true, item: serializeStub(row), warnings: calc.warnings })
+  } catch (e) {
+    if ((e as { status?: number }).status === 400) {
+      res.status(400).json({ ok: false, error: (e as Error).message })
+      return
+    }
+    prismaFail(res, e)
+  }
+})
+
+payStubsRouter.get('/pay-stubs/runs/:runId/ledger', async (req, res) => {
+  try {
+    const me = await requireUser(req, res)
+    if (!me) return
+    if (!canManagePayStubs(me.roleName)) {
+      res.status(403).json({ ok: false, error: 'forbidden' })
+      return
+    }
+    const runId = parsePositiveIntParam(req.params.runId)
+    const ledger = await buildPayrollLedger(runId)
+    res.json({ ok: true, ...ledger })
+  } catch (e) {
+    if ((e as { status?: number }).status === 404) {
+      res.status(404).json({ ok: false, error: 'not found' })
+      return
+    }
+    prismaFail(res, e)
+  }
+})
+
+payStubsRouter.get('/pay-stubs/:id/detail', async (req, res) => {
+  try {
+    const me = await requireUser(req, res)
+    if (!me) return
+    const id = parsePositiveIntParam(req.params.id)
+    const row = await prisma.payStub.findUnique({
+      where: { id },
+      include: {
+        user: { select: userSelect },
+        lines: { orderBy: [{ lineType: 'asc' }, { sortOrder: 'asc' }] },
+        run: true,
+      },
+    })
+    if (!row) {
+      res.status(404).json({ ok: false, error: 'not found' })
+      return
+    }
+    await assertCanViewStub(row, me.id, me.roleName)
+
+    const earnings = row.lines.filter((l) => l.lineType === 'EARNING').map((l) => ({ label: l.label, amount: dec(l.amount) }))
+    const deductions = row.lines.filter((l) => l.lineType === 'DEDUCTION').map((l) => ({ label: l.label, amount: dec(l.amount) }))
+    const detail = await buildPayStubDetail(
+      row.userId,
+      row.run.yearMonth,
+      row.run.payDate ? ymd(row.run.payDate) : null,
+      row.user.userName,
+      { earnings, deductions },
+    )
+    res.json({ ok: true, detail, stub: serializeStub(row) })
+  } catch (e) {
+    if ((e as { status?: number }).status === 403) {
+      res.status(403).json({ ok: false, error: 'forbidden' })
+      return
+    }
+    if ((e as { status?: number }).status === 400) {
+      res.status(400).json({ ok: false, error: (e as Error).message })
+      return
+    }
     prismaFail(res, e)
   }
 })

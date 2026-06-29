@@ -81,6 +81,28 @@
 .mesPsPage .mesPsBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 .mesPsPage .mesPsBtn--green { background: var(--ps-green); color: #fff; }
 .mesPsPage .mesPsBtn--blue { background: var(--ps-blue); color: #fff; }
+
+.mesPsAutoCalcBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.08);
+  margin-bottom: 4px;
+}
+
+.mesPsAutoCalcHint {
+  font-size: 12px;
+  color: var(--ps-muted, #6b7280);
+}
+
+.mesPsEditFoot .mesPsBtn--blue {
+  background: var(--ps-blue, #3b82f6);
+  color: #fff;
+  border: none;
+}
 .mesPsPage .mesPsBtn--ghost { background: var(--ps-card); border-color: var(--ps-border); color: inherit; }
 .mesPsPage .mesPsBtn--danger { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
 
@@ -114,6 +136,25 @@
   margin: 0;
   font-size: 13px;
   color: var(--ps-muted);
+}
+
+.mesPsPage .mesPsEmptyGuide {
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--ps-bg);
+  border: 1px dashed var(--ps-border);
+}
+
+.mesPsPage .mesPsEmptyHint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ps-muted);
+}
+
+.mesPsPage .mesPsEmptyHint strong {
+  color: var(--ps-text);
+  font-weight: 800;
 }
 
 .mesPsPage .mesPsRunItems {
@@ -553,11 +594,209 @@
 
 .mesPsDocStatusNote { margin: 3mm 0 0; font-size: 8pt; color: #888; }
 
+/* ── 급여명세표 (상세) ── */
+.mesPsDocDialog--detail {
+  width: min(240mm, 100%);
+}
+
+.mesPsDocExcelBtn {
+  background: #217346 !important;
+  border-color: #217346 !important;
+  color: #fff !important;
+}
+
+.mesPsDetailLoading,
+.mesPsDetailError {
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.mesPsDetailError { color: #b91c1c; font-weight: 600; }
+
+.mesPsDetailSheet {
+  width: 210mm;
+  margin: 0 auto;
+  padding: 14mm 12mm 16mm;
+  box-sizing: border-box;
+  background: #fff;
+  color: #111;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  font-size: 9.5pt;
+  line-height: 1.45;
+}
+
+.mesPsDetailHead {
+  text-align: center;
+  margin-bottom: 6mm;
+}
+
+.mesPsDetailTitle {
+  margin: 0;
+  font-size: 20pt;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+
+.mesPsDetailPeriod {
+  margin: 2mm 0 0;
+  font-size: 11pt;
+  font-weight: 700;
+  color: #333;
+}
+
+.mesPsDetailMetaTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4mm;
+  font-size: 9pt;
+}
+
+.mesPsDetailMetaTable th,
+.mesPsDetailMetaTable td {
+  border: 1px solid #222;
+  padding: 2mm 3mm;
+}
+
+.mesPsDetailMetaTable th {
+  width: 18%;
+  background: #f5f5f5;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mesPsDetailFormulaBox {
+  border: 1px solid #bbb;
+  background: #fafafa;
+  padding: 3mm 4mm;
+  margin-bottom: 5mm;
+  font-size: 8.5pt;
+  line-height: 1.6;
+}
+
+.mesPsDetailFormulaBox p { margin: 0 0 1.5mm; }
+.mesPsDetailFormulaBox p:last-child { margin-bottom: 0; }
+
+.mesPsDetailSection { margin-bottom: 5mm; }
+
+.mesPsDetailSectionTitle {
+  margin: 0 0 2mm;
+  font-size: 10pt;
+  font-weight: 800;
+}
+
+.mesPsDetailTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.5pt;
+  table-layout: fixed;
+}
+
+/* 수당·공제 공통 7열 그리드 (공제표는 colspan으로 위 표와 세로선 정렬) */
+.mesPsDetailTable .mesPsDetailCol--name { width: 13%; }
+.mesPsDetailTable .mesPsDetailCol--type { width: 8%; }
+.mesPsDetailTable .mesPsDetailCol--work { width: 9%; }
+.mesPsDetailTable .mesPsDetailCol--unit { width: 14%; }
+.mesPsDetailTable .mesPsDetailCol--mult { width: 7%; }
+.mesPsDetailTable .mesPsDetailCol--amount { width: 14%; }
+.mesPsDetailTable .mesPsDetailCol--formula { width: 35%; }
+
+.mesPsDetailTable--deduction td[colspan='3']:first-child,
+.mesPsDetailTable--deduction th[colspan='3']:first-child {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mesPsDetailTable th,
+.mesPsDetailTable td {
+  border: 1px solid #222;
+  padding: 1.5mm 2.5mm;
+  vertical-align: middle;
+}
+
+.mesPsDetailTable--earning td:first-child,
+.mesPsDetailTable--earning th:first-child {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mesPsDetailTable--earning td:nth-child(2),
+.mesPsDetailTable--earning th:nth-child(2) {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mesPsDetailTable th {
+  background: #fce4ec;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 8pt;
+  padding: 1.5mm 1.5mm;
+}
+
+.mesPsDetailTable--deduction th { background: #e8eaf6; }
+
+.mesPsDetailNum {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  padding-left: 1mm;
+  padding-right: 2mm;
+}
+
+.mesPsDetailAmount { font-weight: 700; }
+
+.mesPsDetailFormula {
+  font-size: 7.5pt;
+  text-align: left;
+  word-break: keep-all;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.mesPsDetailTotalRow th,
+.mesPsDetailTotalRow td {
+  background: #f3f4f6;
+  font-weight: 800;
+}
+
+.mesPsDetailNetTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 4mm;
+}
+
+.mesPsDetailNetTable th,
+.mesPsDetailNetTable td {
+  border: 2px solid #222;
+  padding: 3mm 4mm;
+}
+
+.mesPsDetailNetTable th {
+  width: 30%;
+  background: #eee;
+  font-size: 11pt;
+  font-weight: 900;
+  text-align: center;
+}
+
+.mesPsDetailNetTable td {
+  text-align: right;
+  font-size: 13pt;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
 @media print {
   body * { visibility: hidden; }
 
   .mesPsDocSheet,
-  .mesPsDocSheet * { visibility: visible; }
+  .mesPsDocSheet *,
+  .mesPsDetailSheet,
+  .mesPsDetailSheet * { visibility: visible; }
 
   .mesPsModalRoot--doc {
     position: absolute;
@@ -579,7 +818,8 @@
     margin: 0;
   }
 
-  .mesPsDocSheet {
+  .mesPsDocSheet,
+  .mesPsDetailSheet {
     margin: 0;
     box-shadow: none;
     page-break-after: avoid;

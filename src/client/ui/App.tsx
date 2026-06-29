@@ -35,6 +35,10 @@ import { WorkOrdersPage } from '../pages/WorkOrdersPage'
 import { FloorBoardPage } from '../pages/FloorBoardPage'
 import { WorkerInputPage } from '../pages/WorkerInputPage'
 import { PayStubsPage } from '../pages/erp/PayStubsPage'
+import { AllowanceItemsPage } from '../pages/payroll/AllowanceItemsPage'
+import { DeductionItemsPage } from '../pages/payroll/DeductionItemsPage'
+import { EmployeeProfilesPage } from '../pages/payroll/EmployeeProfilesPage'
+import { WorkRecordsPage } from '../pages/payroll/WorkRecordsPage'
 import { SchedulesPage } from '../pages/erp/SchedulesPage'
 import { AnnualLeavePage } from '../pages/erp/AnnualLeavePage'
 import { ExpenseReportsPage } from '../pages/erp/ExpenseReportsPage'
@@ -85,7 +89,12 @@ export function App() {
           <Route path="erp/expense-reports" element={<ExpenseReportsPage />} />
           <Route path="erp/annual-leave" element={<AnnualLeavePage />} />
           <Route path="erp/schedules" element={<SchedulesPage />} />
-          <Route path="erp/pay-stubs" element={<PayStubsPage />} />
+          <Route path="erp/pay-stubs" element={<Navigate to="/payroll/pay-stubs" replace />} />
+          <Route path="payroll/allowance-items" element={<AllowanceItemsPage />} />
+          <Route path="payroll/deduction-items" element={<DeductionItemsPage />} />
+          <Route path="payroll/employee-profiles" element={<EmployeeProfilesPage />} />
+          <Route path="payroll/work-records" element={<WorkRecordsPage />} />
+          <Route path="payroll/pay-stubs" element={<PayStubsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

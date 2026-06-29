@@ -8,7 +8,7 @@
 | **대상 공정** | 화장품 용기 조립/가공 (다단계 공정, LOT 단위 추적) |
 | **사용자** | 생산관리(사무실), 라인 작업자(현장), 라인장(전광판) |
 | **형태** | 모노레포 — React SPA + Express REST API + MySQL |
-| **현재 버전** | **V1.1.0** |
+| **현재 버전** | **V1.2.0** |
 
 ---
 
@@ -75,19 +75,38 @@
 
 ### ERP (V1.1)
 
-사이드메뉴 **ERP** 그룹에 아래 5개 화면이 추가되었습니다.
+사이드메뉴 **ERP** 그룹에 아래 4개 화면이 있습니다.
 
-| 메뉴 | 경로 | V1.1 상태 |
-|------|------|-----------|
+| 메뉴 | 경로 | 상태 |
+|------|------|------|
 | 업무일지 | `/erp/work-logs` | UI 셸 (준비 중) |
 | 지출결의서 | `/erp/expense-reports` | UI 셸 (준비 중) |
 | **연차관리** | `/erp/annual-leave` | **완료** — 캘린더·목록·2단계 승인·A4 연차신청서 |
 | **일정관리** | `/erp/schedules` | **완료** — 캘린더·칸반·주말/공휴일 표시 |
-| **급여명세서** | `/erp/pay-stubs` | **완료** — 월별 배치·명세 등록·발행·A4 인쇄 |
 
 - **연차관리**: 잔여 연차 조회, 신청, 실장/대표 2단계 승인·반려·승인취소·반려취소, A4 연차신청서 보기·인쇄
 - **일정관리**: 관리자(실장/대표/최고관리자) 일정 CRUD, 캘린더·우측 일정·하단 칸반(예정/진행/완료/보류), 지연·기한초과 알림
-- **급여명세서**: 월별 배치(작성중→발행), 직원별 지급/공제 항목 입력, 발행 후 직원 본인 조회·인쇄
+
+### 급여 (V1.2)
+
+사이드메뉴 **급여** 그룹 (ERP와 별도) — eCount 스타일 급여 마스터·명세·자동 계산.
+
+| 메뉴 | 경로 | 설명 |
+|------|------|------|
+| **수당항목** | `/payroll/allowance-items` | 수당 마스터 (고정/시간/일, 배율, 비과세) |
+| **공제항목** | `/payroll/deduction-items` | 공제 마스터 (산출 공식·설명) |
+| **직원정보** | `/payroll/employee-profiles` | 기본급·통상임금·부양가족·급여대상 |
+| **근무입력** | `/payroll/work-records` | 월별 근무일수·연장·야간·휴일·연차 |
+| **급여명세서** | `/payroll/pay-stubs` | 월 배치·자동 계산·발행·명세 조회 |
+
+- **자동 계산**: 직원정보 + 근무입력 + 수당/공제 항목 기준으로 명세 생성 (`전체 자동 계산`, 건별 `재계산`)
+- **급여명세표**: 수당·공제 항목별 지급유형·근무기록·배율·산출방법 상세 조회, 인쇄
+- **Excel**: 개인 **급여명세표**, 월별 **급여대장** 내보내기 (`xlsx`)
+- **4대보험 (2026)**: 국민연금 4.75%, 건강 3.595%, 장기요양 13.14%, 고용 0.9%, 기준소득월액 상·하한(637만/40만), 건강·장기요양 원 단위 절사
+- 기본급은 **월 고정** (일할 계산 없음), 연장·야간·휴일은 통상시급(통상임금÷209) × 시간 × 배율
+- 시드: `npx tsx scripts/seed-payroll-items.ts` (기본 수당·공제 7+6건)
+
+> `/erp/pay-stubs` → `/payroll/pay-stubs` 로 리다이렉트
 
 ### MBOM 공정분석 (V1.1)
 
@@ -113,7 +132,8 @@
 | 생산·LOT | `/lots`, `/worker-input`, `/process-result` … | LOT·실적 |
 | 재고·출하·외주 | `/inventory`, `/shipments` … | 물류 |
 | 시스템 | `/users`, `/audit-logs` … | 계정·로그 |
-| **ERP** | `/erp/annual-leave`, `/erp/schedules`, `/erp/pay-stubs` … | 연차·일정·급여 등 |
+| **ERP** | `/erp/annual-leave`, `/erp/schedules` … | 연차·일정 |
+| **급여** | `/payroll/allowance-items`, `/payroll/pay-stubs` … | 수당·공제·직원·근무·명세 |
 
 레이아웃 없이 단독으로 열리는 화면:
 
@@ -343,7 +363,9 @@ pm2 restart mesnew-api
 | `auth` | `POST /api/auth/login` — 로그인 |
 | `annualLeave` | `/api/annual-leave/*` — 연차 잔여·신청·승인·캘린더 |
 | `erpSchedules` | `/api/erp-schedules` — ERP 일정 CRUD·상태 변경 |
-| `payStubs` | `/api/pay-stubs/*` — 급여 배치·명세 CRUD·발행·본인 조회 |
+| `payStubs` | `/api/pay-stubs/*` — 급여 배치·명세·자동 계산·상세·급여대장 |
+| `payrollItems` | `/api/payroll/allowance-items`, `/api/payroll/deduction-items` |
+| `payrollEmployees` | `/api/payroll/employee-profiles`, `/api/payroll/work-records` |
 | `smartFactoryLog` | 스마트공장 로그 수집 API |
 | `mesTransactions` | 재고·출하 등 트랜잭션 처리 |
 
@@ -365,10 +387,12 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 | 물류 | `Shipment`, `ShipmentDetail`, `Outsourcing`, `OutsourcingResult` |
 | 운영 | `Barcode`, `AuditLog`, `SystemLog`, `VisionRawLog`, `Notice`, `ProductionStatus` |
 | ERP (V1.1) | `AnnualLeaveBalance`, `AnnualLeaveRequest`, `ErpSchedule`, `PayStubRun`, `PayStub`, `PayStubLine` |
+| 급여 (V1.2) | `PayAllowanceItem`, `PayDeductionItem`, `PayEmployeeProfile`, `PayWorkRecord` |
 
 품목(`Product`)은 생산·구매·품질·재고·외주 서브 테이블로 속성이 분리되어 있습니다.
 
-연차 데모 계정 시드: `npx tsx scripts/seed-annual-leave-demo.ts`
+연차 데모 계정 시드: `npx tsx scripts/seed-annual-leave-demo.ts`  
+급여 수당·공제 기본항목 시드: `npx tsx scripts/seed-payroll-items.ts`
 
 ---
 
@@ -387,7 +411,7 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 
 ## 개발 현황
 
-- **V1.1.0** 기준: MES 핵심 + ERP(연차·일정·급여) 1차 완료, 업무일지·지출결의서는 UI 셸만 존재합니다.
+- **V1.2.0** 기준: MES 핵심 + ERP(연차·일정) + **급여(마스터·근무·자동계산·명세표·Excel)** 1차 완료. 업무일지·지출결의서는 UI 셸만 존재합니다.
 - 인증은 로그인 화면 + `X-Sys-User` 헤더 방식이며, JWT/세션 쿠키는 추후 보완 가능합니다.
 - 스키마 반영: `npm run prisma:push` (또는 `prisma migrate deploy`). Prisma Client 변경 후 **`npm run prisma:generate`** 및 API 재시작 필요.
 - 비전 로그(`VisionRawLog`) 등 설비 연동 필드는 수집·조회 위주로 구현되어 있습니다.
@@ -395,6 +419,34 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 ---
 
 ## 버전 이력
+
+### V1.2.0 (2026-06-29)
+
+**급여 메뉴 · 마스터**
+
+- 사이드메뉴 **급여** 그룹 추가 (수당항목, 공제항목, 직원정보, 근무입력, 급여명세서)
+- DB: `PayAllowanceItem`, `PayDeductionItem`, `PayEmployeeProfile`, `PayWorkRecord`
+- API: `payrollItems`, `payrollEmployees`, `payStubs` 확장
+- 기본 수당·공제 시드: `scripts/seed-payroll-items.ts`
+
+**급여 자동 계산**
+
+- 직원정보 + 월별 근무입력 + 수당/공제 항목명·배율 기반 명세 자동 생성
+- 통상시급 = 통상임금 ÷ 209, 연장·야간·휴일 = 통상시급 × 시간 × 배율
+- 기본급 월 고정, 식대·차량유지비 비과세(각 20만 한도)
+- `전체 자동 계산` / 건별 `재계산`, 근무입력 없을 시 자동 초기화
+
+**급여명세서 UI · Excel**
+
+- eCount 스타일 **급여명세표** 상세 조회 (지급유형, 근무기록, 산출방법)
+- **급여대장** / 개인 **급여명세표** Excel 내보내기 (`xlsx`)
+- 공제항목 표 컬럼을 수당항목 표와 세로선 정렬
+- `/erp/pay-stubs` → `/payroll/pay-stubs` 리다이렉트
+
+**4대보험 2026 요율**
+
+- `payrollRates.ts`: 국민연금 4.75%, 건강 3.595%, 장기요양 13.14%, 고용 0.9%
+- 기준소득월액 상한 637만·하한 40만, 건강·장기요양 원 단위 절사
 
 ### V1.1.0 (2026-06-25)
 
