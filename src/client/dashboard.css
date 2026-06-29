@@ -1,0 +1,1350 @@
+/* —— 대시보드 v2 (mesDashPage 전용) —— */
+
+.mesDashPage {
+  max-width: 1440px;
+  --db-bg: #0c0e14;
+  --db-surface: #12151e;
+  --db-surface2: #181c28;
+  --db-border: rgba(255, 255, 255, 0.08);
+  --db-border-strong: rgba(255, 255, 255, 0.14);
+  --db-text: #eef1f6;
+  --db-muted: #b0bac8;
+  --db-label: #c8d0dc;
+  --db-accent: #d4a524;
+  --db-ok: #3dba72;
+  --db-ok-bg: rgba(61, 186, 114, 0.12);
+  --db-warn: #e8b84a;
+  --db-warn-bg: rgba(232, 184, 74, 0.12);
+  --db-danger: #e85d5d;
+  --db-danger-bg: rgba(232, 93, 93, 0.12);
+  --db-info: #5ba4e8;
+  --db-info-bg: rgba(91, 164, 232, 0.12);
+  --db-radius: 14px;
+  --db-radius-sm: 10px;
+  --db-shadow: 0 4px 24px rgba(0, 0, 0, 0.28);
+  --db-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.18);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+[data-theme='light'] .mesDashPage {
+  --db-bg: #f4f5f8;
+  --db-surface: #ffffff;
+  --db-surface2: #f8f9fc;
+  --db-border: rgba(0, 0, 0, 0.08);
+  --db-border-strong: rgba(0, 0, 0, 0.12);
+  --db-text: #141820;
+  --db-muted: #5f6775;
+  --db-accent: #9a7b0a;
+  --db-ok: #1d7a4a;
+  --db-ok-bg: rgba(29, 122, 74, 0.1);
+  --db-warn: #a67c00;
+  --db-warn-bg: rgba(166, 124, 0, 0.1);
+  --db-danger: #c62828;
+  --db-danger-bg: rgba(198, 40, 40, 0.08);
+  --db-info: #2b6cb0;
+  --db-info-bg: rgba(43, 108, 176, 0.1);
+  --db-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --db-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Header — flat, single row */
+.mesDashHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--db-border);
+}
+
+.mesDashHeaderTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--db-text);
+  line-height: 1.2;
+}
+
+.mesDashHeaderAside {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.mesDashHeaderMeta {
+  font-size: 15px;
+  color: var(--db-label);
+}
+
+.mesDashHeaderMeta time {
+  color: var(--db-text);
+  font-weight: 600;
+}
+
+.mesDashHeaderError {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 14px;
+  color: var(--db-danger);
+}
+
+.mesDashStatusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mesDashStatusDot--ok {
+  background: var(--db-ok);
+  box-shadow: 0 0 8px rgba(61, 186, 114, 0.5);
+}
+
+.mesDashStatusDot--error {
+  background: var(--db-danger);
+  box-shadow: 0 0 8px rgba(232, 93, 93, 0.5);
+}
+
+.mesDashStatusDot--pending {
+  background: var(--db-warn);
+  animation: mesDashPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes mesDashPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* KPI Grid */
+.mesDashKpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1100px) {
+  .mesDashKpiGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .mesDashKpiGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesDashPage .mesDashKpiCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--db-radius);
+  background: var(--db-surface);
+  border: 1px solid var(--db-border);
+  box-shadow: var(--db-shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 132px;
+}
+
+.mesDashPage .mesDashKpiCard::after {
+  content: '→';
+  position: absolute;
+  top: 16px;
+  right: 14px;
+  font-size: 14px;
+  color: var(--db-muted);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.mesDashPage .mesDashKpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--db-shadow);
+  border-color: var(--db-border-strong);
+}
+
+.mesDashPage .mesDashKpiCard:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mesDashKpiCard--ok { border-top: 3px solid var(--db-ok); }
+.mesDashKpiCard--warn { border-top: 3px solid var(--db-warn); }
+.mesDashKpiCard--danger { border-top: 3px solid var(--db-danger); }
+.mesDashKpiCard--info { border-top: 3px solid var(--db-info); }
+
+.mesDashKpiTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.mesDashKpiIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mesDashKpiIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.mesDashKpiCard--ok .mesDashKpiIcon { background: var(--db-ok-bg); color: var(--db-ok); }
+.mesDashKpiCard--warn .mesDashKpiIcon { background: var(--db-warn-bg); color: var(--db-warn); }
+.mesDashKpiCard--danger .mesDashKpiIcon { background: var(--db-danger-bg); color: var(--db-danger); }
+.mesDashKpiCard--info .mesDashKpiIcon { background: var(--db-info-bg); color: var(--db-info); }
+
+.mesDashPage .mesDashKpiMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+/* styles.css 레거시(10px uppercase) 덮어쓰기 방지 — .mesDashPage 스코프 필수 */
+.mesDashPage .mesDashKpiLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--db-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.mesDashPage .mesDashKpiValue {
+  margin: 4px 0 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--db-text);
+  line-height: 1.15;
+}
+
+.mesDashPage .mesDashKpiSub {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--db-muted);
+  margin: 3px 0 0;
+  line-height: 1.4;
+}
+
+.mesDashKpiFoot {
+  margin-top: auto;
+  min-height: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.mesDashKpiBar {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesDashKpiBar {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.mesDashKpiBarFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.mesDashKpiBarFill--ok { background: linear-gradient(90deg, var(--db-ok), #5dd99a); }
+.mesDashKpiBarFill--warn { background: linear-gradient(90deg, var(--db-warn), #f0d080); }
+.mesDashKpiBarFill--danger { background: linear-gradient(90deg, var(--db-danger), #f09090); }
+.mesDashKpiBarFill--info { background: linear-gradient(90deg, var(--db-info), #8ec4f8); }
+
+.mesDashPage .mesDashKpiDelta {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.mesDashKpiBarHint {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--db-muted);
+  line-height: 1.3;
+}
+
+.mesDashKpiDelta--up { color: var(--db-danger); }
+.mesDashKpiDelta--down { color: var(--db-ok); }
+.mesDashKpiDelta--flat { color: var(--db-muted); }
+
+/* Kanban — 작업 일정 */
+.mesDashKanban {
+  margin-bottom: 24px;
+}
+
+.mesDashKanbanHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mesDashKanbanTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--db-text);
+}
+
+.mesDashKanbanSub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--db-muted);
+}
+
+.mesDashKanbanErr {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border-radius: var(--db-radius-sm);
+  background: var(--db-danger-bg);
+  color: var(--db-danger);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mesDashKanbanColBody--drop {
+  background: rgba(212, 165, 36, 0.08);
+  box-shadow: inset 0 0 0 2px rgba(212, 165, 36, 0.35);
+  border-radius: 0 0 var(--db-radius-sm) var(--db-radius-sm);
+}
+
+.mesDashKanbanCard {
+  display: block;
+  padding: 10px 12px;
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface);
+  border: 1px solid var(--db-border);
+  color: inherit;
+  transition: border-color 0.12s, box-shadow 0.12s, opacity 0.12s;
+  cursor: grab;
+  user-select: none;
+}
+
+.mesDashKanbanCard:active {
+  cursor: grabbing;
+}
+
+.mesDashKanbanCard--dragging {
+  opacity: 0.45;
+}
+
+.mesDashKanbanCard--moving {
+  opacity: 0.65;
+  pointer-events: none;
+  cursor: wait;
+}
+
+.mesDashKanbanCard:hover {
+  border-color: var(--db-border-strong);
+  box-shadow: var(--db-shadow-sm);
+}
+
+.mesDashKanbanCardNo {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--db-accent);
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.mesDashKanbanCardNo:hover {
+  text-decoration: underline;
+}
+
+.mesDashKanbanBoard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  min-height: 720px;
+}
+
+@media (max-width: 1100px) {
+  .mesDashKanbanBoard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .mesDashKanbanBoard {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesDashKanbanCol {
+  min-width: 0;
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface2);
+  border: 1px solid var(--db-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 720px;
+  max-height: 720px;
+}
+
+.mesDashKanbanCol--wait { border-top: 3px solid var(--db-info); }
+.mesDashKanbanCol--progress { border-top: 3px solid var(--db-warn); }
+.mesDashKanbanCol--hold { border-top: 3px solid var(--db-danger); }
+.mesDashKanbanCol--cal { border-top: 3px solid var(--db-accent); }
+
+.mesDashKanbanColHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--db-border);
+  flex-shrink: 0;
+}
+
+.mesDashKanbanColLabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--db-text);
+}
+
+.mesDashKanbanColCount {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--db-muted);
+}
+
+[data-theme='light'] .mesDashKanbanColCount {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.mesDashKanbanColBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 80px;
+}
+
+.mesDashKanbanColBody--cal {
+  padding: 8px;
+  gap: 0;
+}
+
+.mesDashKanbanColBody--cal .mesDashCalNav {
+  margin-bottom: 8px;
+}
+
+.mesDashKanbanColBody--cal .mesDashCalBtn {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+}
+
+.mesDashKanbanColBody--cal .mesDashCalTodayBtn {
+  height: 28px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+.mesDashKanbanColBody--cal .mesDashCalMonthInput {
+  font-size: 13px;
+}
+
+.mesDashKanbanColBody--cal .mesDashCalDow span {
+  font-size: 10px;
+  padding: 2px 0;
+}
+
+.mesDashKanbanColBody--cal .mesDashCalDay {
+  min-height: 28px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.mesDashKanbanColBody--cal .mesDashDayDetail--compact {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.mesDashKanbanColBody--cal .mesDashDayDetailDate {
+  font-size: 12px;
+}
+
+.mesDashKanbanColBody--cal .mesDashDayItem {
+  padding: 6px 8px;
+  font-size: 11px;
+  gap: 6px;
+}
+
+.mesDashKanbanColBody--cal .mesDashDayItemKind {
+  font-size: 10px;
+  padding: 1px 4px;
+}
+
+.mesDashKanbanEmpty {
+  margin: 0;
+  padding: 20px 8px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--db-muted);
+}
+
+.mesDashKanbanCardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.mesDashKanbanCardAssign {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--db-label);
+  line-height: 1.35;
+  min-width: 0;
+  text-align: right;
+}
+
+.mesDashKanbanCardSep {
+  color: var(--db-muted);
+  font-weight: 700;
+}
+
+.mesDashKanbanCardLine {
+  font-weight: 700;
+  color: var(--db-text);
+}
+
+.mesDashKanbanLateBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--db-danger-bg);
+  color: var(--db-danger);
+  flex-shrink: 0;
+}
+
+.mesDashKanbanCardProduct {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--db-text);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mesDashKanbanCardPeriod {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--db-muted);
+  font-family: var(--mono);
+}
+
+/* Main Layout */
+.mesDashLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+.mesDashLayout--single {
+  grid-template-columns: 1fr;
+}
+
+.mesDashLayout--pair {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.mesDashLayout--pair .mesDashPanel {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mesDashLayout--pair .mesDashPanelBody {
+  flex: 1;
+  min-height: 0;
+}
+
+.mesDashLayout--pair .mesDashPanelHead {
+  padding: 14px 16px;
+}
+
+.mesDashLayout--pair .mesDashPanelBody:not(.mesDashPanelBody--flush) {
+  padding: 16px;
+}
+
+.mesDashLayout--pair .mesDashChartStats {
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.mesDashLayout--pair .mesDashChartStat {
+  padding: 10px 8px;
+}
+
+.mesDashLayout--pair .mesDashChartStatVal {
+  font-size: 18px;
+}
+
+.mesDashLayout--pair .mesDashChartArea {
+  height: 158px;
+  gap: 4px;
+  padding: 10px 4px 8px;
+}
+
+.mesDashLayout--pair .mesDashChartArea::before {
+  inset: 10px 4px 28px;
+}
+
+.mesDashLayout--pair .mesDashChartBarWrap {
+  max-width: 32px;
+}
+
+.mesDashLayout--pair .mesDashChartLegend {
+  margin-top: 10px;
+  gap: 12px;
+}
+
+.mesDashLayout--pair .mesDashChartLegendItem {
+  font-size: 12px;
+}
+
+.mesDashLayout--pair .mesDashWoList {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.mesDashLayout--pair .mesDashWoRow {
+  padding: 12px 16px;
+  gap: 8px 12px;
+}
+
+.mesDashLayout--pair .mesDashWoProduct {
+  font-size: 14px;
+}
+
+.mesDashLayout--pair .mesDashWoMeta {
+  font-size: 12px;
+  gap: 8px;
+}
+
+@media (max-width: 1080px) {
+  .mesDashLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesDashMainCol {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.mesDashSideCol {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* Panel (generic card) */
+.mesDashPanel {
+  border-radius: var(--db-radius);
+  background: var(--db-surface);
+  border: 1px solid var(--db-border);
+  box-shadow: var(--db-shadow-sm);
+  overflow: hidden;
+}
+
+.mesDashPanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--db-border);
+}
+
+.mesDashPanelTitle {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--db-text);
+}
+
+.mesDashPanelSub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--db-muted);
+}
+
+.mesDashPanelAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border-radius: var(--db-radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--db-muted);
+  border: 1px solid var(--db-border);
+  background: var(--db-surface2);
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.mesDashPanelAction:hover {
+  color: var(--db-accent);
+  border-color: var(--db-accent);
+}
+
+.mesDashPanelBody {
+  padding: 20px;
+}
+
+.mesDashPanelBody--flush {
+  padding: 0;
+}
+
+/* Chart */
+.mesDashChartStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.mesDashChartStat {
+  padding: 14px 16px;
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface2);
+  border: 1px solid var(--db-border);
+  text-align: center;
+}
+
+.mesDashChartStatVal {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--db-text);
+  letter-spacing: -0.02em;
+}
+
+.mesDashChartStatLabel {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--db-muted);
+}
+
+.mesDashChartStat--good .mesDashChartStatVal { color: var(--db-ok); }
+.mesDashChartStat--defect .mesDashChartStatVal { color: var(--db-danger); }
+
+.mesDashChartArea {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+  height: 188px;
+  padding: 12px 8px 10px;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-radius: var(--db-radius-sm);
+  border: 1px solid var(--db-border);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.mesDashChartArea::before {
+  content: '';
+  position: absolute;
+  inset: 12px 8px 30px;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent calc(25% - 1px),
+    var(--db-border) calc(25% - 1px),
+    var(--db-border) 25%
+  );
+  pointer-events: none;
+  opacity: 0.5;
+  border-radius: 4px;
+}
+
+.mesDashChartCol {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-items: end;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.mesDashChartCol--today .mesDashChartDate {
+  color: var(--db-accent);
+  font-weight: 800;
+}
+
+.mesDashChartCol--today .mesDashChartBarWrap {
+  box-shadow: 0 0 0 2px rgba(212, 165, 36, 0.35);
+}
+
+.mesDashChartVal {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--db-muted);
+  min-height: 16px;
+}
+
+.mesDashChartVal--active {
+  color: var(--db-text);
+}
+
+.mesDashChartBarWrap {
+  width: 100%;
+  max-width: 40px;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--db-border);
+}
+
+[data-theme='light'] .mesDashChartBarWrap {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.mesDashChartBarStack {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 0;
+  transition: height 0.5s ease;
+}
+
+.mesDashChartBarGood {
+  background: linear-gradient(180deg, #4ecf8a, var(--db-ok));
+  width: 100%;
+}
+
+.mesDashChartBarDefect {
+  background: linear-gradient(180deg, #f08080, var(--db-danger));
+  width: 100%;
+}
+
+.mesDashChartDate {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--db-muted);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.mesDashChartLegend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 2px;
+  justify-content: center;
+  flex-wrap: wrap;
+  clear: both;
+}
+
+.mesDashChartLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--db-muted);
+}
+
+.mesDashChartLegendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.mesDashChartLegendDot--good { background: var(--db-ok); }
+.mesDashChartLegendDot--defect { background: var(--db-danger); }
+
+/* Work Order List */
+.mesDashWoList {
+  display: flex;
+  flex-direction: column;
+}
+
+.mesDashWoRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--db-border);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s;
+  align-items: center;
+}
+
+.mesDashWoRow:last-child {
+  border-bottom: none;
+}
+
+.mesDashWoRow:hover {
+  background: rgba(212, 165, 36, 0.05);
+}
+
+.mesDashWoRowMain {
+  min-width: 0;
+}
+
+.mesDashWoRowTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.mesDashWoNo {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--db-accent);
+}
+
+.mesDashWoProduct {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--db-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesDashWoMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--db-muted);
+}
+
+.mesDashWoMeta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesDashWoRowRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mesDashWoProgress {
+  width: 100px;
+  text-align: right;
+}
+
+.mesDashWoProgressPct {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--db-text);
+  margin-bottom: 4px;
+}
+
+.mesDashWoProgressTrack {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesDashWoProgressTrack {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.mesDashWoProgressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--db-info), var(--db-ok));
+  transition: width 0.4s ease;
+}
+
+.mesDashPill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesDashPill--ok { background: var(--db-ok-bg); color: var(--db-ok); }
+.mesDashPill--progress { background: var(--db-warn-bg); color: var(--db-warn); }
+.mesDashPill--wait { background: var(--db-info-bg); color: var(--db-info); }
+.mesDashPill--hold { background: var(--db-danger-bg); color: var(--db-danger); }
+
+.mesDashEmpty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--db-muted);
+  font-size: 15px;
+}
+
+/* Status Distribution */
+.mesDashStatusStack {
+  display: flex;
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mesDashStatusSeg {
+  min-width: 4px;
+  transition: flex 0.5s ease;
+}
+
+.mesDashStatusSeg--done { background: var(--db-ok); }
+.mesDashStatusSeg--progress { background: var(--db-warn); }
+.mesDashStatusSeg--wait { background: var(--db-info); }
+.mesDashStatusSeg--hold { background: var(--db-danger); }
+
+.mesDashStatusGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.mesDashStatusItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface2);
+  border: 1px solid var(--db-border);
+}
+
+.mesDashStatusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mesDashStatusDot--done { background: var(--db-ok); }
+.mesDashStatusDot--progress { background: var(--db-warn); }
+.mesDashStatusDot--wait { background: var(--db-info); }
+.mesDashStatusDot--hold { background: var(--db-danger); }
+
+.mesDashStatusCount {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--db-text);
+  line-height: 1;
+}
+
+.mesDashStatusLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--db-muted);
+}
+
+/* Calendar */
+.mesDashCalNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.mesDashCalBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface2);
+  color: var(--db-text);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.mesDashCalBtn:hover {
+  border-color: var(--db-accent);
+  background: rgba(212, 165, 36, 0.08);
+}
+
+.mesDashCalMonth {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--db-text);
+}
+
+.mesDashCalMonthInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--db-text);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  color-scheme: var(--input-color-scheme);
+}
+
+.mesDashCalMonthInput:focus {
+  outline: none;
+}
+
+.mesDashCalTodayBtn {
+  padding: 0 12px;
+  height: 36px;
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface2);
+  color: var(--db-accent);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mesDashCalTodayBtn:hover {
+  background: rgba(212, 165, 36, 0.1);
+}
+
+.mesDashCalDow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.mesDashCalDow span {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--db-muted);
+  padding: 4px 0;
+}
+
+.mesDashCalDow span:first-child { color: var(--db-danger); }
+.mesDashCalDow span:last-child { color: var(--db-info); }
+
+.mesDashCalGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.mesDashCalDay {
+  aspect-ratio: 1;
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: var(--db-radius-sm);
+  background: var(--db-surface2);
+  color: var(--db-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.mesDashCalDay:hover {
+  border-color: var(--db-border-strong);
+  background: rgba(212, 165, 36, 0.08);
+}
+
+.mesDashCalDay--selected {
+  border-color: var(--db-accent);
+  background: rgba(212, 165, 36, 0.15);
+  box-shadow: 0 0 0 2px rgba(212, 165, 36, 0.2);
+}
+
+.mesDashCalDay--today {
+  font-weight: 800;
+  color: var(--db-accent);
+}
+
+.mesDashCalDay--hasEvent::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--db-info);
+}
+
+.mesDashCalDay--pad {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.mesDashDayDetail {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--db-border);
+}
+
+.mesDashDayDetailHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.mesDashDayDetailDate {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--db-text);
+  font-family: var(--mono);
+}
+
+.mesDashDayDetailCount {
+  font-size: 13px;
+  color: var(--db-muted);
+  font-weight: 600;
+}
+
+.mesDashDayItems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesDashDayItem {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--db-radius-sm);
+  border: 1px solid var(--db-border);
+  background: var(--db-surface2);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.mesDashDayItem--plan {
+  border-left: 3px solid var(--db-info);
+}
+
+.mesDashDayItem--wo {
+  border-left: 3px solid var(--db-warn);
+}
+
+.mesDashDayItemKind {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--db-muted);
+  font-family: var(--mono);
+  align-self: flex-start;
+}
+
+.mesDashOrphan {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--db-radius-sm);
+  background: var(--db-warn-bg);
+  border: 1px solid rgba(232, 184, 74, 0.3);
+}
+
+.mesDashOrphanTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--db-warn);
+  margin-bottom: 6px;
+}
+
+.mesDashOrphanList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mesDashOrphanList li {
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--db-surface);
+  color: var(--db-text);
+}

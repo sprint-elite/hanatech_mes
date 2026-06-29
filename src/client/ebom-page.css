@@ -1,0 +1,342 @@
+/* EBOM — 인라인 편집 (v2 톤) */
+
+.mesEbomPage {
+  --eb-bg: #0c0e14;
+  --eb-surface: #12151e;
+  --eb-surface2: #181c28;
+  --eb-border: rgba(255, 255, 255, 0.08);
+  --eb-border-strong: rgba(255, 255, 255, 0.14);
+  --eb-text: #eef1f6;
+  --eb-muted: #9aa3b2;
+  --eb-accent: #e8c24a;
+  --eb-accent-text: #1a1406;
+  --eb-ok: #3dba72;
+  --eb-danger: #e85d5d;
+  --eb-radius: 12px;
+  --eb-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesEbomPage {
+  --eb-bg: #f4f5f8;
+  --eb-surface: #ffffff;
+  --eb-surface2: #f3f4f8;
+  --eb-border: rgba(0, 0, 0, 0.08);
+  --eb-border-strong: rgba(0, 0, 0, 0.12);
+  --eb-text: #141820;
+  --eb-muted: #5f6775;
+  --eb-accent: #c9a227;
+}
+
+/* 전역 mesPanelCard/mesInput/버튼을 EBOM에서만 v2 톤으로 */
+.mesEbomPage .mesPanelCard {
+  border: 1px solid var(--eb-border);
+  border-top: 1px solid var(--eb-border);
+  border-radius: var(--eb-radius);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%), var(--eb-surface);
+  padding: 16px 18px 18px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme='light'] .mesEbomPage .mesPanelCard {
+  box-shadow: 0 10px 20px rgba(15, 20, 30, 0.06);
+}
+
+.mesEbomPage .mesPanelTitle {
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--eb-text);
+  opacity: 0.9;
+}
+
+.mesEbomPage .mesPanelHead {
+  margin-bottom: 12px;
+}
+
+.mesEbomPage .mesInput {
+  border-radius: var(--eb-radius-sm);
+  border-color: var(--eb-border-strong);
+  background: var(--eb-surface2);
+  color: var(--eb-text);
+  padding: 10px 12px;
+}
+
+.mesEbomPage .mesInput:focus {
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 1px rgba(232, 194, 74, 0.22);
+}
+
+.mesEbomPage .mesLabel {
+  color: var(--eb-muted);
+}
+
+.mesEbomPage .mesBtnPrimary,
+.mesEbomPage .mesBtnSecondary {
+  border-radius: var(--eb-radius-sm);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  padding: 9px 14px;
+}
+
+.mesEbomPage .mesBtnPrimary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--eb-accent) 100%);
+  color: var(--eb-accent-text);
+  border-color: #a8841c;
+}
+
+.mesEbomPage .mesBtnSecondary {
+  background: var(--eb-surface2);
+  color: var(--eb-text);
+  border-color: var(--eb-border-strong);
+  box-shadow: none;
+}
+
+.mesEbomPage .mesBtnSecondary:hover {
+  filter: brightness(1.04);
+}
+
+.mesEbomPage .mesEbomHeadRow {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.mesEbomPage .mesEbomHeadMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.mesEbomPage .mesEbomCountPill {
+  white-space: nowrap;
+}
+
+.mesEbomPage .mesEbomRefreshBtn {
+  white-space: nowrap;
+}
+
+.mesEbomPage .mesEbomFilterCard {
+  margin-bottom: 12px;
+}
+
+.mesEbomPage .mesEbomFilterRow {
+  margin-bottom: 0;
+}
+
+.mesEbomPage .mesEbomResultCount {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 700;
+}
+
+[data-theme='light'] .mesEbomPage .mesEbomResultCount {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.mesEbomPage .mesEbomCrudMain {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesEbomPage .mesEbomFormCard {
+  margin-bottom: 0;
+}
+
+.mesEbomPage .mesEbomFormHead {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mesEbomPage .mesEbomPanelHeadText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mesEbomPage .mesEbomContextChip {
+  max-width: 100%;
+}
+
+.mesEbomPage .mesEbomContextChip .mesOpsPlanContextChipName {
+  max-width: min(560px, 78vw);
+}
+
+.mesEbomPage .mesEbomFormGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 10px 12px;
+  padding-top: 4px;
+}
+
+.mesEbomPage .mesEbomFormGrid .mesLabel,
+.mesEbomPage .mesEbomFormGrid .mesInput {
+  min-width: 0;
+}
+
+.mesEbomPage .mesEbomSpan1 { grid-column: span 1; }
+.mesEbomPage .mesEbomSpan2 { grid-column: span 2; }
+.mesEbomPage .mesEbomSpan3 { grid-column: span 3; }
+
+.mesEbomPage .mesEbomTableCard {
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+.mesEbomPage .mesEbomTableHead {
+  padding-bottom: 10px;
+}
+
+.mesEbomPage .mesEbomLineCount {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--eb-accent);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesEbomPage .mesEbomLinesTable {
+  max-height: min(560px, calc(100vh - 380px));
+  overflow: auto;
+  border-top: 1px solid var(--eb-border);
+}
+
+[data-theme='light'] .mesEbomPage .mesEbomLinesTable {
+  border-top-color: rgba(0, 0, 0, 0.06);
+}
+
+.mesEbomPage .mesEbomLinesTable table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 0;
+}
+
+.mesEbomPage .mesEbomLinesGrid .mesEbomColCode { width: 96px; }
+.mesEbomPage .mesEbomLinesGrid .mesEbomColName { width: 180px; }
+.mesEbomPage .mesEbomLinesGrid .mesEbomColSpec { width: 72px; }
+.mesEbomPage .mesEbomLinesGrid .mesEbomColQty,
+.mesEbomPage .mesEbomLinesGrid .mesEbomColPath,
+.mesEbomPage .mesEbomLinesGrid .mesEbomColUseYn { width: 64px; }
+.mesEbomPage .mesEbomLinesGrid .mesEbomColPrice { width: 80px; }
+.mesEbomPage .mesEbomLinesGrid .mesEbomColAction { width: 64px; }
+.mesEbomPage .mesEbomLinesGrid .mesEbomColRemark { width: 120px; }
+
+.mesEbomPage .mesEbomLinesTable .mesTable th,
+.mesEbomPage .mesEbomLinesTable .mesTable td {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.mesEbomPage .mesTableSticky thead th {
+  background: var(--eb-surface2);
+  box-shadow: 0 1px 0 var(--eb-border);
+}
+
+.mesEbomPage .mesTableClick tbody tr:hover {
+  background: rgba(232, 194, 74, 0.06);
+}
+
+.mesEbomPage .mesEbomLinesTable td,
+.mesEbomPage .mesEbomLinesTable th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesEbomPage .mesEbomLinesTable th {
+  overflow: visible;
+  text-overflow: clip;
+  text-align: center;
+}
+
+.mesEbomPage .mesEbomLinesGrid td:nth-child(1),
+.mesEbomPage .mesEbomLinesGrid td:nth-child(2),
+.mesEbomPage .mesEbomLinesGrid td:nth-child(9) {
+  text-align: left;
+}
+
+.mesEbomPage .mesEbomLinesGrid td:nth-child(4),
+.mesEbomPage .mesEbomLinesGrid td:nth-child(5),
+.mesEbomPage .mesEbomLinesGrid td:nth-child(6),
+.mesEbomPage .mesEbomLinesGrid td:nth-child(10) {
+  text-align: center;
+}
+
+.mesEbomPage .mesEbomLinesGrid td.mesEbomNum {
+  text-align: right;
+  padding-right: 12px;
+}
+
+.mesEbomPage .mesEbomUseYn {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.mesEbomPage .mesEbomUseYn--y {
+  color: var(--eb-ok);
+  background: rgba(61, 186, 114, 0.12);
+  border: 1px solid rgba(61, 186, 114, 0.35);
+}
+
+.mesEbomPage .mesEbomUseYn--n {
+  color: #9aa3b2;
+  background: rgba(154, 163, 178, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mesEbomPage .mesRowSelected {
+  background: rgba(232, 194, 74, 0.08) !important;
+  box-shadow: inset 3px 0 0 var(--eb-accent);
+}
+
+.mesEbomPage .mesEbomEmptyCell {
+  padding: 28px 16px !important;
+  text-align: center;
+}
+
+.mesEbomPage .mesEbomEmptyCard {
+  padding: 32px 24px;
+  text-align: center;
+}
+
+@media (max-width: 1200px) {
+  .mesEbomPage .mesEbomFormGrid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .mesEbomPage .mesEbomSpan3 { grid-column: span 3; }
+  .mesEbomPage .mesEbomSpan2 { grid-column: span 2; }
+  .mesEbomPage .mesEbomSpan1 { grid-column: span 2; }
+}
+
+@media (max-width: 820px) {
+  .mesEbomPage .mesEbomFilterRow {
+    grid-template-columns: 1fr;
+  }
+
+  .mesEbomPage .mesEbomFormGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesEbomPage .mesEbomSpan3,
+  .mesEbomPage .mesEbomSpan2,
+  .mesEbomPage .mesEbomSpan1 {
+    grid-column: span 1;
+  }
+
+  .mesEbomPage .mesEbomHeadMeta {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

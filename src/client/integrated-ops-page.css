@@ -1,0 +1,1650 @@
+/* 통합 생산 운영 — 생산계획 탭 v2 */
+
+.mesPageOps {
+  --opsv2-accent: #e8c24a;
+  --opsv2-accent-text: #1a1406;
+  --opsv2-surface: #12151e;
+  --opsv2-surface2: #181c28;
+  --opsv2-border: rgba(255, 255, 255, 0.08);
+  --opsv2-border-strong: rgba(255, 255, 255, 0.14);
+  --opsv2-text: #eef1f6;
+  --opsv2-muted: #9aa3b2;
+  --opsv2-info: #5ba4e8;
+  --opsv2-ok: #3dba72;
+  --opsv2-danger: #e85d5d;
+  --opsv2-wip: #e8c24a;
+  --opsv2-fg: #5ba4e8;
+  --opsv2-raw: #6ec9e8;
+  --opsv2-radius: 12px;
+  --opsv2-radius-sm: 8px;
+}
+
+[data-theme='light'] .mesPageOps {
+  --opsv2-surface: #ffffff;
+  --opsv2-surface2: #f3f4f8;
+  --opsv2-border: rgba(0, 0, 0, 0.08);
+  --opsv2-border-strong: rgba(0, 0, 0, 0.12);
+  --opsv2-text: #141820;
+  --opsv2-muted: #5f6775;
+}
+
+.mesPageOps .mesOpsV2Head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mesPageOps .mesOpsV2HeadMain {
+  min-width: 0;
+}
+
+.mesPageOps .mesOpsV2Title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--opsv2-text);
+}
+
+.mesPageOps .mesOpsV2Desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--opsv2-muted);
+  line-height: 1.5;
+}
+
+.mesPageOps .mesOpsV2HeadActions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.mesPageOps .mesOpsV2Btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--opsv2-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesPageOps .mesOpsV2Btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesPageOps .mesOpsV2Btn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--opsv2-accent) 100%);
+  color: var(--opsv2-accent-text);
+  border-color: #a8841c;
+}
+
+.mesPageOps .mesOpsV2Btn--primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mesPageOps .mesOpsV2Btn--secondary {
+  background: var(--opsv2-surface2);
+  color: var(--opsv2-text);
+  border-color: var(--opsv2-border-strong);
+}
+
+.mesPageOps .mesOpsTop {
+  margin-top: 0;
+}
+
+.mesPageOps .mesOpsV2Tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.mesPageOps .mesOpsV2Tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--opsv2-radius-sm);
+  border: 1px solid var(--opsv2-border-strong);
+  background: var(--opsv2-surface2);
+  color: var(--opsv2-muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.mesPageOps .mesOpsV2Tab svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.mesPageOps .mesOpsV2Tab:hover {
+  color: var(--opsv2-text);
+  border-color: rgba(232, 194, 74, 0.35);
+}
+
+.mesPageOps .mesOpsV2Tab--active {
+  background: linear-gradient(180deg, #f0d060 0%, var(--opsv2-accent) 100%);
+  color: var(--opsv2-accent-text);
+  border-color: #a8841c;
+}
+
+.mesPageOps .mesOpsV2SummaryStrip {
+  display: grid;
+  grid-template-columns: minmax(96px, 0.85fr) minmax(220px, 2.6fr) repeat(4, minmax(68px, 0.65fr));
+  align-items: stretch;
+  margin-bottom: 16px;
+  border-radius: var(--opsv2-radius);
+  background: var(--opsv2-surface);
+  border: 1px solid var(--opsv2-border);
+  overflow: hidden;
+}
+
+.mesPageOps .mesOpsV2SummaryItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px;
+  min-width: 0;
+  position: relative;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--name {
+  padding-left: 16px;
+  padding-right: 18px;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--narrow {
+  padding: 16px 10px;
+  gap: 8px;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--narrow .mesOpsV2SummaryIcon {
+  width: 34px;
+  height: 34px;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--narrow .mesOpsV2SummaryIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--narrow .mesOpsV2SummaryLabel {
+  font-size: 11px;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--narrow .mesOpsV2SummaryVal {
+  font-size: 13px;
+}
+
+.mesPageOps .mesOpsV2SummaryItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--opsv2-border-strong);
+}
+
+.mesPageOps .mesOpsV2SummaryIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--opsv2-border);
+  color: var(--opsv2-accent);
+}
+
+[data-theme='light'] .mesPageOps .mesOpsV2SummaryIcon {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.mesPageOps .mesOpsV2SummaryIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.mesPageOps .mesOpsV2SummaryMeta {
+  min-width: 0;
+}
+
+.mesPageOps .mesOpsV2SummaryLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--opsv2-muted);
+}
+
+.mesPageOps .mesOpsV2SummaryVal {
+  margin: 3px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--opsv2-text);
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.mesPageOps .mesOpsV2SummaryVal.mono {
+  font-family: var(--mono, ui-monospace, monospace);
+}
+
+.mesPageOps .mesOpsPlanV2Split {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  min-height: 480px;
+}
+
+@media (max-width: 960px) {
+  .mesPageOps .mesOpsPlanV2Split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesPageOps .mesOpsV2SidePanel {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--opsv2-radius);
+  background: var(--opsv2-surface);
+  border: 1px solid var(--opsv2-border);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.mesPageOps .mesOpsV2SideHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--opsv2-border);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--opsv2-text);
+}
+
+.mesPageOps .mesOpsV2SideHead svg {
+  width: 18px;
+  height: 18px;
+  color: var(--opsv2-accent);
+}
+
+.mesPageOps .mesOpsV2SideTools {
+  padding: 12px;
+  border-bottom: 1px solid var(--opsv2-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesPageOps .mesOpsV2SearchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mesPageOps .mesOpsV2SearchIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--opsv2-muted);
+  display: flex;
+  pointer-events: none;
+}
+
+.mesPageOps .mesOpsV2SearchIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesPageOps .mesOpsV2Input,
+.mesPageOps .mesOpsV2Select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border-radius: var(--opsv2-radius-sm);
+  border: 1px solid var(--opsv2-border-strong);
+  background: var(--opsv2-surface2);
+  color: var(--opsv2-text);
+  font-size: 13px;
+}
+
+.mesPageOps .mesOpsV2Input--search {
+  padding-left: 34px;
+}
+
+.mesPageOps .mesOpsV2ToolsRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.mesPageOps .mesOpsV2ResetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 9px 12px;
+  border-radius: var(--opsv2-radius-sm);
+  border: 1px solid var(--opsv2-border-strong);
+  background: var(--opsv2-surface2);
+  color: var(--opsv2-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mesPageOps .mesOpsV2SideBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  min-height: 0;
+}
+
+.mesPageOps .mesOpsV2ProductRow {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--opsv2-radius-sm);
+  border: 1px solid var(--opsv2-border);
+  background: var(--opsv2-surface2);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.mesPageOps .mesOpsV2ProductRow:hover {
+  border-color: rgba(232, 194, 74, 0.35);
+}
+
+.mesPageOps .mesOpsV2ProductRow--active {
+  border-color: var(--opsv2-accent);
+  background: rgba(232, 194, 74, 0.08);
+  box-shadow: 0 0 0 1px rgba(232, 194, 74, 0.25);
+}
+
+.mesPageOps .mesOpsV2ProductRowTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.mesPageOps .mesOpsV2ProductCode {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--opsv2-accent);
+}
+
+.mesPageOps .mesOpsV2ProductRow--active .mesOpsV2ProductCode {
+  color: var(--opsv2-accent);
+}
+
+.mesPageOps .mesOpsV2TypeBadge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.mesPageOps .mesOpsV2TypeBadge--fg {
+  color: var(--opsv2-fg);
+  background: rgba(91, 164, 232, 0.12);
+  border-color: rgba(91, 164, 232, 0.35);
+}
+
+.mesPageOps .mesOpsV2TypeBadge--wip {
+  color: var(--opsv2-wip);
+  background: rgba(232, 194, 74, 0.12);
+  border-color: rgba(232, 194, 74, 0.35);
+}
+
+.mesPageOps .mesOpsV2TypeBadge--raw {
+  color: var(--opsv2-raw);
+  background: rgba(110, 201, 232, 0.12);
+  border-color: rgba(110, 201, 232, 0.35);
+}
+
+.mesPageOps .mesOpsV2ProductName {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--opsv2-text);
+  line-height: 1.35;
+}
+
+.mesPageOps .mesOpsV2SidePager {
+  padding: 10px 12px;
+  border-top: 1px solid var(--opsv2-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--opsv2-muted);
+  flex-wrap: wrap;
+}
+
+.mesPageOps .mesOpsV2MainPanel {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--opsv2-radius);
+  background: var(--opsv2-surface);
+  border: 1px solid var(--opsv2-border);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.mesPageOps .mesOpsV2MainHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--opsv2-border);
+}
+
+.mesPageOps .mesOpsV2MainTitleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mesPageOps .mesOpsV2MainTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--opsv2-text);
+}
+
+.mesPageOps .mesOpsV2MainTitle svg {
+  width: 18px;
+  height: 18px;
+  color: var(--opsv2-accent);
+}
+
+.mesPageOps .mesOpsV2ContextChip {
+  display: inline-block;
+  max-width: 280px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 194, 74, 0.4);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--opsv2-accent);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesPageOps .mesOpsV2TableToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--opsv2-border);
+}
+
+.mesPageOps .mesOpsV2TableToolbar .mesOpsV2SearchWrap {
+  flex: 1 1 200px;
+}
+
+.mesPageOps .mesOpsV2TableToolbar .mesOpsV2Select {
+  flex: 0 1 140px;
+  min-width: 120px;
+}
+
+.mesPageOps .mesOpsV2TableWrap {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+.mesPageOps .mesOpsV2Table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesPageOps .mesOpsV2Table th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--opsv2-muted);
+  background: var(--opsv2-surface2);
+  border-bottom: 1px solid var(--opsv2-border);
+  white-space: nowrap;
+}
+
+.mesPageOps .mesOpsV2Table th.mesOpsV2ThSort::after {
+  content: '⇅';
+  margin-left: 4px;
+  font-size: 10px;
+  opacity: 0.45;
+}
+
+.mesPageOps .mesOpsV2Table td {
+  padding: 12px 14px;
+  color: var(--opsv2-text);
+  border-bottom: 1px solid var(--opsv2-border);
+  vertical-align: middle;
+}
+
+.mesPageOps .mesOpsV2Table tbody tr:hover td {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesPageOps .mesOpsV2Table .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesPageOps .mesOpsV2PlanBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.mesPageOps .mesOpsV2PlanBadge--planned {
+  color: var(--opsv2-info);
+  background: rgba(91, 164, 232, 0.12);
+  border-color: rgba(91, 164, 232, 0.35);
+}
+
+.mesPageOps .mesOpsV2PlanBadge--confirmed {
+  color: var(--opsv2-ok);
+  background: rgba(61, 186, 114, 0.12);
+  border-color: rgba(61, 186, 114, 0.35);
+}
+
+.mesPageOps .mesOpsV2PlanBadge--closed {
+  color: var(--opsv2-muted);
+  background: var(--opsv2-surface2);
+  border-color: var(--opsv2-border-strong);
+}
+
+.mesPageOps .mesOpsV2RowActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.mesPageOps .mesOpsV2ActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--opsv2-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--opsv2-border-strong);
+  background: var(--opsv2-surface2);
+  color: var(--opsv2-text);
+}
+
+.mesPageOps .mesOpsV2ActionBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.mesPageOps .mesOpsV2ActionBtn--danger {
+  color: var(--opsv2-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  background: transparent;
+}
+
+.mesPageOps .mesOpsV2TablePager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--opsv2-border);
+  background: var(--opsv2-surface2);
+  font-size: 13px;
+  color: var(--opsv2-muted);
+}
+
+.mesPageOps .mesOpsV2PagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesPageOps .mesOpsV2PagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--opsv2-radius-sm);
+  border: 1px solid var(--opsv2-border-strong);
+  background: var(--opsv2-surface);
+  color: var(--opsv2-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesPageOps .mesOpsV2PagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesPageOps .mesOpsV2PagerBtn--active {
+  background: var(--opsv2-accent);
+  color: var(--opsv2-accent-text);
+  border-color: #a8841c;
+}
+
+.mesPageOps .mesOpsV2Empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--opsv2-muted);
+  font-size: 13px;
+}
+
+/* —— 작업지시 탭 —— */
+.mesPageOps .mesOpsV2SummaryStrip--wo {
+  grid-template-columns:
+    minmax(80px, 0.65fr)
+    minmax(200px, 2.2fr)
+    minmax(108px, 1.15fr)
+    repeat(2, minmax(56px, 0.45fr))
+    repeat(3, minmax(56px, 0.48fr));
+}
+
+.mesPageOps .mesOpsV2SummaryItem--plan {
+  padding-left: 14px;
+  padding-right: 16px;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--plan .mesOpsV2SummaryVal {
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.mesPageOps .mesOpsV2Btn--info {
+  background: linear-gradient(180deg, #5ba4e8 0%, #3d8fd9 100%);
+  color: #fff;
+  border-color: #2b6cb0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset;
+}
+
+.mesPageOps .mesOpsV2Btn--info:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.mesPageOps .mesOpsV2Btn--info:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mesPageOps .mesOpsV2Btn--compact {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+.mesPageOps .mesOpsV2WoTitleSep {
+  font-weight: 600;
+  color: var(--opsv2-muted);
+}
+
+.mesPageOps .mesOpsV2PlanPickRow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--opsv2-radius-sm);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.mesPageOps .mesOpsV2PlanPickRow:hover {
+  background: var(--opsv2-surface2);
+}
+
+.mesPageOps .mesOpsV2PlanPickRow--active {
+  background: rgba(212, 168, 44, 0.08);
+  border-color: var(--opsv2-accent);
+  box-shadow: inset 0 0 0 1px rgba(212, 168, 44, 0.35);
+}
+
+.mesPageOps .mesOpsV2PlanPickRow--active .mesOpsV2ProductCode {
+  color: var(--opsv2-accent-text);
+}
+
+.mesPageOps .mesOpsV2PlanPickMeta {
+  font-size: 12px;
+  color: var(--opsv2-muted);
+  line-height: 1.35;
+}
+
+.mesPageOps .mesOpsV2KpiStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--opsv2-border);
+  background: var(--opsv2-surface);
+}
+
+@media (max-width: 900px) {
+  .mesPageOps .mesOpsV2KpiStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesPageOps .mesOpsV2KpiCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--opsv2-radius-sm);
+  background: var(--opsv2-surface2);
+  border: 1px solid var(--opsv2-border);
+  min-width: 0;
+}
+
+.mesPageOps .mesOpsV2KpiIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+}
+
+.mesPageOps .mesOpsV2KpiIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesPageOps .mesOpsV2KpiIcon--blue {
+  color: #5ba4e8;
+  background: rgba(91, 164, 232, 0.14);
+}
+
+.mesPageOps .mesOpsV2KpiIcon--green {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+}
+
+.mesPageOps .mesOpsV2KpiIcon--purple {
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.14);
+}
+
+.mesPageOps .mesOpsV2KpiMeta {
+  min-width: 0;
+}
+
+.mesPageOps .mesOpsV2KpiLabel {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--opsv2-muted);
+}
+
+.mesPageOps .mesOpsV2KpiVal {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--opsv2-text);
+  line-height: 1.2;
+}
+
+.mesPageOps .mesOpsV2KpiSub {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--opsv2-muted);
+}
+
+.mesPageOps .mesOpsV2WoBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  border: 1px solid transparent;
+}
+
+.mesPageOps .mesOpsV2WoBadge--ready {
+  color: #93c5fd;
+  background: rgba(30, 64, 175, 0.35);
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+.mesPageOps .mesOpsV2WoBadge--progress {
+  color: #fcd34d;
+  background: rgba(180, 120, 20, 0.25);
+  border-color: rgba(212, 168, 44, 0.45);
+}
+
+.mesPageOps .mesOpsV2WoBadge--done {
+  color: #86efac;
+  background: rgba(22, 101, 52, 0.35);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.mesPageOps .mesOpsV2WoBadge--hold {
+  color: #fca5a5;
+  background: rgba(127, 29, 29, 0.35);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* —— 생산 LOT 탭 —— */
+.mesPageOps .mesOpsV2SummaryStrip--lot {
+  grid-template-columns:
+    minmax(80px, 0.65fr)
+    minmax(180px, 1.75fr)
+    minmax(108px, 1.1fr)
+    repeat(2, minmax(56px, 0.45fr))
+    minmax(64px, 0.55fr)
+    minmax(72px, 0.8fr)
+    minmax(64px, 0.55fr);
+}
+
+.mesPageOps .mesOpsV2LotBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  border: 1px solid transparent;
+}
+
+.mesPageOps .mesOpsV2LotBadge--created {
+  color: #93c5fd;
+  background: rgba(30, 64, 175, 0.35);
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+.mesPageOps .mesOpsV2LotBadge--progress {
+  color: #fcd34d;
+  background: rgba(180, 120, 20, 0.25);
+  border-color: rgba(212, 168, 44, 0.45);
+}
+
+.mesPageOps .mesOpsV2LotBadge--done {
+  color: #86efac;
+  background: rgba(22, 101, 52, 0.35);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.mesPageOps .mesOpsV2LotBadge--outsource {
+  color: #c4b5fd;
+  background: rgba(91, 33, 182, 0.3);
+  border-color: rgba(139, 92, 246, 0.45);
+}
+
+/* —— 재고현황 탭 —— */
+.mesPageOps .mesOpsV2MainPanel--inv {
+  min-height: 520px;
+}
+
+.mesPageOps .mesOpsV2InvStack {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mesPageOps .mesOpsV2InvSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mesPageOps .mesOpsV2InvSectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.mesPageOps .mesOpsV2InvSubHead {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--opsv2-text);
+}
+
+.mesPageOps .mesOpsV2CheckLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--opsv2-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.mesPageOps .mesOpsV2CheckLabel input {
+  accent-color: var(--opsv2-accent);
+}
+
+.mesPageOps .mesOpsV2TableWrap--inv {
+  border: 1px solid var(--opsv2-border);
+  border-radius: var(--opsv2-radius-sm) var(--opsv2-radius-sm) 0 0;
+  border-bottom: none;
+  max-height: 300px;
+}
+
+.mesPageOps .mesOpsV2InvSection .mesOpsV2TablePager {
+  border-radius: 0 0 var(--opsv2-radius-sm) var(--opsv2-radius-sm);
+}
+
+.mesPageOps .mesOpsV2InvStatus,
+.mesPageOps .mesOpsV2InvTxType {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--opsv2-muted);
+  background: var(--opsv2-surface2);
+  border: 1px solid var(--opsv2-border);
+}
+
+/* —— 생산계획 등록/수정 모달 —— */
+.mesOpsPlanModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mesOpsPlanModalRoot > * {
+  pointer-events: auto;
+}
+
+.mesOpsPlanModalRoot .mesModalBackdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.mesOpsPlanModalDialog {
+  position: relative;
+  z-index: 1;
+  width: min(1040px, 96vw);
+  max-width: 1040px;
+  max-height: min(92vh, 880px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesOpsPlanModalDialog {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.mesOpsPlanModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  background: #12151e;
+}
+
+[data-theme='light'] .mesOpsPlanModalHead {
+  background: #f8f9fc;
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesOpsPlanModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesOpsPlanModalHeadIcon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: #e8c24a;
+}
+
+.mesOpsPlanModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesOpsPlanModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #eef1f6;
+  letter-spacing: -0.02em;
+}
+
+[data-theme='light'] .mesOpsPlanModalTitle {
+  color: #141820;
+}
+
+.mesOpsPlanModalSub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #9aa3b2;
+}
+
+.mesOpsPlanModalStatus {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+}
+
+.mesOpsPlanModalBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #0e1018;
+}
+
+[data-theme='light'] .mesOpsPlanModalBody {
+  background: #ffffff;
+}
+
+.mesOpsPlanModalStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 10px;
+  background: #181c28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesOpsPlanModalStrip {
+  background: #f3f4f8;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesOpsPlanModalStripItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  min-width: 0;
+}
+
+.mesOpsPlanModalStripItem:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='light'] .mesOpsPlanModalStripItem:not(:last-child) {
+  border-right-color: rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 640px) {
+  .mesOpsPlanModalStrip {
+    grid-template-columns: 1fr;
+  }
+
+  .mesOpsPlanModalStripItem:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.mesOpsPlanModalStripLabel {
+  font-size: 13px;
+  color: #9aa3b2;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.mesOpsPlanModalStripVal {
+  font-size: 17px;
+  font-weight: 800;
+  color: #eef1f6;
+  line-height: 1.2;
+  text-align: right;
+  word-break: break-all;
+}
+
+[data-theme='light'] .mesOpsPlanModalStripVal {
+  color: #141820;
+}
+
+.mesOpsPlanModalGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 800px) {
+  .mesOpsPlanModalGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesOpsPlanModalCard {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #181c28;
+  padding: 18px 20px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+[data-theme='light'] .mesOpsPlanModalCard {
+  background: #f8f9fc;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesOpsPlanModalCard--summary {
+  background: #141820;
+}
+
+[data-theme='light'] .mesOpsPlanModalCard--summary {
+  background: #eef1f6;
+}
+
+.mesOpsPlanModalCardTitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #eef1f6;
+  flex-shrink: 0;
+}
+
+[data-theme='light'] .mesOpsPlanModalCardTitle {
+  color: #141820;
+}
+
+.mesOpsPlanModalFieldGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 14px 16px;
+  flex: 1;
+}
+
+@media (max-width: 520px) {
+  .mesOpsPlanModalFieldGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesOpsPlanModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.mesOpsPlanModalField--product {
+  grid-column: 1 / -1;
+}
+
+.mesOpsPlanModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9aa3b2;
+}
+
+.mesOpsPlanModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0a0d14;
+  color: #eef1f6;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.4;
+  min-height: 42px;
+}
+
+[data-theme='light'] .mesOpsPlanModalInput {
+  background: #ffffff;
+  color: #141820;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.mesOpsPlanModalSelect {
+  text-overflow: ellipsis;
+}
+
+.mesOpsPlanModalInput:focus {
+  outline: none;
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 2px rgba(232, 194, 74, 0.15);
+}
+
+.mesOpsPlanModalInput:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.mesOpsPlanModalInfoList {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.mesOpsPlanModalInfoRow {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+}
+
+[data-theme='light'] .mesOpsPlanModalInfoRow {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.mesOpsPlanModalInfoRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.mesOpsPlanModalInfoRow:first-child {
+  padding-top: 0;
+}
+
+.mesOpsPlanModalInfoRow span {
+  color: #9aa3b2;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.mesOpsPlanModalInfoRow strong {
+  color: #eef1f6;
+  font-weight: 700;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+[data-theme='light'] .mesOpsPlanModalInfoRow strong {
+  color: #141820;
+}
+
+.mesOpsPlanModalFoot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  background: #12151e;
+}
+
+[data-theme='light'] .mesOpsPlanModalFoot {
+  background: #f8f9fc;
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesOpsPlanModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, background 0.12s;
+}
+
+.mesOpsPlanModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesOpsPlanModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mesOpsPlanModalBtn--cancel {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #eef1f6;
+}
+
+[data-theme='light'] .mesOpsPlanModalBtn--cancel {
+  color: #141820;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.mesOpsPlanModalBtn--cancel:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mesOpsPlanModalBtn--save {
+  background: linear-gradient(180deg, #efd06a 0%, #e8c24a 100%);
+  color: #1a1406;
+  border-color: #c9a832;
+}
+
+.mesOpsPlanModalBtn--save:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+/* 모달 내 계획 상태 뱃지 (페이지 스코프 밖에서도 동작) */
+.mesOpsPlanModalStatus.mesOpsV2PlanBadge {
+  display: inline-flex;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.mesOpsPlanModalStatus.mesOpsV2PlanBadge--planned {
+  color: #5ba4e8;
+  background: rgba(91, 164, 232, 0.12);
+  border-color: rgba(91, 164, 232, 0.35);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2PlanBadge--confirmed {
+  color: #3dba72;
+  background: rgba(61, 186, 114, 0.12);
+  border-color: rgba(61, 186, 114, 0.35);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2PlanBadge--closed {
+  color: #9aa3b2;
+  background: #181c28;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mesOpsPlanModalDialog--wide {
+  width: min(1120px, 96vw);
+  max-width: 1120px;
+}
+
+.mesOpsPlanModalHeadIcon--info {
+  background: rgba(91, 164, 232, 0.12);
+  border-color: rgba(91, 164, 232, 0.35);
+  color: #5ba4e8;
+}
+
+.mesOpsPlanModalTextarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.mesOpsPlanModalHint {
+  font-size: 12px;
+  color: #9aa3b2;
+  line-height: 1.4;
+}
+
+.mesOpsPlanModalMuted {
+  color: #9aa3b2;
+  font-size: 13px;
+}
+
+.mesOpsPlanModalWorker {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #181c28;
+  padding: 18px 20px;
+}
+
+[data-theme='light'] .mesOpsPlanModalWorker {
+  background: #f8f9fc;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesOpsPlanModalWorkerHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.mesOpsPlanModalWorkerHead .mesOpsPlanModalCardTitle {
+  margin: 0;
+}
+
+.mesOpsPlanModalWorkerMeta {
+  margin: 0;
+  font-size: 12px;
+  color: #9aa3b2;
+}
+
+.mesOpsPlanModalWorkerTools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.mesOpsPlanModalWorkerSearch {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+.mesOpsPlanModalWorkerSearch .mesOpsV2SearchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9aa3b2;
+  pointer-events: none;
+}
+
+.mesOpsPlanModalWorkerSearch .mesOpsPlanModalInput {
+  padding-left: 34px;
+}
+
+.mesOpsPlanModalCheck {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #9aa3b2;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mesOpsPlanModalCheck input {
+  accent-color: #e8c24a;
+}
+
+.mesOpsPlanModalToolBtn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0a0d14;
+  color: #eef1f6;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+[data-theme='light'] .mesOpsPlanModalToolBtn {
+  background: #ffffff;
+  color: #141820;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.mesOpsPlanModalToolBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mesOpsPlanModalWorkerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+
+.mesOpsPlanModalWorkerItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0a0d14;
+  font-size: 13px;
+  color: #eef1f6;
+  cursor: pointer;
+}
+
+[data-theme='light'] .mesOpsPlanModalWorkerItem {
+  background: #ffffff;
+  color: #141820;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesOpsPlanModalWorkerItem:has(input:checked) {
+  border-color: rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesOpsPlanModalWorkerItem input {
+  margin-top: 2px;
+  accent-color: #e8c24a;
+  flex-shrink: 0;
+}
+
+/* 모달 내 작업지시·LOT 상태 뱃지 */
+.mesOpsPlanModalStatus.mesOpsV2WoBadge,
+.mesOpsPlanModalStatus.mesOpsV2LotBadge {
+  display: inline-flex;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.mesOpsPlanModalStatus.mesOpsV2WoBadge--ready {
+  color: #93c5fd;
+  background: rgba(30, 64, 175, 0.35);
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2WoBadge--progress {
+  color: #fcd34d;
+  background: rgba(180, 120, 20, 0.25);
+  border-color: rgba(212, 168, 44, 0.45);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2WoBadge--done {
+  color: #86efac;
+  background: rgba(22, 101, 52, 0.35);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2WoBadge--hold {
+  color: #fca5a5;
+  background: rgba(127, 29, 29, 0.35);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2LotBadge--created {
+  color: #93c5fd;
+  background: rgba(30, 64, 175, 0.35);
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2LotBadge--progress {
+  color: #fcd34d;
+  background: rgba(180, 120, 20, 0.25);
+  border-color: rgba(212, 168, 44, 0.45);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2LotBadge--done {
+  color: #86efac;
+  background: rgba(22, 101, 52, 0.35);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2LotBadge--outsource {
+  color: #c4b5fd;
+  background: rgba(91, 33, 182, 0.3);
+  border-color: rgba(139, 92, 246, 0.45);
+}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiJson } from '../lib/api'
+import '../defect-history-page.css'
 
 type Row = {
   id: number
@@ -44,6 +45,26 @@ type Row = {
 
 type Tab = 'list' | 'stats'
 
+type FilterState = {
+  q: string
+  productId: string
+  productionLotId: string
+  materialLotId: string
+  defectTypeId: string
+  workerId: string
+}
+
+const PAGE_SIZE = 20
+
+const emptyFilters = (): FilterState => ({
+  q: '',
+  productId: '',
+  productionLotId: '',
+  materialLotId: '',
+  defectTypeId: '',
+  workerId: '',
+})
+
 function materialLotIds(r: Row): number[] {
   const ids: number[] = []
   for (const u of r.lot?.materialUsages ?? []) {
@@ -77,9 +98,8 @@ function materialUsagesTitle(usages: MatUsageItem[]) {
     .join('\n')
 }
 
-/** 자재 LOT: FIFO 순 칩 + 투입량. 3건 이상이면 2건까지 표시 후 +N, 전체는 툴팁 */
 function MaterialLotCell({ usages }: { usages: MatUsageItem[] }) {
-  if (usages.length === 0) return <span className="muted">—</span>
+  if (usages.length === 0) return <span className="mesDhRemarkCell">—</span>
 
   const title = `FIFO 투입\n${materialUsagesTitle(usages)}`
   const visible = usages.length <= 2 ? usages : usages.slice(0, 2)
@@ -106,9 +126,22 @@ function defectRatePct(defect: number, input: number) {
   return Math.round((defect / input) * 1000) / 10
 }
 
-function fmtDate(v?: string | null) {
+function fmtDateKst(v?: string | null) {
   if (!v) return '—'
-  return String(v).replace('T', ' ').slice(0, 19)
+  const d = new Date(v)
+  if (Number.isNaN(d.getTime())) return String(v).replace('T', ' ').slice(0, 19)
+  const parts = new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(d)
+  const p = (type: Intl.DateTimeFormatPartTypes) => parts.find((x) => x.type === type)?.value ?? ''
+  return `${p('year')}-${p('month')}-${p('day')} ${p('hour')}:${p('minute')}:${p('second')}`
 }
 
 function toYmd(d: Date) {
@@ -124,6 +157,14 @@ function rowProductId(r: Row) {
 
 function rowProductName(r: Row) {
   return r.lot?.product?.productName ?? (rowProductId(r) ? `품목#${rowProductId(r)}` : '—')
+}
+
+function rowProductCode(r: Row) {
+  return r.lot?.product?.productCode ?? ''
+}
+
+function totalPages(n: number, pageSize: number) {
+  return Math.max(1, Math.ceil(Math.max(0, n) / pageSize))
 }
 
 type BarRow = { key: string; label: string; qty: number; count: number }
@@ -151,7 +192,7 @@ function HBarChart({ rows, maxBars = 8 }: { rows: BarRow[]; maxBars?: number }) 
   const slice = rows.slice(0, maxBars)
   const max = Math.max(1, ...slice.map((r) => r.qty))
   if (slice.length === 0) {
-    return <div className="muted mesDhEmptyChart">표시할 데이터가 없습니다.</div>
+    return <div className="mesDhEmptyChart">표시할 데이터가 없습니다.</div>
   }
   return (
     <div className="mesDhHBarChart" role="img" aria-label="막대 차트">
@@ -197,29 +238,18 @@ function DailyTrendChart({ rows, days = 14 }: { rows: Row[]; days?: number }) {
   }, [rows, days])
 
   return (
-    <div className="mesDashBars mesDashBarsCompact mesDhTrendBars" style={{ gridTemplateColumns: `repeat(${days}, minmax(0, 1fr))` }}>
+    <div className="mesDhTrendBars" style={{ gridTemplateColumns: `repeat(${days}, minmax(0, 1fr))` }}>
       {chart.dayList.map((d) => {
         const h = Math.round((d.qty / chart.max) * 100)
         return (
-          <div
-            key={d.ymd}
-            className={`mesDashBarWrap${d.qty > 0 ? ' mesDashBarWrapLabeled' : ''}`}
-            title={`${d.ymd} · ${d.qty}개 · ${d.count}건`}
-          >
-            {d.qty > 0 ? (
-              <div className="mesDashBarDataLabel mono">
-                <span className="mesDashBarDataLabelSum">{d.qty}</span>
-              </div>
-            ) : null}
-            <div className="mesDashBarChart">
-              <div
-                className="mesDashBarStack"
-                style={{ height: `${Math.max(h, d.qty > 0 ? 6 : 0)}%`, minHeight: d.qty > 0 ? 4 : 0 }}
-              >
-                {d.qty > 0 ? <div className="mesDashBarSeg mesDashBarSeg--defect" style={{ flex: 1 }} /> : null}
-              </div>
+          <div key={d.ymd} className="mesDhTrendBarWrap" title={`${d.ymd} · ${d.qty}개 · ${d.count}건`}>
+            <span className="mesDhTrendBarLabel">{d.qty > 0 ? d.qty : ''}</span>
+            <div className="mesDhTrendBarTrack">
+              {d.qty > 0 ? (
+                <div className="mesDhTrendBarFill" style={{ height: `${Math.max(h, 6)}%` }} />
+              ) : null}
             </div>
-            <div className="mesDashBarTick mono">{d.ymd.slice(5)}</div>
+            <span className="mesDhTrendBarTick">{d.ymd.slice(5)}</span>
           </div>
         )
       })}
@@ -227,16 +257,84 @@ function DailyTrendChart({ rows, days = 14 }: { rows: Row[]; days?: number }) {
   )
 }
 
+function IconSearch() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  )
+}
+
+function IconRefresh() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+      <path d="M21 3v6h-6" />
+    </svg>
+  )
+}
+
+function IconFilter() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M4 6h16M7 12h10M10 18h4" />
+    </svg>
+  )
+}
+
+function IconReset() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 12a9 9 0 1 0 9-9" />
+      <path d="M3 3v6h6" />
+    </svg>
+  )
+}
+
+function applyRowFilters(rows: Row[], filters: FilterState) {
+  const q = filters.q.trim().toLowerCase()
+  return rows.filter((r) => {
+    if (filters.productId && String(rowProductId(r) ?? '') !== filters.productId) return false
+    if (filters.productionLotId && String(r.productionLotId) !== filters.productionLotId) return false
+    if (filters.materialLotId && !materialLotIds(r).includes(Number(filters.materialLotId))) return false
+    if (filters.defectTypeId && String(r.defectTypeId) !== filters.defectTypeId) return false
+    if (filters.workerId) {
+      if (filters.workerId === '__none__') {
+        if (r.workerId != null) return false
+      } else if (String(r.workerId ?? '') !== filters.workerId) {
+        return false
+      }
+    }
+    if (q) {
+      const hay = [
+        rowProductName(r),
+        rowProductCode(r),
+        r.lot?.lotNo ?? '',
+        r.defectType?.defectName ?? '',
+        r.defectType?.defectCode ?? '',
+        r.worker?.workerName ?? '',
+        r.workCenter?.centerName ?? '',
+        r.remark ?? '',
+        ...parseMaterialUsages(r).map((u) => u.lotNo),
+      ]
+        .join(' ')
+        .toLowerCase()
+      if (!hay.includes(q)) return false
+    }
+    return true
+  })
+}
+
 export function DefectHistoryPage() {
   const [tab, setTab] = useState<Tab>('list')
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState<string | null>(null)
-  const [productFilter, setProductFilter] = useState('')
-  const [productionLotFilter, setProductionLotFilter] = useState('')
-  const [materialLotFilter, setMaterialLotFilter] = useState('')
-  const [defectTypeFilter, setDefectTypeFilter] = useState('')
-  const [workerFilter, setWorkerFilter] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(PAGE_SIZE)
+  const [draftFilters, setDraftFilters] = useState<FilterState>(emptyFilters)
+  const [filters, setFilters] = useState<FilterState>(emptyFilters)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -315,21 +413,23 @@ export function DefectHistoryPage() {
   }, [rows])
 
   const filtered = useMemo(() => {
-    return rows.filter((r) => {
-      if (productFilter && String(rowProductId(r) ?? '') !== productFilter) return false
-      if (productionLotFilter && String(r.productionLotId) !== productionLotFilter) return false
-      if (materialLotFilter && !materialLotIds(r).includes(Number(materialLotFilter))) return false
-      if (defectTypeFilter && String(r.defectTypeId) !== defectTypeFilter) return false
-      if (workerFilter) {
-        if (workerFilter === '__none__') {
-          if (r.workerId != null) return false
-        } else if (String(r.workerId ?? '') !== workerFilter) {
-          return false
-        }
-      }
-      return true
+    return applyRowFilters(rows, filters).sort((a, b) => {
+      const ta = a.detectedAt ?? a.createdAt
+      const tb = b.detectedAt ?? b.createdAt
+      return tb.localeCompare(ta)
     })
-  }, [rows, productFilter, productionLotFilter, materialLotFilter, defectTypeFilter, workerFilter])
+  }, [rows, filters])
+
+  const pages = totalPages(filtered.length, pageSize)
+  const safePage = Math.min(Math.max(1, page), pages)
+  const pageItems = useMemo(() => {
+    const start = (safePage - 1) * pageSize
+    return filtered.slice(start, start + pageSize)
+  }, [filtered, safePage, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [filters])
 
   const stats = useMemo(() => {
     const totalQty = filtered.reduce((s, r) => s + r.qty, 0)
@@ -366,22 +466,48 @@ export function DefectHistoryPage() {
     return { totalQty, inputQty, goodQty, defectQty, defectRate, count: filtered.length, byType, byProduct, byWorker }
   }, [filtered])
 
+  const applyFilters = () => {
+    setFilters({ ...draftFilters })
+    setPage(1)
+  }
+
+  const resetFilters = () => {
+    const empty = emptyFilters()
+    setDraftFilters(empty)
+    setFilters(empty)
+    setPage(1)
+  }
+
   return (
-    <div className="mesPage">
-      <header className="mesPageHead">
-        <h1 className="mesPageTitle">불량 이력</h1>
-        <p className="mesPageDesc">
-          공정 실적 등록 시 기록된 불량 상세 이력을 조회합니다. 자재 LOT은 선입선출(FIFO) 투입 기준으로 생산 LOT과 연결됩니다.
-        </p>
+    <div className="mesPage mesPageWide mesDefectHistoryPage">
+      <header className="mesDhHead">
+        <div>
+          <h1 className="mesDhTitle">불량 이력</h1>
+          <p className="mesDhDesc">
+            공정 실적 등록 시 기록된 불량 상세 이력을 조회합니다. 자재 LOT은 선입선출(FIFO) 투입 기준으로 생산 LOT과 연결됩니다.
+          </p>
+        </div>
+        <div className="mesDhHeadActions">
+          <span className="mesDhSummaryBadge mesDhSummaryBadge--accent">
+            {loading ? '…' : `${stats.count}건`}
+          </span>
+          <span className="mesDhSummaryBadge mesDhSummaryBadge--danger">
+            {loading ? '…' : `불량 ${stats.totalQty.toLocaleString()}개`}
+          </span>
+          <button type="button" className="mesDhBtn mesDhBtn--secondary" onClick={() => void load()}>
+            <IconRefresh />
+            새로고침
+          </button>
+        </div>
       </header>
 
-      <div className="mesOpsTopRow" style={{ marginBottom: 12 }}>
-        <div className="mesOpsTabs" role="tablist" aria-label="불량 이력 구역">
+      <div className="mesDhTopRow">
+        <div className="mesDhTabs" role="tablist" aria-label="불량 이력 구역">
           <button
             type="button"
             role="tab"
             aria-selected={tab === 'list'}
-            className={`mesOpsTab ${tab === 'list' ? 'mesOpsTabActive' : ''}`}
+            className={`mesDhTab${tab === 'list' ? ' mesDhTab--active' : ''}`}
             onClick={() => setTab('list')}
           >
             이력 목록
@@ -390,197 +516,252 @@ export function DefectHistoryPage() {
             type="button"
             role="tab"
             aria-selected={tab === 'stats'}
-            className={`mesOpsTab ${tab === 'stats' ? 'mesOpsTabActive' : ''}`}
+            className={`mesDhTab${tab === 'stats' ? ' mesDhTab--active' : ''}`}
             onClick={() => setTab('stats')}
           >
             통계
           </button>
         </div>
-        <button type="button" className="mesBtnSecondary" onClick={() => void load()}>
-          새로고침
-        </button>
       </div>
 
-      {err ? <div className="error mesBanner">{err}</div> : null}
+      {err ? (
+        <div className="mesNotice mesNoticeError" role="alert">
+          <div className="mesNoticeBody">
+            <span className="mesNoticeTitle">오류</span>
+            <span className="mesNoticeText">{err}</span>
+          </div>
+          <button type="button" className="mesNoticeDismiss" onClick={() => setErr(null)} aria-label="닫기">×</button>
+        </div>
+      ) : null}
 
-      <div className="mesOpsTableToolbar mesDhFilterBar">
-        <select
-          className="mesInput mesOpsTableToolbarSelect mesDhFilterSelect"
-          value={productFilter}
-          onChange={(e) => setProductFilter(e.target.value)}
-          aria-label="생산품 필터"
-        >
-          <option value="">전체 생산품</option>
-          {productOptions.map(([id, name]) => (
-            <option key={id} value={String(id)}>
-              {name}
-            </option>
-          ))}
-        </select>
-        <select
-          className="mesInput mesOpsTableToolbarSelect mesDhFilterSelect"
-          value={productionLotFilter}
-          onChange={(e) => setProductionLotFilter(e.target.value)}
-          aria-label="생산 LOT 필터"
-        >
-          <option value="">전체 생산 LOT</option>
-          {productionLotOptions.map(([id, v]) => (
-            <option key={id} value={String(id)}>
-              {v.lotNo}
-            </option>
-          ))}
-        </select>
-        <select
-          className="mesInput mesOpsTableToolbarSelect mesDhFilterSelect"
-          value={materialLotFilter}
-          onChange={(e) => setMaterialLotFilter(e.target.value)}
-          aria-label="자재 LOT 필터"
-        >
-          <option value="">전체 자재 LOT (FIFO)</option>
-          {materialLotOptions.map(([id, v]) => (
-            <option key={id} value={String(id)}>
-              {v.label}
-            </option>
-          ))}
-        </select>
-        <select
-          className="mesInput mesOpsTableToolbarSelect mesDhFilterSelect"
-          value={defectTypeFilter}
-          onChange={(e) => setDefectTypeFilter(e.target.value)}
-          aria-label="불량 유형 필터"
-        >
-          <option value="">전체 불량 유형</option>
-          {defectTypeOptions.map(([id, name]) => (
-            <option key={id} value={String(id)}>
-              {name}
-            </option>
-          ))}
-        </select>
-        <select
-          className="mesInput mesOpsTableToolbarSelect mesDhFilterSelect"
-          value={workerFilter}
-          onChange={(e) => setWorkerFilter(e.target.value)}
-          aria-label="작업자 필터"
-        >
-          <option value="">전체 작업자</option>
-          <option value="__none__">미지정</option>
-          {workerOptions.map(([id, name]) => (
-            <option key={id} value={String(id)}>
-              {name}
-            </option>
-          ))}
-        </select>
-        {(productFilter || productionLotFilter || materialLotFilter || defectTypeFilter || workerFilter) && (
-          <button
-            type="button"
-            className="mesBtnSm"
-            onClick={() => {
-              setProductFilter('')
-              setProductionLotFilter('')
-              setMaterialLotFilter('')
-              setDefectTypeFilter('')
-              setWorkerFilter('')
-            }}
+      <div className="mesDhFilterCard">
+        <div className="mesDhField mesDhField--search">
+          <span className="mesDhFieldLabel">검색</span>
+          <div className="mesDhInputWrap">
+            <span className="mesDhInputIcon"><IconSearch /></span>
+            <input
+              className="mesDhInput mesDhInput--search"
+              placeholder="생산품 / LOT / 불량유형 / 작업자"
+              value={draftFilters.q}
+              onChange={(e) => setDraftFilters((f) => ({ ...f, q: e.target.value }))}
+              onKeyDown={(e) => { if (e.key === 'Enter') applyFilters() }}
+            />
+          </div>
+        </div>
+        <div className="mesDhField mesDhField--select">
+          <span className="mesDhFieldLabel">생산품</span>
+          <select
+            className="mesDhSelect"
+            value={draftFilters.productId}
+            onChange={(e) => setDraftFilters((f) => ({ ...f, productId: e.target.value }))}
           >
+            <option value="">전체</option>
+            {productOptions.map(([id, name]) => (
+              <option key={id} value={String(id)}>{name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mesDhField mesDhField--select">
+          <span className="mesDhFieldLabel">생산 LOT</span>
+          <select
+            className="mesDhSelect"
+            value={draftFilters.productionLotId}
+            onChange={(e) => setDraftFilters((f) => ({ ...f, productionLotId: e.target.value }))}
+          >
+            <option value="">전체</option>
+            {productionLotOptions.map(([id, v]) => (
+              <option key={id} value={String(id)}>{v.lotNo}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mesDhField mesDhField--select">
+          <span className="mesDhFieldLabel">자재 LOT</span>
+          <select
+            className="mesDhSelect"
+            value={draftFilters.materialLotId}
+            onChange={(e) => setDraftFilters((f) => ({ ...f, materialLotId: e.target.value }))}
+          >
+            <option value="">전체 (FIFO)</option>
+            {materialLotOptions.map(([id, v]) => (
+              <option key={id} value={String(id)}>{v.label}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mesDhField mesDhField--select">
+          <span className="mesDhFieldLabel">불량 유형</span>
+          <select
+            className="mesDhSelect"
+            value={draftFilters.defectTypeId}
+            onChange={(e) => setDraftFilters((f) => ({ ...f, defectTypeId: e.target.value }))}
+          >
+            <option value="">전체</option>
+            {defectTypeOptions.map(([id, name]) => (
+              <option key={id} value={String(id)}>{name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mesDhField mesDhField--select">
+          <span className="mesDhFieldLabel">작업자</span>
+          <select
+            className="mesDhSelect"
+            value={draftFilters.workerId}
+            onChange={(e) => setDraftFilters((f) => ({ ...f, workerId: e.target.value }))}
+          >
+            <option value="">전체</option>
+            <option value="__none__">미지정</option>
+            {workerOptions.map(([id, name]) => (
+              <option key={id} value={String(id)}>{name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mesDhFilterActions">
+          <button type="button" className="mesDhBtn mesDhBtn--secondary" onClick={resetFilters}>
+            <IconReset />
             필터 초기화
           </button>
-        )}
-        <span className="muted small mesDhFilterMeta">
-          {loading ? '로딩 중…' : `${filtered.length}건 · 불량 ${stats.totalQty.toLocaleString()}개`}
-        </span>
+          <button type="button" className="mesDhBtn mesDhBtn--primary" onClick={applyFilters}>
+            <IconFilter />
+            필터 적용
+          </button>
+        </div>
       </div>
 
       {tab === 'list' ? (
-        <div className="mesTableWrap mesTableScroll">
-          <table className="mesTable">
-            <thead>
-              <tr>
-                <th>생산품</th>
-                <th>생산 LOT</th>
-                <th>자재 LOT</th>
-                <th>불량유형</th>
-                <th>수량</th>
-                <th>작업자</th>
-                <th>작업장</th>
-                <th>검출시각</th>
-                <th>비고</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
+        <div className="mesDhTableCard">
+          <div className="mesDhTableViewport">
+            <table className="mesDhTable">
+              <thead>
                 <tr>
-                  <td colSpan={9} className="muted">
-                    로딩 중…
-                  </td>
+                  <th>생산품</th>
+                  <th>생산 LOT</th>
+                  <th>자재 LOT</th>
+                  <th>불량유형</th>
+                  <th className="mesDhThQty">수량</th>
+                  <th>작업자</th>
+                  <th>작업장</th>
+                  <th>검출시각</th>
+                  <th>비고</th>
                 </tr>
-              ) : filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={9} className="muted">
-                    데이터 없음
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((r) => (
-                  <tr key={r.id}>
-                    <td>{rowProductName(r)}</td>
-                    <td className="mono">{r.lot?.lotNo ?? r.productionLotId}</td>
-                    <td className="mesTdMatLot">
-                      <MaterialLotCell usages={parseMaterialUsages(r)} />
-                    </td>
-                    <td>{r.defectType?.defectName ?? r.defectTypeId}</td>
-                    <td>{r.qty}</td>
-                    <td>{r.worker?.workerName ?? '—'}</td>
-                    <td>{r.workCenter?.centerName ?? '—'}</td>
-                    <td className="mono small">{fmtDate(r.detectedAt)}</td>
-                    <td className="mesTdEllipsis" title={r.remark ?? undefined}>
-                      {r.remark ?? '—'}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={9} className="mesDhEmpty">로딩 중…</td></tr>
+                ) : filtered.length === 0 ? (
+                  <tr><td colSpan={9} className="mesDhEmpty">조건에 맞는 이력이 없습니다.</td></tr>
+                ) : (
+                  pageItems.map((r) => (
+                    <tr key={r.id}>
+                      <td className="mesDhProductCell">
+                        <span className="mesDhProductName">{rowProductName(r)}</span>
+                        {rowProductCode(r) ? (
+                          <span className="mono" style={{ display: 'block', fontSize: 11, color: 'var(--dh-muted)', marginTop: 2 }}>
+                            {rowProductCode(r)}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td>
+                        <span className="mesDhLotPill mono">{r.lot?.lotNo ?? r.productionLotId}</span>
+                      </td>
+                      <td className="mesDhTdMatLot">
+                        <MaterialLotCell usages={parseMaterialUsages(r)} />
+                      </td>
+                      <td>
+                        <span className="mesDhDefectBadge">{r.defectType?.defectName ?? r.defectTypeId}</span>
+                      </td>
+                      <td className="mesDhQtyCell">{r.qty.toLocaleString()}</td>
+                      <td className="mesDhWorkerCell">{r.worker?.workerName ?? '—'}</td>
+                      <td className="mesDhCenterCell">{r.workCenter?.centerName ?? '—'}</td>
+                      <td className="mesDhTimeCell mono">{fmtDateKst(r.detectedAt)}</td>
+                      <td className="mesDhRemarkCell" title={r.remark ?? undefined}>
+                        {r.remark ?? '—'}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          {!loading && filtered.length > 0 ? (
+            <footer className="mesDhPager">
+              <span>총 {filtered.length}건 · 불량 {stats.totalQty.toLocaleString()}개</span>
+              <nav className="mesDhPagerNav" aria-label="페이지">
+                <button type="button" className="mesDhPagerBtn" disabled={safePage <= 1} onClick={() => setPage(1)}>«</button>
+                <button type="button" className="mesDhPagerBtn" disabled={safePage <= 1} onClick={() => setPage(safePage - 1)}>‹</button>
+                {Array.from({ length: pages }, (_, i) => i + 1)
+                  .filter((n) => n === 1 || n === pages || Math.abs(n - safePage) <= 1)
+                  .map((n, idx, arr) => {
+                    const prev = arr[idx - 1]
+                    const ellipsis = prev != null && n - prev > 1
+                    return (
+                      <span key={n} style={{ display: 'contents' }}>
+                        {ellipsis ? <span className="mesDhPagerBtn" style={{ border: 'none', background: 'transparent' }}>…</span> : null}
+                        <button
+                          type="button"
+                          className={`mesDhPagerBtn${n === safePage ? ' mesDhPagerBtn--active' : ''}`}
+                          onClick={() => setPage(n)}
+                        >
+                          {n}
+                        </button>
+                      </span>
+                    )
+                  })}
+                <button type="button" className="mesDhPagerBtn" disabled={safePage >= pages} onClick={() => setPage(safePage + 1)}>›</button>
+                <button type="button" className="mesDhPagerBtn" disabled={safePage >= pages} onClick={() => setPage(pages)}>»</button>
+              </nav>
+              <select
+                className="mesDhSelect"
+                style={{ width: 'auto', minWidth: '120px' }}
+                value={pageSize}
+                onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1) }}
+                aria-label="페이지당 표시 건수"
+              >
+                <option value={10}>10개씩 보기</option>
+                <option value={20}>20개씩 보기</option>
+                <option value={50}>50개씩 보기</option>
+              </select>
+            </footer>
+          ) : null}
         </div>
       ) : (
-        <div className="mesDhStats">
+        <div className="mesDhStatsPanel">
           <div className="mesDhKpiRow">
-            <div className="mesDashKpiCard">
-              <div className="mesDashKpiLabel">총 투입 수량</div>
-              <div className="mesDashKpiValue">{stats.inputQty.toLocaleString()}</div>
-              <div className="mesDashKpiMeta muted">실적 등록 기준</div>
+            <div className="mesDhKpiCard">
+              <div className="mesDhKpiLabel">총 투입 수량</div>
+              <div className="mesDhKpiValue">{stats.inputQty.toLocaleString()}</div>
+              <div className="mesDhKpiMeta">실적 등록 기준</div>
             </div>
-            <div className="mesDashKpiCard">
-              <div className="mesDashKpiLabel">총 불량 / 불량률</div>
-              <div className="mesDashKpiValue">
+            <div className="mesDhKpiCard">
+              <div className="mesDhKpiLabel">총 불량 / 불량률</div>
+              <div className="mesDhKpiValue mesDhKpiValue--danger">
                 {stats.defectQty.toLocaleString()}
-                <span className="mesWoKpiSub"> ({stats.defectRate}%)</span>
+                <span className="mesDhKpiSub"> ({stats.defectRate}%)</span>
               </div>
-              <div className="mesDashKpiMeta muted">양품 {stats.goodQty.toLocaleString()}</div>
+              <div className="mesDhKpiMeta">양품 {stats.goodQty.toLocaleString()}</div>
             </div>
-            <div className="mesDashKpiCard">
-              <div className="mesDashKpiLabel">이력 건수</div>
-              <div className="mesDashKpiValue">{stats.count.toLocaleString()}</div>
-              <div className="mesDashKpiMeta muted">불량 상세 건</div>
+            <div className="mesDhKpiCard">
+              <div className="mesDhKpiLabel">이력 건수</div>
+              <div className="mesDhKpiValue">{stats.count.toLocaleString()}</div>
+              <div className="mesDhKpiMeta">불량 상세 건</div>
             </div>
           </div>
 
           <div className="mesDhChartGrid">
-            <section className="mesDashChartCard">
+            <section className="mesDhChartCard mesDhChartCard--wide">
               <h2 className="mesDhChartTitle">일별 불량 추이 (최근 14일)</h2>
               <DailyTrendChart rows={filtered} days={14} />
             </section>
 
-            <section className="mesDashChartCard">
+            <section className="mesDhChartCard">
               <h2 className="mesDhChartTitle">불량 유형별</h2>
               <HBarChart rows={stats.byType} />
             </section>
 
-            <section className="mesDashChartCard">
+            <section className="mesDhChartCard">
               <h2 className="mesDhChartTitle">생산품별</h2>
               <HBarChart rows={stats.byProduct} />
             </section>
 
-            <section className="mesDashChartCard">
+            <section className="mesDhChartCard">
               <h2 className="mesDhChartTitle">작업자별</h2>
               <HBarChart rows={stats.byWorker} />
             </section>

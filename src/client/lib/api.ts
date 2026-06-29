@@ -1,3 +1,5 @@
+import { getSysUserHeader } from './auth'
+
 export class ApiError extends Error {
   declare status: number
   declare body: unknown
@@ -11,10 +13,12 @@ export class ApiError extends Error {
 }
 
 export async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const sysUser = getSysUserHeader()
   const res = await fetch(path, {
     ...init,
     headers: {
       ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(sysUser ? { 'X-Sys-User': sysUser } : {}),
       ...(init?.headers ?? {}),
     },
   })

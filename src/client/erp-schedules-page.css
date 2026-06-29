@@ -1,0 +1,687 @@
+.mesSchPage {
+  --sch-green: #3dba72;
+  --sch-green-soft: rgba(61, 186, 114, 0.12);
+  --sch-blue: #3b82f6;
+  --sch-blue-soft: rgba(59, 130, 246, 0.12);
+  --sch-orange: #f0a030;
+  --sch-orange-soft: rgba(240, 160, 48, 0.15);
+  --sch-red: #e85d5d;
+  --sch-gray-soft: rgba(100, 116, 139, 0.15);
+  --sch-muted: #6b7280;
+  --sch-border: #e5e7eb;
+  --sch-card: #ffffff;
+  --sch-bg: #f3f4f6;
+  --sch-text: #111827;
+  color: var(--sch-text);
+}
+
+[data-theme='dark'] .mesSchPage {
+  --sch-muted: #9aa3b2;
+  --sch-border: rgba(255, 255, 255, 0.12);
+  --sch-card: #161a24;
+  --sch-bg: #0f1218;
+  --sch-text: #eef1f6;
+}
+
+.mesSchPage .mesSchTopBar { margin-bottom: 12px; }
+.mesSchPage .mesSchTopTitle { margin: 0; font-size: 28px; font-weight: 800; }
+.mesSchPage .mesSchTopSub { margin: 4px 0 0; font-size: 13px; color: var(--sch-muted); }
+
+.mesSchPage .mesSchLoginNotice {
+  padding: 32px;
+  text-align: center;
+  border: 1px solid var(--sch-border);
+  border-radius: 12px;
+  background: var(--sch-card);
+}
+
+.mesSchPage .mesSchToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--sch-border);
+  border-radius: 12px;
+  background: var(--sch-card);
+}
+
+.mesSchPage .mesSchToolbarLeft,
+.mesSchPage .mesSchToolbarRight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesSchPage .mesSchMonthLabel {
+  min-width: 96px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.mesSchPage .mesSchMonthInput {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--sch-border);
+  background: var(--sch-bg);
+  color: inherit;
+  font: inherit;
+}
+
+.mesSchPage .mesSchToolbarMeta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesSchPage .mesSchBtn--green { background: var(--sch-green); color: #fff; }
+.mesSchPage .mesSchBtn--ghost { background: var(--sch-card); border-color: var(--sch-border); color: inherit; }
+.mesSchPage .mesSchBtn--danger { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+
+.mesSchPage .mesSchIconBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--sch-border);
+  background: var(--sch-bg);
+  cursor: pointer;
+  font-size: 18px;
+  color: inherit;
+}
+
+.mesSchPage .mesSchCalendarCard,
+.mesSchPage .mesSchKanbanCard {
+  border: 1px solid var(--sch-border);
+  border-radius: 12px;
+  background: var(--sch-card);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.mesSchPage .mesSchCalendarBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  min-height: 460px;
+}
+
+@media (max-width: 960px) {
+  .mesSchPage .mesSchCalendarBody { grid-template-columns: 1fr; }
+}
+
+.mesSchPage .mesSchCalendarMain {
+  border-right: 1px solid var(--sch-border);
+}
+
+@media (max-width: 960px) {
+  .mesSchPage .mesSchCalendarMain { border-right: none; border-bottom: 1px solid var(--sch-border); }
+}
+
+.mesSchPage .mesSchCalGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.mesSchPage .mesSchCalDow {
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--sch-muted);
+  background: var(--sch-bg);
+  border-bottom: 1px solid var(--sch-border);
+}
+
+.mesSchPage .mesSchCalDow--sun { color: #dc2626; }
+.mesSchPage .mesSchCalDow--sat { color: #2563eb; }
+
+.mesSchPage .mesSchCalCell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 104px;
+  padding: 6px 8px 8px;
+  border: none;
+  border-right: 1px solid var(--sch-border);
+  border-bottom: 1px solid var(--sch-border);
+  background: var(--sch-card);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.mesSchPage .mesSchCalCell:nth-child(7n) { border-right: none; }
+.mesSchPage .mesSchCalCell--empty { background: var(--sch-bg); cursor: default; }
+.mesSchPage .mesSchCalCell--today .mesSchCalDayNum {
+  background: var(--sch-green);
+  color: #fff;
+  border-radius: 999px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mesSchPage .mesSchCalCell--selected {
+  background: var(--sch-green-soft);
+  box-shadow: inset 0 0 0 2px var(--sch-green);
+}
+
+.mesSchPage .mesSchCalCell--sun { background: rgba(220, 38, 38, 0.04); }
+.mesSchPage .mesSchCalCell--sat { background: rgba(37, 99, 235, 0.05); }
+.mesSchPage .mesSchCalCell--holiday { background: rgba(220, 38, 38, 0.08); }
+
+.mesSchPage .mesSchCalDayNum {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.mesSchPage .mesSchCalCell--sun .mesSchCalDayNum { color: #dc2626; }
+.mesSchPage .mesSchCalCell--sat .mesSchCalDayNum { color: #2563eb; }
+.mesSchPage .mesSchCalCell--holiday .mesSchCalDayNum { color: #dc2626; }
+
+.mesSchPage .mesSchCalHoliday {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  max-width: calc(100% - 36px);
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesSchPage .mesSchCalBadges {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 26px;
+}
+
+.mesSchPage .mesSchCalBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 10px;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.mesSchPage .mesSchCalBadgeTime {
+  flex-shrink: 0;
+  font-style: normal;
+  font-size: 9px;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+.mesSchPage .mesSchCalBadge span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesSchPage .mesSchCalMore {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchAgenda {
+  display: flex;
+  flex-direction: column;
+  background: var(--sch-bg);
+  min-height: 0;
+}
+
+.mesSchPage .mesSchAgendaHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--sch-border);
+}
+
+.mesSchPage .mesSchAgendaHead h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.mesSchPage .mesSchAgendaHoliday {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.mesSchPage .mesSchAgendaHead span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchAgendaEmpty {
+  margin: 16px 14px;
+  font-size: 13px;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchAgendaList {
+  flex: 1;
+  overflow: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesSchPage .mesSchAgendaItem {
+  display: block;
+  width: 100%;
+  padding: 10px 10px 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--sch-border);
+  border-left-width: 4px;
+  background: var(--sch-card);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.mesSchPage .mesSchAgendaItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.mesSchPage .mesSchAgendaTime {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--sch-blue);
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mesSchPage .mesSchAgendaMain {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mesSchPage .mesSchAgendaMain strong {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.mesSchPage .mesSchAgendaSub {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchAgendaAdd {
+  margin: 0 10px 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px dashed var(--sch-border);
+  background: transparent;
+  color: var(--sch-green);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mesSchPage .mesSchStatusChip {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--sch-bg);
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchStatusChip--planned { background: var(--sch-blue-soft); color: #1d4ed8; }
+.mesSchPage .mesSchStatusChip--in_progress { background: var(--sch-orange-soft); color: #b45309; }
+.mesSchPage .mesSchStatusChip--done { background: var(--sch-green-soft); color: #15803d; }
+.mesSchPage .mesSchStatusChip--hold { background: var(--sch-gray-soft); color: var(--sch-muted); }
+
+.mesSchPage .mesSchKanbanHead {
+  padding: 14px 16px 0;
+}
+
+.mesSchPage .mesSchKanbanHead h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.mesSchPage .mesSchKanbanHead p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchKanban {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 14px 16px 16px;
+  overflow-x: auto;
+}
+
+.mesSchPage .mesSchKanbanCol {
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  border-radius: 10px;
+  border: 1px solid var(--sch-border);
+  background: var(--sch-bg);
+}
+
+.mesSchPage .mesSchKanbanColHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--sch-border);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.mesSchPage .mesSchKanbanColHead em {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchKanbanCol--planned .mesSchKanbanColHead { background: var(--sch-blue-soft); }
+.mesSchPage .mesSchKanbanCol--in_progress .mesSchKanbanColHead { background: var(--sch-orange-soft); }
+.mesSchPage .mesSchKanbanCol--done .mesSchKanbanColHead { background: var(--sch-green-soft); }
+.mesSchPage .mesSchKanbanCol--hold .mesSchKanbanColHead { background: var(--sch-gray-soft); }
+
+.mesSchPage .mesSchKanbanColBody {
+  flex: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesSchPage .mesSchKanbanEmpty {
+  margin: auto;
+  font-size: 12px;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchCard {
+  position: relative;
+  padding: 10px 10px 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--sch-border);
+  border-left-width: 4px;
+  background: var(--sch-card);
+  cursor: pointer;
+}
+
+.mesSchPage .mesSchCard--alert {
+  padding-top: 22px;
+}
+
+.mesSchPage .mesSchCardAlert {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.mesSchPage .mesSchCardAlert--delay {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+}
+
+.mesSchPage .mesSchCardAlert--overdue {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.mesSchPage .mesSchCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.mesSchPage .mesSchCard--highlight {
+  box-shadow: inset 0 0 0 2px var(--sch-green);
+}
+
+.mesSchPage .mesSchCardTime {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sch-blue);
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mesSchPage .mesSchCardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.mesSchPage .mesSchCardHead strong {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.mesSchPage .mesSchPriority {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--sch-bg);
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchPriority--HIGH { background: rgba(232, 93, 93, 0.15); color: #b91c1c; }
+
+.mesSchPage .mesSchCardMeta,
+.mesSchPage .mesSchCardSub {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchCardSub { margin-top: 4px; }
+
+.mesSchPage .mesSchModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.mesSchPage .mesSchModal {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid var(--sch-border);
+  background: var(--sch-card);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+}
+
+.mesSchPage .mesSchModalHead,
+.mesSchPage .mesSchModalFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--sch-border);
+}
+
+.mesSchPage .mesSchModalFoot {
+  border-bottom: none;
+  border-top: 1px solid var(--sch-border);
+}
+
+.mesSchPage .mesSchModalHead h2 { margin: 0; font-size: 17px; font-weight: 800; }
+
+.mesSchPage .mesSchModalBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mesSchPage .mesSchField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mesSchPage .mesSchFieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mesSchPage .mesSchWhenBlock {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--sch-border);
+  background: var(--sch-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesSchPage .mesSchWhenRow {
+  display: grid;
+  grid-template-columns: 44px 1fr 108px;
+  gap: 8px;
+  align-items: center;
+}
+
+.mesSchPage .mesSchWhenLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--sch-border);
+  background: var(--sch-card);
+  color: inherit;
+  font: inherit;
+}
+
+.mesSchPage .mesSchInput--time {
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.mesSchPage .mesSchInput:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mesSchPage .mesSchCheck {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sch-muted);
+}
+
+.mesSchPage .mesSchColorPick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mesSchPage .mesSchColorDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.mesSchPage .mesSchColorDot--on {
+  border-color: var(--sch-text);
+  box-shadow: 0 0 0 2px var(--sch-card);
+}
+
+.mesSchPage .mesSchModalFootActions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 560px) {
+  .mesSchPage .mesSchWhenRow {
+    grid-template-columns: 1fr;
+  }
+
+  .mesSchPage .mesSchWhenLabel {
+    margin-bottom: -4px;
+  }
+}

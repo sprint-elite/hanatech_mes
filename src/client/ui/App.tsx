@@ -34,11 +34,18 @@ import { WorkersPage } from '../pages/WorkersPage'
 import { WorkOrdersPage } from '../pages/WorkOrdersPage'
 import { FloorBoardPage } from '../pages/FloorBoardPage'
 import { WorkerInputPage } from '../pages/WorkerInputPage'
+import { PayStubsPage } from '../pages/erp/PayStubsPage'
+import { SchedulesPage } from '../pages/erp/SchedulesPage'
+import { AnnualLeavePage } from '../pages/erp/AnnualLeavePage'
+import { ExpenseReportsPage } from '../pages/erp/ExpenseReportsPage'
+import { WorkLogsPage } from '../pages/erp/WorkLogsPage'
+import { LoginPage } from '../pages/LoginPage'
 
 export function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="login" element={<LoginPage />} />
         <Route path="floor-board" element={<FloorBoardPage />} />
         <Route path="worker-input" element={<WorkerInputPage />} />
         <Route element={<Layout />}>
@@ -74,6 +81,11 @@ export function App() {
           <Route path="audit-logs" element={<AuditLogsPage />} />
           <Route path="system-logs" element={<SystemLogsPage />} />
           <Route path="vision-logs" element={<VisionLogsPage />} />
+          <Route path="erp/work-logs" element={<WorkLogsPage />} />
+          <Route path="erp/expense-reports" element={<ExpenseReportsPage />} />
+          <Route path="erp/annual-leave" element={<AnnualLeavePage />} />
+          <Route path="erp/schedules" element={<SchedulesPage />} />
+          <Route path="erp/pay-stubs" element={<PayStubsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

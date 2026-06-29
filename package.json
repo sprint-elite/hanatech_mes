@@ -1,6 +1,6 @@
 {
   "name": "mesnew",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
     "dev:web": "vite",
     "dev:api": "tsx watch --env-file=.env src/server/index.ts",
     "build": "vite build && tsup",
+    "deploy": "npm run build && rsync -a --delete dist/index.html /var/www/mesnew/dist/ && rsync -a --delete dist/assets/ /var/www/mesnew/dist/assets/",
     "start": "node --env-file=.env dist/server/index.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",

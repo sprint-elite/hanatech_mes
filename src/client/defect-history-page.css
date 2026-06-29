@@ -1,0 +1,671 @@
+/* 불량 이력 페이지 v2 — 조회 전용 */
+
+.mesDefectHistoryPage {
+  --dh-bg: #0c0e14;
+  --dh-surface: #12151e;
+  --dh-surface2: #181c28;
+  --dh-border: rgba(255, 255, 255, 0.08);
+  --dh-border-strong: rgba(255, 255, 255, 0.14);
+  --dh-text: #eef1f6;
+  --dh-muted: #9aa3b2;
+  --dh-accent: #e8c24a;
+  --dh-accent-text: #1a1406;
+  --dh-ok: #3dba72;
+  --dh-danger: #e87878;
+  --dh-danger-bg: rgba(232, 120, 120, 0.12);
+  --dh-info: #5ba4e8;
+  --dh-radius: 12px;
+  --dh-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesDefectHistoryPage {
+  --dh-bg: #f4f5f8;
+  --dh-surface: #ffffff;
+  --dh-surface2: #f3f4f8;
+  --dh-border: rgba(0, 0, 0, 0.08);
+  --dh-border-strong: rgba(0, 0, 0, 0.12);
+  --dh-text: #141820;
+  --dh-muted: #5f6775;
+  --dh-accent: #c9a227;
+  --dh-danger: #c45c5c;
+  --dh-danger-bg: rgba(196, 92, 92, 0.1);
+}
+
+.mesDefectHistoryPage .mesDhHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mesDefectHistoryPage .mesDhTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--dh-text);
+}
+
+.mesDefectHistoryPage .mesDhDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--dh-muted);
+  line-height: 1.55;
+  max-width: 720px;
+}
+
+.mesDefectHistoryPage .mesDhHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mesDefectHistoryPage .mesDhSummaryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--dh-radius-sm);
+  border: 1px solid var(--dh-border-strong);
+  background: var(--dh-surface2);
+  color: var(--dh-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesDefectHistoryPage .mesDhSummaryBadge--accent {
+  border-color: rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--dh-accent);
+}
+
+.mesDefectHistoryPage .mesDhSummaryBadge--danger {
+  border-color: rgba(232, 120, 120, 0.4);
+  background: var(--dh-danger-bg);
+  color: var(--dh-danger);
+}
+
+.mesDefectHistoryPage .mesDhBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--dh-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.mesDefectHistoryPage .mesDhBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesDefectHistoryPage .mesDhBtn--secondary {
+  background: var(--dh-surface2);
+  color: var(--dh-text);
+  border-color: var(--dh-border-strong);
+}
+
+.mesDefectHistoryPage .mesDhTopRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mesDefectHistoryPage .mesDhTabs {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: var(--dh-radius-sm);
+  background: var(--dh-surface);
+  border: 1px solid var(--dh-border);
+}
+
+.mesDefectHistoryPage .mesDhTab {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--dh-muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mesDefectHistoryPage .mesDhTab--active {
+  background: linear-gradient(180deg, #f0d060 0%, var(--dh-accent) 100%);
+  color: var(--dh-accent-text);
+}
+
+.mesDefectHistoryPage .mesDhFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--dh-radius);
+  background: var(--dh-surface);
+  border: 1px solid var(--dh-border);
+}
+
+.mesDefectHistoryPage .mesDhField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesDefectHistoryPage .mesDhField--search {
+  flex: 1 1 220px;
+}
+
+.mesDefectHistoryPage .mesDhField--select {
+  flex: 0 1 160px;
+  min-width: 130px;
+}
+
+.mesDefectHistoryPage .mesDhFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dh-muted);
+}
+
+.mesDefectHistoryPage .mesDhInputWrap {
+  position: relative;
+}
+
+.mesDefectHistoryPage .mesDhInputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--dh-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesDefectHistoryPage .mesDhInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesDefectHistoryPage .mesDhInput,
+.mesDefectHistoryPage .mesDhSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--dh-radius-sm);
+  border: 1px solid var(--dh-border-strong);
+  background: var(--dh-surface2);
+  color: var(--dh-text);
+  font-size: 13px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.mesDefectHistoryPage .mesDhInput--search {
+  padding-left: 34px;
+}
+
+.mesDefectHistoryPage .mesDhFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesDefectHistoryPage .mesDhBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--dh-accent) 100%);
+  color: var(--dh-accent-text);
+  border-color: #a8841c;
+}
+
+.mesDefectHistoryPage .mesDhTableCard {
+  border-radius: var(--dh-radius);
+  background: var(--dh-surface);
+  border: 1px solid var(--dh-border);
+  overflow: hidden;
+}
+
+.mesDefectHistoryPage .mesDhTableViewport {
+  overflow-x: auto;
+}
+
+.mesDefectHistoryPage .mesDhTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesDefectHistoryPage .mesDhTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dh-muted);
+  background: var(--dh-surface2);
+  border-bottom: 1px solid var(--dh-border);
+  white-space: nowrap;
+}
+
+.mesDefectHistoryPage .mesDhTable td {
+  padding: 12px 14px;
+  color: var(--dh-text);
+  border-bottom: 1px solid var(--dh-border);
+  vertical-align: middle;
+}
+
+.mesDefectHistoryPage .mesDhTable tbody tr {
+  transition: background 0.1s;
+}
+
+.mesDefectHistoryPage .mesDhTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesDefectHistoryPage .mesDhTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesDefectHistoryPage .mesDhTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesDefectHistoryPage .mesDhProductCell {
+  max-width: 220px;
+  line-height: 1.4;
+}
+
+.mesDefectHistoryPage .mesDhProductName {
+  font-weight: 600;
+}
+
+.mesDefectHistoryPage .mesDhLotPill {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(91, 164, 232, 0.1);
+  border: 1px solid rgba(91, 164, 232, 0.28);
+  color: var(--dh-info);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.mesDefectHistoryPage .mesDhDefectBadge {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--dh-danger-bg);
+  color: var(--dh-danger);
+  border: 1px solid rgba(232, 120, 120, 0.35);
+  white-space: nowrap;
+}
+
+.mesDefectHistoryPage .mesDhQtyCell {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--dh-danger);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.mesDefectHistoryPage .mesDhThQty {
+  text-align: right;
+}
+
+.mesDefectHistoryPage .mesDhWorkerCell {
+  font-weight: 600;
+}
+
+.mesDefectHistoryPage .mesDhCenterCell {
+  color: var(--dh-muted);
+  font-size: 12px;
+}
+
+.mesDefectHistoryPage .mesDhTimeCell {
+  color: var(--dh-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.mesDefectHistoryPage .mesDhRemarkCell {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--dh-muted);
+  font-size: 12px;
+}
+
+.mesDefectHistoryPage .mesDhTdMatLot {
+  min-width: 9rem;
+  max-width: 15rem;
+  vertical-align: top;
+}
+
+.mesDefectHistoryPage .mesDhMatLotCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  cursor: help;
+}
+
+.mesDefectHistoryPage .mesDhMatLotChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 3px 8px 3px 5px;
+  border-radius: 6px;
+  border: 1px solid var(--dh-border-strong);
+  background: var(--dh-surface2);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.mesDefectHistoryPage .mesDhMatLotOrd {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: rgba(232, 194, 74, 0.2);
+  color: var(--dh-accent);
+  font-size: 10px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mesDefectHistoryPage .mesDhMatLotNo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  color: var(--dh-text);
+  font-weight: 600;
+}
+
+.mesDefectHistoryPage .mesDhMatLotQty {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--dh-muted);
+}
+
+.mesDefectHistoryPage .mesDhMatLotQty::before {
+  content: '·';
+  margin-right: 4px;
+  opacity: 0.5;
+}
+
+.mesDefectHistoryPage .mesDhMatLotMore {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dh-accent);
+  padding: 0 4px;
+}
+
+.mesDefectHistoryPage .mesDhEmpty {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--dh-muted);
+  font-size: 14px;
+}
+
+.mesDefectHistoryPage .mesDhEmpty strong {
+  color: var(--dh-accent);
+}
+
+.mesDefectHistoryPage .mesDhPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--dh-border);
+  background: var(--dh-surface2);
+  font-size: 13px;
+  color: var(--dh-muted);
+}
+
+.mesDefectHistoryPage .mesDhPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesDefectHistoryPage .mesDhPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: 1px solid var(--dh-border-strong);
+  background: var(--dh-surface);
+  color: var(--dh-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesDefectHistoryPage .mesDhPagerBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mesDefectHistoryPage .mesDhPagerBtn--active {
+  background: rgba(232, 194, 74, 0.15);
+  border-color: rgba(232, 194, 74, 0.45);
+  color: var(--dh-accent);
+}
+
+/* —— 통계 탭 —— */
+.mesDefectHistoryPage .mesDhStatsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mesDefectHistoryPage .mesDhKpiRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mesDefectHistoryPage .mesDhKpiCard {
+  padding: 16px 18px;
+  border-radius: var(--dh-radius);
+  background: var(--dh-surface);
+  border: 1px solid var(--dh-border);
+}
+
+.mesDefectHistoryPage .mesDhKpiLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dh-muted);
+  margin-bottom: 6px;
+}
+
+.mesDefectHistoryPage .mesDhKpiValue {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--dh-text);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.mesDefectHistoryPage .mesDhKpiValue--danger {
+  color: var(--dh-danger);
+}
+
+.mesDefectHistoryPage .mesDhKpiSub {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dh-muted);
+}
+
+.mesDefectHistoryPage .mesDhKpiMeta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--dh-muted);
+}
+
+.mesDefectHistoryPage .mesDhChartGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mesDefectHistoryPage .mesDhChartCard {
+  padding: 16px 18px;
+  border-radius: var(--dh-radius);
+  background: var(--dh-surface);
+  border: 1px solid var(--dh-border);
+}
+
+.mesDefectHistoryPage .mesDhChartCard--wide {
+  grid-column: 1 / -1;
+}
+
+.mesDefectHistoryPage .mesDhChartTitle {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--dh-text);
+}
+
+.mesDefectHistoryPage .mesDhTrendBars {
+  display: grid;
+  gap: 6px;
+  align-items: end;
+  height: 150px;
+}
+
+.mesDefectHistoryPage .mesDhTrendBarWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 100%;
+}
+
+.mesDefectHistoryPage .mesDhTrendBarLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dh-danger);
+  font-variant-numeric: tabular-nums;
+  min-height: 14px;
+}
+
+.mesDefectHistoryPage .mesDhTrendBarTrack {
+  flex: 1;
+  width: 100%;
+  max-width: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 4px 4px 0 0;
+  background: var(--dh-surface2);
+  border: 1px solid var(--dh-border);
+  overflow: hidden;
+}
+
+.mesDefectHistoryPage .mesDhTrendBarFill {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, #e87878 0%, #c45c5c 100%);
+  min-height: 2px;
+}
+
+.mesDefectHistoryPage .mesDhTrendBarTick {
+  font-size: 10px;
+  color: var(--dh-muted);
+  font-family: var(--mono, ui-monospace, monospace);
+}
+
+.mesDefectHistoryPage .mesDhHBarChart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesDefectHistoryPage .mesDhHBarRow {
+  display: grid;
+  grid-template-columns: minmax(80px, 30%) 1fr auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.mesDefectHistoryPage .mesDhHBarLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dh-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesDefectHistoryPage .mesDhHBarTrack {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--dh-surface2);
+  overflow: hidden;
+  border: 1px solid var(--dh-border);
+}
+
+.mesDefectHistoryPage .mesDhHBarFill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #c45c5c 0%, #e87878 100%);
+  min-width: 2px;
+}
+
+.mesDefectHistoryPage .mesDhHBarVal {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--dh-danger);
+  min-width: 2.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.mesDefectHistoryPage .mesDhEmptyChart {
+  padding: 32px 8px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--dh-muted);
+}
+
+@media (max-width: 960px) {
+  .mesDefectHistoryPage .mesDhKpiRow,
+  .mesDefectHistoryPage .mesDhChartGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesDefectHistoryPage .mesDhChartCard--wide {
+    grid-column: auto;
+  }
+
+  .mesDefectHistoryPage .mesDhFilterActions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

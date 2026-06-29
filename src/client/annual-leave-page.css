@@ -1,0 +1,916 @@
+.mesAlPage {
+  --al-green: #3dba72;
+  --al-green-soft: rgba(61, 186, 114, 0.12);
+  --al-orange: #f0a030;
+  --al-orange-soft: rgba(240, 160, 48, 0.15);
+  --al-red: #e85d5d;
+  --al-red-soft: rgba(232, 93, 93, 0.12);
+  --al-muted: #6b7280;
+  --al-border: #e5e7eb;
+  --al-card: #ffffff;
+  --al-bg: #f3f4f6;
+  --al-text: #111827;
+  color: var(--al-text);
+}
+
+[data-theme='dark'] .mesAlPage {
+  --al-muted: #9aa3b2;
+  --al-border: rgba(255, 255, 255, 0.12);
+  --al-card: #161a24;
+  --al-bg: #0f1218;
+  --al-text: #eef1f6;
+}
+
+.mesAlPage .mesAlTopBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.mesAlPage .mesAlTopTitle { margin: 0; font-size: 28px; font-weight: 800; }
+.mesAlPage .mesAlTopSub { margin: 4px 0 0; font-size: 13px; color: var(--al-muted); }
+.mesAlPage .mesAlTopClock { text-align: right; }
+.mesAlPage .mesAlTopDate { font-size: 13px; color: var(--al-muted); }
+.mesAlPage .mesAlTopTime {
+  font-size: 32px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.mesAlPage .mesAlSummaryRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 0;
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--al-border);
+  background: var(--al-card);
+}
+
+.mesAlPage .mesAlSummaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 20px;
+  border-right: 1px solid var(--al-border);
+  flex: 0 0 auto;
+}
+
+.mesAlPage .mesAlSummaryItem:first-child { padding-left: 4px; }
+
+.mesAlPage .mesAlSummaryItem span {
+  font-size: 11px;
+  color: var(--al-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mesAlPage .mesAlSummaryItem strong {
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.mesAlPage .mesAlSummaryItem--accent strong { color: var(--al-green); }
+
+.mesAlPage .mesAlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesAlPage .mesAlBtn--green {
+  background: var(--al-green);
+  color: #fff;
+  margin-left: auto;
+  padding: 10px 16px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.mesAlPage .mesAlBtn--ghost { background: var(--al-card); border-color: var(--al-border); color: inherit; }
+
+.mesAlPage .mesAlCalendarCard,
+.mesAlPage .mesAlListCard {
+  border: 1px solid var(--al-border);
+  border-radius: 12px;
+  background: var(--al-card);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.mesAlPage .mesAlCalendarToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--al-border);
+  background: var(--al-bg);
+}
+
+.mesAlPage .mesAlMonthPick {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesAlPage .mesAlMonthPick input {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--al-border);
+  background: var(--al-card);
+  color: inherit;
+}
+
+.mesAlPage .mesAlIconBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--al-border);
+  background: var(--al-card);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.mesAlPage .mesAlLegendPills { display: flex; gap: 6px; margin-left: auto; }
+
+.mesAlPage .mesAlLegendPill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.mesAlPage .mesAlLegendPill--pending { background: var(--al-orange-soft); color: #b45309; }
+.mesAlPage .mesAlLegendPill--approved { background: var(--al-green-soft); color: #15803d; }
+.mesAlPage .mesAlLegendPill--rejected { background: var(--al-red-soft); color: var(--al-red); }
+
+.mesAlPage .mesAlCalendarBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  min-height: 420px;
+}
+
+@media (max-width: 900px) {
+  .mesAlPage .mesAlCalendarBody { grid-template-columns: 1fr; }
+}
+
+.mesAlPage .mesAlCalendarMain { border-right: 1px solid var(--al-border); }
+
+.mesAlPage .mesAlCalGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.mesAlPage .mesAlCalDow {
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--al-muted);
+  background: var(--al-bg);
+  border-bottom: 1px solid var(--al-border);
+}
+
+.mesAlPage .mesAlCalCell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 96px;
+  padding: 6px 8px 8px;
+  border: none;
+  border-right: 1px solid var(--al-border);
+  border-bottom: 1px solid var(--al-border);
+  background: var(--al-card);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.mesAlPage .mesAlCalCell:nth-child(7n) { border-right: none; }
+.mesAlPage .mesAlCalCell--empty { background: var(--al-bg); cursor: default; }
+.mesAlPage .mesAlCalCell--selected { background: var(--al-green-soft); outline: 2px solid var(--al-green); outline-offset: -2px; }
+
+.mesAlPage .mesAlCalDayNum {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  z-index: 1;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  color: var(--al-text);
+}
+
+.mesAlPage .mesAlCalCell--selected .mesAlCalDayNum { color: #15803d; }
+
+.mesAlPage .mesAlCalBadges {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 22px;
+  flex: 1;
+  min-height: 0;
+}
+
+.mesAlPage .mesAlCalBadge {
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesAlPage .mesAlCalBadge--PENDING { background: var(--al-orange-soft); color: #b45309; }
+.mesAlPage .mesAlCalBadge--APPROVED { background: var(--al-green-soft); color: #15803d; }
+.mesAlPage .mesAlCalBadge--REJECTED { background: var(--al-red-soft); color: var(--al-red); }
+
+.mesAlPage .mesAlDaySide { padding: 14px; background: var(--al-bg); }
+.mesAlPage .mesAlDaySideTitle { margin: 0 0 12px; font-size: 14px; font-weight: 800; }
+.mesAlPage .mesAlDaySideEmpty { font-size: 13px; color: var(--al-muted); }
+.mesAlPage .mesAlDaySideCard {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--al-border);
+  background: var(--al-card);
+  margin-bottom: 10px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mesAlPage .mesAlDaySideCard:hover {
+  border-color: rgba(61, 186, 114, 0.55);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.mesAlPage .mesAlDaySideCard:focus-visible {
+  outline: 2px solid var(--al-green);
+  outline-offset: 2px;
+}
+
+.mesAlPage .mesAlDaySideCardHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.mesAlPage .mesAlDaySidePeriod { margin: 0 0 6px; font-size: 12px; line-height: 1.45; }
+.mesAlPage .mesAlDaySideReason { margin: 0; font-size: 12px; color: var(--al-muted); }
+.mesAlPage .mesAlRejectReason {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--al-red);
+  word-break: break-word;
+}
+.mesAlPage .mesAlDaySideCard .mesAlRejectReason { margin: 0 0 8px; }
+
+.mesAlPage .mesAlLinkBtn {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--al-green);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.mesAlPage .mesAlListToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--al-border);
+  background: var(--al-bg);
+}
+
+.mesAlPage .mesAlInput {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--al-border);
+  background: var(--al-card);
+  color: inherit;
+  font-size: 13px;
+}
+
+.mesAlPage .mesAlInput--search { flex: 1 1 240px; }
+.mesAlPage .mesAlTable { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.mesAlPage .mesAlTable th,
+.mesAlPage .mesAlTable td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--al-border);
+  vertical-align: middle;
+}
+
+.mesAlPage .mesAlTable th {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--al-muted);
+  background: var(--al-bg);
+}
+
+.mesAlPage .mesAlTableEmpty { text-align: center; color: var(--al-muted); padding: 32px !important; }
+.mesAlPage .mesAlTdName { font-weight: 800; }
+.mesAlPage .mesAlTdSub { font-size: 12px; color: var(--al-muted); }
+.mesAlPage .mesAlTdPeriod { white-space: pre-line; font-size: 12px; line-height: 1.45; }
+
+.mesAlPage .mesAlStatusBadge {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.mesAlPage .mesAlStatusBadge--PENDING { background: var(--al-orange-soft); color: #b45309; }
+.mesAlPage .mesAlStatusBadge--APPROVED { background: var(--al-green-soft); color: #15803d; }
+.mesAlPage .mesAlStatusBadge--REJECTED { background: var(--al-red-soft); color: var(--al-red); }
+
+.mesAlPage .mesAlApprovalCell { font-size: 12px; white-space: nowrap; }
+.mesAlPage .mesAlY { color: var(--al-green); }
+.mesAlPage .mesAlN { color: var(--al-red); }
+.mesAlPage .mesAlDash { color: var(--al-muted); font-weight: 400; }
+
+.mesAlPage .mesAlRowActions { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.mesAlPage .mesAlActionBtn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--al-border);
+  background: var(--al-bg);
+  color: var(--al-text);
+}
+
+.mesAlPage .mesAlActionBtn--approve {
+  background: var(--al-bg);
+  color: var(--al-text);
+  border-color: var(--al-border);
+}
+
+.mesAlPage .mesAlActionBtn--ghost {
+  background: var(--al-card);
+  color: var(--al-muted);
+  border-color: var(--al-border);
+}
+
+.mesAlPage .mesAlActionBtn--reject {
+  background: var(--al-red-soft);
+  color: var(--al-red);
+  border-color: rgba(232, 93, 93, 0.45);
+}
+
+.mesAlPage .mesAlActionBtn--view {
+  background: var(--al-green);
+  color: #fff;
+  border-color: #2a9d5c;
+}
+
+.mesAlPage .mesAlActionBtn:hover {
+  filter: brightness(1.06);
+}
+
+.mesAlPage .mesAlActionBtn--view:hover {
+  filter: brightness(1.08);
+}
+
+.mesAlPage .mesAlPager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--al-muted);
+}
+
+.mesAlPage .mesAlLoginNotice {
+  padding: 48px 24px;
+  border-radius: 12px;
+  border: 1px dashed var(--al-border);
+  text-align: center;
+  color: var(--al-muted);
+  background: var(--al-card);
+}
+
+.mesAlModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.mesAlModalRoot > * { pointer-events: auto; }
+
+.mesAlModalRoot .mesModalBackdrop {
+  position: fixed;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.mesAlFormDialog {
+  position: relative;
+  width: min(480px, 100%);
+  border-radius: 12px;
+  border: 1px solid var(--al-border);
+  background: var(--al-card);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.mesAlFormHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--al-border);
+}
+
+.mesAlFormHead h2 { margin: 0; font-size: 18px; font-weight: 800; }
+
+.mesAlFormBody {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mesAlFormRow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.mesAlFormField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--al-muted);
+}
+
+.mesAlFormField .mesAlInput { width: 100%; box-sizing: border-box; }
+
+.mesAlFormFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--al-border);
+}
+
+.mesAlModalClose {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--al-muted);
+}
+
+.mesAlModalRoot--doc {
+  align-items: flex-start;
+  padding: 24px 16px 32px;
+  overflow-y: auto;
+}
+
+.mesAlDocDialog {
+  position: relative;
+  width: fit-content;
+  max-width: calc(100vw - 32px);
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #e5e7eb;
+  color: #111;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+  margin-bottom: 32px;
+}
+
+.mesAlDocHeadBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #d1d5db;
+  background: #f3f4f6;
+}
+
+.mesAlDocHeadTitle { margin: 0; font-size: 15px; font-weight: 800; color: #111; }
+
+.mesAlDocHeadActions {
+  display: flex;
+  gap: 8px;
+}
+
+.mesAlDocPrintBtn,
+.mesAlDocCloseBtn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+}
+
+.mesAlDocPrintBtn {
+  background: #3dba72;
+  color: #fff;
+  border-color: #2a9d5c;
+}
+
+/* —— A4 고정 양식 (210 × 297 mm) —— */
+.mesAlDocSheet {
+  width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  margin: 16px;
+  padding: 15mm 15mm 22mm;
+  background: #fff;
+  color: #111;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  font-size: 11pt;
+  line-height: 1.5;
+  position: relative;
+}
+
+.mesAlDocHeaderTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-bottom: 9mm;
+  font-size: 10.5pt;
+}
+
+.mesAlDocHeaderTable__titleCol {
+  width: auto;
+}
+
+.mesAlDocHeaderTable__labelCol {
+  width: 8mm;
+}
+
+.mesAlDocHeaderTable__signCol {
+  width: 18mm;
+}
+
+.mesAlDocHeaderTable th,
+.mesAlDocHeaderTable td {
+  border: 1px solid #222;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+}
+
+.mesAlDocTitleCell {
+  height: 25mm;
+  background: #fff;
+}
+
+.mesAlDocFormTitle {
+  margin: 0;
+  text-align: center;
+  font-size: 22pt;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  line-height: 1.2;
+}
+
+.mesAlDocApprovalLabel {
+  background: #f0f0f0;
+  font-weight: 700;
+  font-size: 10.5pt;
+  letter-spacing: 0.35em;
+  padding: 2mm 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.mesAlDocHeaderTable th {
+  background: #f0f0f0;
+  font-weight: 700;
+  font-size: 10.5pt;
+  padding: 2mm 1mm;
+  height: 7mm;
+}
+
+.mesAlDocSignCell {
+  width: 18mm;
+  height: 18mm;
+  max-width: 18mm;
+  box-sizing: border-box;
+  padding: 1mm;
+  background: #fff;
+  overflow: hidden;
+}
+
+.mesAlDocFormTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 10.5pt;
+  margin-bottom: 9mm;
+}
+
+.mesAlDocFormTable th,
+.mesAlDocFormTable td {
+  border: 1px solid #222;
+  padding: 3mm 3.5mm;
+  vertical-align: middle;
+}
+
+.mesAlDocFormTable th {
+  width: 22mm;
+  background: #f5f5f5;
+  font-weight: 700;
+  font-size: 11pt;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mesAlDocFormTable td {
+  min-height: 9mm;
+}
+
+.mesAlDocFormTable__detail th {
+  vertical-align: top;
+  padding-top: 4mm;
+}
+
+.mesAlDocFormTable__detail td {
+  height: 48mm;
+  vertical-align: top;
+  padding-top: 4mm;
+  line-height: 1.6;
+}
+
+.mesAlDocRejectBox {
+  border: 1px solid #b91c1c;
+  background: #fef2f2;
+  padding: 4mm 5mm;
+  margin-bottom: 9mm;
+  font-size: 10pt;
+  line-height: 1.55;
+  color: #7f1d1d;
+}
+
+.mesAlDocRejectBox strong {
+  display: block;
+  margin-bottom: 2mm;
+  font-size: 10.5pt;
+  color: #b91c1c;
+}
+
+.mesAlDocRejectBox p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mesAlDocSignName,
+.mesAlDocApplicantSign {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.2;
+  letter-spacing: normal;
+  display: inline-block;
+  transform: none;
+  filter: none;
+}
+
+.mesAlDocSignName {
+  font-size: 11pt;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesAlDocSignReject {
+  font-family: 'Malgun Gothic', sans-serif;
+  font-size: 9pt;
+  font-weight: 800;
+  color: #b91c1c;
+}
+
+.mesAlDocFooterBlock {
+  position: relative;
+  text-align: center;
+  margin: 12mm 0 14mm;
+  min-height: 38mm;
+}
+
+.mesAlDocClosing {
+  margin: 0 0 6mm;
+  font-size: 10.5pt;
+}
+
+.mesAlDocDateLine {
+  margin: 0 0 10mm;
+  font-size: 10.5pt;
+}
+
+.mesAlDocApplicantLine {
+  margin: 0;
+  font-size: 10.5pt;
+  position: relative;
+  z-index: 1;
+  font-family: 'Malgun Gothic', sans-serif;
+}
+
+.mesAlDocApplicantSignWrap {
+  position: relative;
+  display: inline-block;
+  margin-left: 6mm;
+  vertical-align: baseline;
+}
+
+.mesAlDocApplicantSign {
+  position: relative;
+  z-index: 2;
+  margin-left: 0;
+  font-size: 11pt;
+  vertical-align: baseline;
+}
+
+.mesAlDocApplicantSeal {
+  position: absolute;
+  left: 38%;
+  top: 0.12em;
+  z-index: 1;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  font-size: 10pt;
+  font-weight: 400;
+  color: #444;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.mesAlDocFieldInput {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+
+.mesAlDocFieldInput:focus {
+  outline: 1px dashed #999;
+  outline-offset: 1px;
+}
+
+.mesAlDocFieldInput--select {
+  cursor: pointer;
+}
+
+.mesAlDocFieldInput--textarea {
+  display: block;
+  width: 100%;
+  min-height: 38mm;
+  resize: vertical;
+  line-height: 1.6;
+  font-family: inherit;
+}
+
+.mesAlDocPeriodEdit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2mm 3mm;
+}
+
+.mesAlDocFieldInput--date {
+  width: auto;
+  min-width: 36mm;
+}
+
+.mesAlDocFieldInput--days {
+  width: 12mm;
+  text-align: center;
+}
+
+.mesAlDocPeriodSep {
+  white-space: nowrap;
+}
+
+.mesAlDocWatermark {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -50%);
+  font-size: 26pt;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.mesAlDocNotes {
+  border: 1px solid #222;
+  padding: 4mm 5mm 5mm;
+  font-size: 8.5pt;
+  line-height: 1.6;
+  color: #444;
+  margin-bottom: 6mm;
+}
+
+.mesAlDocNotes strong {
+  display: block;
+  margin-bottom: 2mm;
+  font-size: 9pt;
+}
+
+.mesAlDocNotes ol {
+  margin: 0;
+  padding-left: 5mm;
+}
+
+.mesAlDocNotes li + li {
+  margin-top: 1.5mm;
+}
+
+/* —— 인쇄: A4 1장 —— */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .mesAlDocSheet,
+  .mesAlDocSheet * {
+    visibility: visible;
+  }
+
+  .mesAlModalRoot--doc {
+    position: absolute;
+    inset: 0;
+    padding: 0;
+    margin: 0;
+    background: #fff;
+    overflow: visible;
+  }
+
+  .mesAlNoPrint {
+    display: none !important;
+  }
+
+  .mesAlDocDialog {
+    border: none;
+    box-shadow: none;
+    background: #fff;
+    max-width: none;
+    width: auto;
+    margin: 0;
+  }
+
+  .mesAlDocSheet {
+    margin: 0;
+    box-shadow: none;
+    page-break-after: avoid;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}
+

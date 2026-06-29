@@ -1,0 +1,891 @@
+/* MBOM 공정 — 사이드 품목 + 메인 공정 흐름 (v2) */
+
+.mesMbomPage {
+  --mb-bg: #0c0e14;
+  --mb-surface: #12151e;
+  --mb-surface2: #181c28;
+  --mb-border: rgba(255, 255, 255, 0.08);
+  --mb-border-strong: rgba(255, 255, 255, 0.14);
+  --mb-text: #eef1f6;
+  --mb-muted: #9aa3b2;
+  --mb-accent: #e8c24a;
+  --mb-accent-text: #1a1406;
+  --mb-ok: #3dba72;
+  --mb-danger: #e85d5d;
+  --mb-info: #5ba4e8;
+  --mb-out: #a78bfa;
+  --mb-radius: 12px;
+  --mb-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesMbomPage {
+  --mb-bg: #f4f5f8;
+  --mb-surface: #ffffff;
+  --mb-surface2: #f3f4f8;
+  --mb-border: rgba(0, 0, 0, 0.08);
+  --mb-border-strong: rgba(0, 0, 0, 0.12);
+  --mb-text: #141820;
+  --mb-muted: #5f6775;
+  --mb-accent: #c9a227;
+}
+
+.mesMbomPage .mesMbHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mesMbomPage .mesMbTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--mb-text);
+}
+
+.mesMbomPage .mesMbDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--mb-muted);
+  line-height: 1.55;
+  max-width: 640px;
+}
+
+.mesMbomPage .mesMbHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mesMbomPage .mesMbCountBadge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: var(--mb-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--mb-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesMbomPage .mesMbBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--mb-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.mesMbomPage .mesMbBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesMbomPage .mesMbBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--mb-accent) 100%);
+  color: var(--mb-accent-text);
+  border-color: #a8841c;
+}
+
+.mesMbomPage .mesMbBtn--secondary {
+  background: var(--mb-surface2);
+  color: var(--mb-text);
+  border-color: var(--mb-border-strong);
+}
+
+.mesMbomPage .mesMbBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* —— 분할 레이아웃 —— */
+.mesMbomPage .mesMbSplit {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  min-height: 520px;
+}
+
+.mesMbomPage .mesMbSidePanel,
+.mesMbomPage .mesMbMainPanel {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--mb-radius);
+  background: var(--mb-surface);
+  border: 1px solid var(--mb-border);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.mesMbomPage .mesMbSideHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--mb-border);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mb-text);
+}
+
+.mesMbomPage .mesMbSideHead svg {
+  width: 18px;
+  height: 18px;
+  color: var(--mb-accent);
+}
+
+.mesMbomPage .mesMbSideTools {
+  padding: 12px;
+  border-bottom: 1px solid var(--mb-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesMbomPage .mesMbSearchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mesMbomPage .mesMbSearchIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--mb-muted);
+  display: flex;
+  pointer-events: none;
+}
+
+.mesMbomPage .mesMbSearchIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesMbomPage .mesMbInput,
+.mesMbomPage .mesMbSelect {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border-radius: var(--mb-radius-sm);
+  border: 1px solid var(--mb-border-strong);
+  background: var(--mb-surface2);
+  color: var(--mb-text);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.mesMbomPage .mesMbInput--search {
+  padding-left: 34px;
+}
+
+.mesMbomPage .mesMbResetBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: var(--mb-radius-sm);
+  border: 1px solid var(--mb-border-strong);
+  background: var(--mb-surface2);
+  color: var(--mb-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesMbomPage .mesMbResetBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.mesMbomPage .mesMbSideBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  min-height: 0;
+}
+
+.mesMbomPage .mesMbSideEmpty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--mb-muted);
+  font-size: 13px;
+}
+
+.mesMbomPage .mesMbProductRow {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--mb-radius-sm);
+  border: 1px solid var(--mb-border);
+  background: var(--mb-surface2);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.mesMbomPage .mesMbProductRow:hover {
+  border-color: rgba(232, 194, 74, 0.35);
+}
+
+.mesMbomPage .mesMbProductRow--active {
+  border-color: var(--mb-accent);
+  background: rgba(232, 194, 74, 0.08);
+  box-shadow: 0 0 0 1px rgba(232, 194, 74, 0.25);
+}
+
+.mesMbomPage .mesMbProductRowTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.mesMbomPage .mesMbProductCode {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mb-accent);
+}
+
+.mesMbomPage .mesMbProcessCountBadge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--mb-muted);
+  border: 1px solid var(--mb-border-strong);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.mesMbomPage .mesMbProductRow--active .mesMbProcessCountBadge {
+  color: var(--mb-accent);
+  border-color: rgba(232, 194, 74, 0.35);
+}
+
+.mesMbomPage .mesMbProductName {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mb-text);
+  line-height: 1.35;
+}
+
+.mesMbomPage .mesMbSidePager {
+  padding: 10px 12px;
+  border-top: 1px solid var(--mb-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--mb-muted);
+  flex-wrap: wrap;
+}
+
+.mesMbomPage .mesMbPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesMbomPage .mesMbPagerBtn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: 1px solid var(--mb-border-strong);
+  background: var(--mb-surface2);
+  color: var(--mb-text);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mesMbomPage .mesMbPagerBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* —— 메인 패널 —— */
+.mesMbomPage .mesMbMainHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--mb-border);
+}
+
+.mesMbomPage .mesMbMainTitleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mesMbomPage .mesMbMainTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mb-text);
+}
+
+.mesMbomPage .mesMbMainTitle svg {
+  width: 18px;
+  height: 18px;
+  color: var(--mb-accent);
+}
+
+.mesMbomPage .mesMbContextChip {
+  display: inline-block;
+  max-width: 280px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 194, 74, 0.4);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--mb-accent);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesMbomPage .mesMbMainToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--mb-border);
+}
+
+.mesMbomPage .mesMbMainToolbar .mesMbSearchWrap {
+  flex: 1 1 200px;
+}
+
+.mesMbomPage .mesMbMainMeta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mb-muted);
+  white-space: nowrap;
+}
+
+.mesMbomPage .mesMbMainBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  min-height: 0;
+}
+
+/* —— 공정 흐름 카드 —— */
+.mesMbomPage .mesMbFlow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.mesMbomPage .mesMbFlowStep {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--mb-radius-sm);
+  border: 1px solid var(--mb-border);
+  background: var(--mb-surface2);
+  min-height: 0;
+}
+
+.mesMbomPage .mesMbFlowStep--inactive {
+  opacity: 0.55;
+}
+
+.mesMbomPage .mesMbFlowStepTop {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.mesMbomPage .mesMbFlowOrd {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mb-accent-text);
+  background: linear-gradient(180deg, #f0d060 0%, var(--mb-accent) 100%);
+  border: 1px solid #a8841c;
+  flex-shrink: 0;
+}
+
+.mesMbomPage .mesMbFlowBody {
+  min-width: 0;
+  flex: 1;
+}
+
+.mesMbomPage .mesMbFlowCode {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--mb-muted);
+  margin-bottom: 2px;
+}
+
+.mesMbomPage .mesMbFlowName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mb-text);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mesMbomPage .mesMbFlowMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.mesMbomPage .mesMbTag {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.mesMbomPage .mesMbTag--wc {
+  color: var(--mb-info);
+  background: rgba(91, 164, 232, 0.12);
+  border-color: rgba(91, 164, 232, 0.3);
+}
+
+.mesMbomPage .mesMbTag--out {
+  color: var(--mb-out);
+  background: rgba(167, 139, 250, 0.12);
+  border-color: rgba(167, 139, 250, 0.35);
+}
+
+.mesMbomPage .mesMbTag--use-y {
+  color: var(--mb-ok);
+  background: rgba(61, 186, 114, 0.12);
+  border-color: rgba(61, 186, 114, 0.35);
+}
+
+.mesMbomPage .mesMbTag--use-n {
+  color: var(--mb-muted);
+  background: rgba(154, 163, 178, 0.1);
+  border-color: var(--mb-border-strong);
+}
+
+.mesMbomPage .mesMbFlowStandard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 8px;
+  padding: 8px 10px;
+  border-radius: var(--mb-radius-sm);
+  background: rgba(232, 194, 74, 0.1);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+}
+
+.mesMbomPage .mesMbFlowStandard--missing {
+  background: rgba(154, 163, 178, 0.08);
+  border-color: var(--mb-border-strong);
+}
+
+.mesMbomPage .mesMbFlowStandardLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mb-accent-text);
+}
+
+.mesMbomPage .mesMbFlowStandard--missing .mesMbFlowStandardLabel {
+  color: var(--mb-muted);
+}
+
+.mesMbomPage .mesMbFlowStandardValue {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mb-text);
+}
+
+.mesMbomPage .mesMbFlowStandard--missing .mesMbFlowStandardValue {
+  font-weight: 600;
+  color: var(--mb-muted);
+}
+
+.mesMbomPage .mesMbFlowRemark {
+  flex: 1 1 100%;
+  font-size: 11px;
+  color: var(--mb-muted);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mesMbomPage .mesMbFlowActions {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  flex-shrink: 0;
+  align-self: start;
+}
+
+.mesMbomPage .mesMbActionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--mb-radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--mb-border-strong);
+  background: var(--mb-surface);
+  color: var(--mb-text);
+  white-space: nowrap;
+}
+
+.mesMbomPage .mesMbActionBtn--danger {
+  color: var(--mb-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+}
+
+.mesMbomPage .mesMbEmpty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--mb-muted);
+  font-size: 14px;
+  border-radius: var(--mb-radius-sm);
+  border: 1px dashed var(--mb-border-strong);
+}
+
+.mesMbomPage .mesMbEmpty strong {
+  color: var(--mb-accent);
+}
+
+.mesMbomPage .mesMbEmpty--inline {
+  grid-column: 1 / -1;
+  border: none;
+  background: transparent;
+}
+
+.mesMbomPage .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+}
+
+/* —— 모달 —— */
+.mesMbModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mesMbModalRoot > * {
+  pointer-events: auto;
+}
+
+.mesMbModalRoot .mesModalBackdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.mesMbModalDialog {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 96vw);
+  max-height: min(92vh, 720px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesMbModalDialog {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.mesMbModalHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mesMbModalHeadTitle {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesMbModalHeadIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(232, 194, 74, 0.12);
+  color: #e8c24a;
+  flex-shrink: 0;
+}
+
+.mesMbModalHeadIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.mesMbModalTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesMbModalSub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #9aa3b2;
+  line-height: 1.4;
+}
+
+.mesMbModalClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: #9aa3b2;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mesMbModalClose svg {
+  width: 18px;
+  height: 18px;
+}
+
+.mesMbModalBody {
+  padding: 20px 22px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mesMbModalSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme='light'] .mesMbModalSection {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesMbModalSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesMbModalSectionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 194, 74, 0.15);
+  color: #e8c24a;
+}
+
+.mesMbModalSectionIcon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.mesMbModalSectionHint {
+  margin: -4px 0 0;
+  font-size: 12px;
+  color: #9aa3b2;
+  line-height: 1.45;
+}
+
+.mesMbModalTextarea {
+  min-height: 72px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.mesMbModalFieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+.mesMbModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mesMbModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesMbModalField--wide {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 520px) {
+  .mesMbModalField--wide {
+    grid-column: span 1;
+  }
+}
+
+.mesMbModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9aa3b2;
+}
+
+.mesMbModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0a0d14;
+  color: #eef1f6;
+  font-size: 14px;
+  font-family: inherit;
+  min-height: 42px;
+}
+
+.mesMbModalFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesMbModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesMbModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesMbModalBtn--cancel {
+  background: #181c28;
+  color: #eef1f6;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mesMbModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, #e8c24a 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesMbModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 960px) {
+  .mesMbomPage .mesMbSplit {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .mesMbomPage .mesMbSidePanel {
+    max-height: 320px;
+  }
+
+  .mesMbomPage .mesMbFlow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .mesMbModalFieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesMbModalField--wide {
+    grid-column: span 1;
+  }
+}

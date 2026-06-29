@@ -1,0 +1,864 @@
+/* 작업자 페이지 — 목록 탭 v2 */
+
+.mesWorkersPage {
+  --wr-bg: #0c0e14;
+  --wr-surface: #12151e;
+  --wr-surface2: #181c28;
+  --wr-border: rgba(255, 255, 255, 0.08);
+  --wr-border-strong: rgba(255, 255, 255, 0.14);
+  --wr-text: #eef1f6;
+  --wr-muted: #9aa3b2;
+  --wr-accent: #e8c24a;
+  --wr-accent-text: #1a1406;
+  --wr-ok: #3dba72;
+  --wr-danger: #e85d5d;
+  --wr-info: #5ba4e8;
+  --wr-radius: 12px;
+  --wr-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesWorkersPage {
+  --wr-bg: #f4f5f8;
+  --wr-surface: #ffffff;
+  --wr-surface2: #f3f4f8;
+  --wr-border: rgba(0, 0, 0, 0.08);
+  --wr-border-strong: rgba(0, 0, 0, 0.12);
+  --wr-text: #141820;
+  --wr-muted: #5f6775;
+  --wr-accent: #c9a227;
+}
+
+.mesWorkersPage .mesWrHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mesWorkersPage .mesWrTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--wr-text);
+}
+
+.mesWorkersPage .mesWrDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--wr-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesWorkersPage .mesWrTopRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.mesWorkersPage .mesWrTabs {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: var(--wr-radius-sm);
+  background: var(--wr-surface);
+  border: 1px solid var(--wr-border);
+}
+
+.mesWorkersPage .mesWrTab {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--wr-muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mesWorkersPage .mesWrTab--active {
+  background: rgba(232, 194, 74, 0.14);
+  color: var(--wr-accent);
+  box-shadow: inset 0 0 0 1px rgba(232, 194, 74, 0.35);
+}
+
+.mesWorkersPage .mesWrTopActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesWorkersPage .mesWrCountBadge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: var(--wr-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--wr-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesWorkersPage .mesWrBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--wr-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.mesWorkersPage .mesWrBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWorkersPage .mesWrBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--wr-accent) 100%);
+  color: var(--wr-accent-text);
+  border-color: #a8841c;
+}
+
+.mesWorkersPage .mesWrBtn--secondary {
+  background: var(--wr-surface2);
+  color: var(--wr-text);
+  border-color: var(--wr-border-strong);
+}
+
+.mesWorkersPage .mesWrFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--wr-radius);
+  background: var(--wr-surface);
+  border: 1px solid var(--wr-border);
+}
+
+.mesWorkersPage .mesWrField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesWorkersPage .mesWrField--search {
+  flex: 1 1 240px;
+}
+
+.mesWorkersPage .mesWrField--select {
+  flex: 0 1 150px;
+  min-width: 130px;
+}
+
+.mesWorkersPage .mesWrFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wr-muted);
+}
+
+.mesWorkersPage .mesWrInputWrap {
+  position: relative;
+}
+
+.mesWorkersPage .mesWrInputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--wr-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesWorkersPage .mesWrInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWorkersPage .mesWrInput,
+.mesWorkersPage .mesWrSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--wr-radius-sm);
+  border: 1px solid var(--wr-border-strong);
+  background: var(--wr-surface2);
+  color: var(--wr-text);
+  font-size: 13px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.mesWorkersPage .mesWrInput--search {
+  padding-left: 34px;
+}
+
+.mesWorkersPage .mesWrFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesWorkersPage .mesWrTableCard {
+  border-radius: var(--wr-radius);
+  background: var(--wr-surface);
+  border: 1px solid var(--wr-border);
+  overflow: hidden;
+}
+
+.mesWorkersPage .mesWrTableViewport {
+  overflow-x: auto;
+}
+
+.mesWorkersPage .mesWrTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesWorkersPage .mesWrTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wr-muted);
+  background: var(--wr-surface2);
+  border-bottom: 1px solid var(--wr-border);
+  white-space: nowrap;
+}
+
+.mesWorkersPage .mesWrTable td {
+  padding: 12px 14px;
+  color: var(--wr-text);
+  border-bottom: 1px solid var(--wr-border);
+  vertical-align: middle;
+}
+
+.mesWorkersPage .mesWrTable tbody tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.mesWorkersPage .mesWrTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesWorkersPage .mesWrTable tbody tr.mesWrRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesWorkersPage .mesWrTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesWorkersPage .mesWrTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesWorkersPage .mesWrThActions,
+.mesWorkersPage .mesWrTdActions {
+  text-align: right;
+  width: 200px;
+}
+
+.mesWorkersPage .mesWrRowActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.mesWorkersPage .mesWrActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--wr-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--wr-border-strong);
+  background: var(--wr-surface2);
+  color: var(--wr-text);
+}
+
+.mesWorkersPage .mesWrActionBtn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.mesWorkersPage .mesWrActionBtn--danger {
+  color: var(--wr-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+}
+
+.mesWorkersPage .mesWrStatusBadge {
+  display: inline-flex;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  border: 1px solid transparent;
+}
+
+.mesWorkersPage .mesWrStatusBadge--active {
+  color: var(--wr-ok);
+  background: rgba(61, 186, 114, 0.12);
+  border-color: rgba(61, 186, 114, 0.35);
+}
+
+.mesWorkersPage .mesWrStatusBadge--inactive {
+  color: var(--wr-muted);
+  background: rgba(154, 163, 178, 0.1);
+  border-color: var(--wr-border-strong);
+}
+
+.mesWorkersPage .mesWrEmpty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--wr-muted);
+}
+
+.mesWorkersPage .mesWrPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--wr-border);
+  background: var(--wr-surface2);
+  font-size: 13px;
+  color: var(--wr-muted);
+}
+
+.mesWorkersPage .mesWrPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesWorkersPage .mesWrPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--wr-radius-sm);
+  border: 1px solid var(--wr-border-strong);
+  background: var(--wr-surface);
+  color: var(--wr-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesWorkersPage .mesWrPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesWorkersPage .mesWrPagerBtn--active {
+  background: var(--wr-accent);
+  color: var(--wr-accent-text);
+  border-color: #a8841c;
+}
+
+/* —— 작업자 등록/수정 모달 —— */
+.mesWrModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mesWrModalRoot > * {
+  pointer-events: auto;
+}
+
+.mesWrModalRoot .mesModalBackdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.mesWrModalDialog {
+  position: relative;
+  z-index: 1;
+  width: min(920px, 96vw);
+  max-height: min(92vh, 860px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesWrModalDialog {
+  background: #ffffff;
+}
+
+.mesWrModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesWrModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesWrModalHeadIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: #e8c24a;
+  flex-shrink: 0;
+}
+
+.mesWrModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesWrModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesWrModalSub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #9aa3b2;
+}
+
+.mesWrModalHeadBadges {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mesWrModalBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mesWrModalStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 10px;
+  background: #181c28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.mesWrModalStripItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+}
+
+.mesWrModalStripItem:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mesWrModalStripLabel {
+  font-size: 13px;
+  color: #9aa3b2;
+  font-weight: 600;
+}
+
+.mesWrModalStripVal {
+  font-size: 15px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesWrModalGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .mesWrModalGrid {
+    grid-template-columns: 1fr;
+  }
+  .mesWrModalStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesWrModalCard {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #181c28;
+  padding: 18px 20px;
+}
+
+.mesWrModalCardTitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #eef1f6;
+}
+
+.mesWrModalFieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+.mesWrModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesWrModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mesWrModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9aa3b2;
+}
+
+.mesWrModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0a0d14;
+  color: #eef1f6;
+  font-size: 14px;
+  font-family: inherit;
+  min-height: 42px;
+}
+
+.mesWrModalInfoList {
+  display: flex;
+  flex-direction: column;
+}
+
+.mesWrModalInfoRow {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+}
+
+.mesWrModalInfoRow:last-child {
+  border-bottom: none;
+}
+
+.mesWrModalInfoRow span {
+  color: #9aa3b2;
+  font-weight: 600;
+}
+
+.mesWrModalInfoRow strong {
+  color: #eef1f6;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.mesWrModalFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesWrModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesWrModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWrModalBtn--cancel {
+  background: #181c28;
+  color: #eef1f6;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mesWrModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, #e8c24a 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesWrModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* —— 작업자 통계 탭 —— */
+.mesWorkersPage .mesWrStatsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mesWorkersPage .mesWrStatsFilter {
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.mesWorkersPage .mesWrStatsFilterHint {
+  flex: 1 1 200px;
+  font-size: 13px;
+  color: var(--wr-muted);
+  padding-bottom: 2px;
+}
+
+.mesWorkersPage .mesWrStatsFilterCount {
+  color: var(--wr-accent);
+  font-weight: 700;
+}
+
+.mesWorkersPage .mesWrStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 960px) {
+  .mesWorkersPage .mesWrStatsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesWorkersPage .mesWrStatsCard {
+  border-radius: var(--wr-radius);
+  background: var(--wr-surface);
+  border: 1px solid var(--wr-border);
+  padding: 18px 20px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mesWorkersPage .mesWrStatsCard--table {
+  min-height: 280px;
+}
+
+.mesWorkersPage .mesWrStatsCardTitle {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--wr-text);
+  letter-spacing: -0.01em;
+}
+
+.mesWorkersPage .mesWrStatsBest {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: var(--wr-radius-sm);
+  background: rgba(232, 194, 74, 0.08);
+  border: 1px solid rgba(232, 194, 74, 0.22);
+  font-size: 12px;
+  color: var(--wr-muted);
+  line-height: 1.45;
+}
+
+.mesWorkersPage .mesWrStatsBest strong {
+  color: var(--wr-accent);
+  font-weight: 800;
+}
+
+.mesWorkersPage .mesWrBarChart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.mesWorkersPage .mesWrBarRow {
+  display: grid;
+  grid-template-columns: 22px minmax(64px, 24%) 1fr auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.mesWorkersPage .mesWrBarRow--best .mesWrBarLabel,
+.mesWorkersPage .mesWrBarRow--best .mesWrBarRank {
+  color: var(--wr-accent);
+  font-weight: 800;
+}
+
+.mesWorkersPage .mesWrBarRank {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--wr-muted);
+  text-align: center;
+}
+
+.mesWorkersPage .mesWrBarLabel {
+  font-size: 12px;
+  color: var(--wr-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesWorkersPage .mesWrBarTrack {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--wr-surface2);
+  border: 1px solid var(--wr-border);
+  overflow: hidden;
+}
+
+.mesWorkersPage .mesWrBarFill {
+  height: 100%;
+  border-radius: 999px;
+  min-width: 4px;
+  transition: width 0.2s ease;
+}
+
+.mesWorkersPage .mesWrBarFill--good {
+  background: linear-gradient(90deg, #2d8f57 0%, #4ecf8a 100%);
+  box-shadow: 0 0 10px rgba(78, 207, 138, 0.25);
+}
+
+.mesWorkersPage .mesWrBarFill--defect {
+  background: linear-gradient(90deg, #b84a4a 0%, #e87878 100%);
+  box-shadow: 0 0 10px rgba(232, 120, 120, 0.22);
+}
+
+.mesWorkersPage .mesWrBarFill--eff {
+  background: linear-gradient(90deg, #a8841c 0%, #e8c24a 100%);
+  box-shadow: 0 0 10px rgba(232, 194, 74, 0.25);
+}
+
+.mesWorkersPage .mesWrBarVal {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--wr-text);
+  min-width: 4.5rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.mesWorkersPage .mesWrStatsTableWrap {
+  flex: 1;
+  overflow: auto;
+  border-radius: var(--wr-radius-sm);
+  border: 1px solid var(--wr-border);
+}
+
+.mesWorkersPage .mesWrStatsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.mesWorkersPage .mesWrStatsTable th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--wr-muted);
+  background: var(--wr-surface2);
+  border-bottom: 1px solid var(--wr-border);
+  white-space: nowrap;
+}
+
+.mesWorkersPage .mesWrStatsTable td {
+  padding: 10px 12px;
+  color: var(--wr-text);
+  border-bottom: 1px solid var(--wr-border);
+  vertical-align: middle;
+}
+
+.mesWorkersPage .mesWrStatsTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesWorkersPage .mesWrStatsTableRow--top {
+  background: rgba(232, 194, 74, 0.06);
+}
+
+.mesWorkersPage .mesWrStatsTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesWorkersPage .mesWrStatsEmpty {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--wr-muted);
+  font-size: 13px;
+}
+
+.mesWorkersPage .mesWrStatsEmpty--page {
+  padding: 48px 24px;
+  border-radius: var(--wr-radius);
+  background: var(--wr-surface);
+  border: 1px solid var(--wr-border);
+}

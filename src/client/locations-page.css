@@ -1,0 +1,653 @@
+/* 창고·위치 페이지 v2 */
+
+.mesLocationsPage {
+  --loc-bg: #0c0e14;
+  --loc-surface: #12151e;
+  --loc-surface2: #181c28;
+  --loc-border: rgba(255, 255, 255, 0.08);
+  --loc-border-strong: rgba(255, 255, 255, 0.14);
+  --loc-text: #eef1f6;
+  --loc-muted: #9aa3b2;
+  --loc-accent: #e8c24a;
+  --loc-accent-text: #1a1406;
+  --loc-ok: #3dba72;
+  --loc-danger: #e85d5d;
+  --loc-warehouse: #5ba4e8;
+  --loc-rack: #a78bfa;
+  --loc-zone: #4ecf8a;
+  --loc-radius: 12px;
+  --loc-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesLocationsPage {
+  --loc-bg: #f4f5f8;
+  --loc-surface: #ffffff;
+  --loc-surface2: #f3f4f8;
+  --loc-border: rgba(0, 0, 0, 0.08);
+  --loc-border-strong: rgba(0, 0, 0, 0.12);
+  --loc-text: #141820;
+  --loc-muted: #5f6775;
+  --loc-accent: #c9a227;
+}
+
+.mesLocationsPage .mesLocHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesLocationsPage .mesLocTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--loc-text);
+}
+
+.mesLocationsPage .mesLocDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--loc-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesLocationsPage .mesLocHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mesLocationsPage .mesLocCountBadge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: var(--loc-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--loc-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesLocationsPage .mesLocBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--loc-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.mesLocationsPage .mesLocBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesLocationsPage .mesLocBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--loc-accent) 100%);
+  color: var(--loc-accent-text);
+  border-color: #a8841c;
+}
+
+.mesLocationsPage .mesLocBtn--secondary {
+  background: var(--loc-surface2);
+  color: var(--loc-text);
+  border-color: var(--loc-border-strong);
+}
+
+.mesLocationsPage .mesLocFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--loc-radius);
+  background: var(--loc-surface);
+  border: 1px solid var(--loc-border);
+}
+
+.mesLocationsPage .mesLocField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesLocationsPage .mesLocField--search {
+  flex: 1 1 240px;
+}
+
+.mesLocationsPage .mesLocField--select {
+  flex: 0 1 150px;
+  min-width: 130px;
+}
+
+.mesLocationsPage .mesLocFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--loc-muted);
+}
+
+.mesLocationsPage .mesLocInputWrap {
+  position: relative;
+}
+
+.mesLocationsPage .mesLocInputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--loc-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesLocationsPage .mesLocInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesLocationsPage .mesLocInput,
+.mesLocationsPage .mesLocSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--loc-radius-sm);
+  border: 1px solid var(--loc-border-strong);
+  background: var(--loc-surface2);
+  color: var(--loc-text);
+  font-size: 13px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.mesLocationsPage .mesLocInput--search {
+  padding-left: 34px;
+}
+
+.mesLocationsPage .mesLocFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesLocationsPage .mesLocTableCard {
+  border-radius: var(--loc-radius);
+  background: var(--loc-surface);
+  border: 1px solid var(--loc-border);
+  overflow: hidden;
+}
+
+.mesLocationsPage .mesLocTableViewport {
+  overflow-x: auto;
+}
+
+.mesLocationsPage .mesLocTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesLocationsPage .mesLocTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--loc-muted);
+  background: var(--loc-surface2);
+  border-bottom: 1px solid var(--loc-border);
+  white-space: nowrap;
+}
+
+.mesLocationsPage .mesLocTable td {
+  padding: 12px 14px;
+  color: var(--loc-text);
+  border-bottom: 1px solid var(--loc-border);
+  vertical-align: middle;
+}
+
+.mesLocationsPage .mesLocTable tbody tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.mesLocationsPage .mesLocTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesLocationsPage .mesLocTable tbody tr.mesLocRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesLocationsPage .mesLocTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesLocationsPage .mesLocTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesLocationsPage .mesLocThActions,
+.mesLocationsPage .mesLocTdActions {
+  text-align: right;
+  width: 140px;
+}
+
+.mesLocationsPage .mesLocRowActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.mesLocationsPage .mesLocActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--loc-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--loc-border-strong);
+  background: var(--loc-surface2);
+  color: var(--loc-text);
+}
+
+.mesLocationsPage .mesLocActionBtn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.mesLocationsPage .mesLocActionBtn--danger {
+  color: var(--loc-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+}
+
+.mesLocationsPage .mesLocTypeBadge {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.mesLocationsPage .mesLocTypeBadge--line {
+  color: var(--loc-line);
+  background: rgba(91, 164, 232, 0.12);
+  border-color: rgba(91, 164, 232, 0.35);
+}
+
+.mesLocationsPage .mesLocTypeBadge--equip {
+  color: var(--loc-equip);
+  background: rgba(167, 139, 250, 0.12);
+  border-color: rgba(167, 139, 250, 0.35);
+}
+
+.mesLocationsPage .mesLocTypeBadge--out {
+  color: var(--loc-out);
+  background: rgba(78, 207, 138, 0.12);
+  border-color: rgba(78, 207, 138, 0.35);
+}
+
+.mesLocationsPage .mesLocUseBadge {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.mesLocationsPage .mesLocUseBadge--y {
+  color: var(--loc-ok);
+  background: rgba(61, 186, 114, 0.12);
+  border: 1px solid rgba(61, 186, 114, 0.35);
+}
+
+.mesLocationsPage .mesLocUseBadge--n {
+  color: var(--loc-muted);
+  background: rgba(154, 163, 178, 0.1);
+  border: 1px solid var(--loc-border-strong);
+}
+
+.mesLocationsPage .mesLocEmpty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--loc-muted);
+}
+
+.mesLocationsPage .mesLocPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--loc-border);
+  background: var(--loc-surface2);
+  font-size: 13px;
+  color: var(--loc-muted);
+}
+
+.mesLocationsPage .mesLocPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesLocationsPage .mesLocPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--loc-radius-sm);
+  border: 1px solid var(--loc-border-strong);
+  background: var(--loc-surface);
+  color: var(--loc-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesLocationsPage .mesLocPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesLocationsPage .mesLocPagerBtn--active {
+  background: var(--loc-accent);
+  color: var(--loc-accent-text);
+  border-color: #a8841c;
+}
+
+/* —— 창고·위치 모달 —— */
+.mesLocModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mesLocModalRoot > * {
+  pointer-events: auto;
+}
+
+.mesLocModalRoot .mesModalBackdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.mesLocModalDialog {
+  position: relative;
+  z-index: 1;
+  width: min(920px, 96vw);
+  max-height: min(92vh, 860px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesLocModalDialog {
+  background: #ffffff;
+}
+
+.mesLocModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesLocModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesLocModalHeadIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: #e8c24a;
+  flex-shrink: 0;
+}
+
+.mesLocModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesLocModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesLocModalSub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #9aa3b2;
+}
+
+.mesLocModalHeadBadges {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mesLocModalBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mesLocModalStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 10px;
+  background: #181c28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.mesLocModalStripItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+}
+
+.mesLocModalStripItem:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mesLocModalStripLabel {
+  font-size: 13px;
+  color: #9aa3b2;
+  font-weight: 600;
+}
+
+.mesLocModalStripVal {
+  font-size: 15px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesLocModalGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .mesLocModalGrid {
+    grid-template-columns: 1fr;
+  }
+  .mesLocModalStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesLocModalCard {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #181c28;
+  padding: 18px 20px;
+}
+
+.mesLocModalCardTitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #eef1f6;
+}
+
+.mesLocModalFieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+.mesLocModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesLocModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mesLocModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9aa3b2;
+}
+
+.mesLocModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0a0d14;
+  color: #eef1f6;
+  font-size: 14px;
+  font-family: inherit;
+  min-height: 42px;
+}
+
+.mesLocModalInfoList {
+  display: flex;
+  flex-direction: column;
+}
+
+.mesLocModalInfoRow {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+}
+
+.mesLocModalInfoRow:last-child {
+  border-bottom: none;
+}
+
+.mesLocModalInfoRow span {
+  color: #9aa3b2;
+  font-weight: 600;
+}
+
+.mesLocModalInfoRow strong {
+  color: #eef1f6;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.mesLocModalFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesLocModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesLocModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesLocModalBtn--cancel {
+  background: #181c28;
+  color: #eef1f6;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mesLocModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, #e8c24a 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesLocModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mesLocModalHint {
+  margin: 0;
+  font-size: 12px;
+  color: #9aa3b2;
+}

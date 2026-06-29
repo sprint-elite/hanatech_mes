@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type SVGProps } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { apiJson } from '../lib/api'
+import { getStoredUser, setStoredUser, type MesAuthUser } from '../lib/auth'
 import { getStoredTheme, setTheme, type MesTheme } from '../lib/theme'
 
 type NavItem = { to: string; label: string; end?: boolean }
@@ -54,6 +56,16 @@ const navGroups: { label: string; items: NavItem[] }[] = [
       { to: '/shipments', label: '출하' },
       { to: '/outsourcing', label: '외주' },
       { to: '/barcodes', label: '바코드' },
+    ],
+  },
+  {
+    label: 'ERP',
+    items: [
+      { to: '/erp/work-logs', label: '업무일지' },
+      { to: '/erp/expense-reports', label: '지출결의서' },
+      { to: '/erp/annual-leave', label: '연차관리' },
+      { to: '/erp/schedules', label: '일정관리' },
+      { to: '/erp/pay-stubs', label: '급여명세서' },
     ],
   },
   {
@@ -132,6 +144,14 @@ function groupIcon(label: string) {
           <path d="M12 22.08V12" />
         </Svg>
       )
+    case 'ERP':
+      return (
+        <Svg>
+          <rect x="2" y="7" width="20" height="14" rx="2" />
+          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+          <path d="M2 12h20" />
+        </Svg>
+      )
     case '시스템':
       return (
         <Svg>
@@ -175,8 +195,31 @@ function ThemeIcon({ theme }: { theme: MesTheme }) {
 
 export function Layout() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [theme, setThemeState] = useState<MesTheme>(() => getStoredTheme())
+  const [user, setUser] = useState<MesAuthUser | null>(() => getStoredUser())
+
+  useEffect(() => {
+    setUser(getStoredUser())
+  }, [location.pathname])
+
+  const handleLogout = useCallback(async () => {
+    const current = getStoredUser()
+    if (current) {
+      try {
+        await apiJson('/api/auth/logout', {
+          method: 'POST',
+          body: JSON.stringify({ loginId: current.loginId }),
+        })
+      } catch {
+        /* still clear local session */
+      }
+    }
+    setStoredUser(null)
+    setUser(null)
+    navigate('/login', { replace: true })
+  }, [navigate])
 
   const handleThemeToggle = useCallback(() => {
     const next: MesTheme = theme === 'dark' ? 'light' : 'dark'
@@ -221,9 +264,22 @@ export function Layout() {
             <div className="mesBrandMes">MES</div>
             <div className="mesBrandSub">Manufacturing Execution</div>
           </div>
-          <div className="mesStatusStrip" title="클라이언트 세션">
-            <span className="mesStatusLed" aria-hidden />
-            <span className="mesStatusText">현장 단말</span>
+          <div className="mesAuthStrip">
+            {user ? (
+              <>
+                <div className="mesAuthUser">
+                  <span className="mesAuthName">{user.userName}</span>
+                  <span className="mesAuthId mono">{user.loginId}</span>
+                </div>
+                <button type="button" className="mesBtnSm mesBtnSecondary mesAuthLogout" onClick={() => void handleLogout()}>
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="mesBtnSm mesBtnPrimary mesAuthLoginLink">
+                로그인
+              </Link>
+            )}
           </div>
         </div>
         <div className="mesSideBody mesSideBodyAccordion">

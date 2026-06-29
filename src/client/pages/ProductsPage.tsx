@@ -1,8 +1,119 @@
-import { useCallback, useEffect, useState, type MouseEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react'
 
 import { apiJson } from '../lib/api'
+import '../products-page.css'
+import { ProductFormModal } from '../ui/ProductFormModal'
 
 import { isStandardItemType, itemTypeLabel, normalizeItemTypeToCode } from '../lib/itemType'
+
+
+
+function itemTypeBadgeClass(code: string): string {
+  const c = normalizeItemTypeToCode(code)
+  if (c === 'FG') return 'mesProdTypeBadge mesProdTypeBadge--fg'
+  if (c === 'WIP') return 'mesProdTypeBadge mesProdTypeBadge--wip'
+  if (c === 'RAW') return 'mesProdTypeBadge mesProdTypeBadge--raw'
+  return 'mesProdTypeBadge'
+}
+
+function IconSearch() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  )
+}
+
+function IconPlus() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  )
+}
+
+function IconRefresh() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+      <path d="M21 3v6h-6" />
+    </svg>
+  )
+}
+
+function IconFilter() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M4 6h16M7 12h10M10 18h4" />
+    </svg>
+  )
+}
+
+function IconReset() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 12a9 9 0 1 0 9-9" />
+      <path d="M3 3v6h6" />
+    </svg>
+  )
+}
+
+function IconTrash() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
+    </svg>
+  )
+}
+
+function IconPackage() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 3 3 8v8l9 5 9-5V8l-9-5Z" />
+      <path d="M12 12v9" />
+      <path d="M3 8l9 5 9-5" />
+    </svg>
+  )
+}
+
+function IconBox() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z" />
+      <path d="M3 7l9 5 9-5M12 12v10" />
+    </svg>
+  )
+}
+
+function IconTag() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 2H2v10l9.29 9.29a1 1 0 0 0 1.41 0l6.59-6.59a1 1 0 0 0 0-1.41L12 2Z" />
+      <circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+function IconGrid() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  )
+}
+
+function IconShield() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 2 4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  )
+}
 
 
 
@@ -304,6 +415,20 @@ export function ProductsPage() {
 
   })
 
+  const [draftFilters, setDraftFilters] = useState<{ q: string; itemType: string; status: string }>({
+
+    q: '',
+
+    itemType: '',
+
+    status: '',
+
+  })
+
+  const [page, setPage] = useState(1)
+
+  const [pageSize, setPageSize] = useState(20)
+
   const [form, setForm] = useState<FormState>(emptyForm())
 
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -375,6 +500,82 @@ export function ProductsPage() {
     }
 
   }, [filters.itemType, filters.q, filters.status])
+
+
+
+  const stats = useMemo(() => {
+
+    let wip = 0
+
+    let raw = 0
+
+    let fg = 0
+
+    let safety = 0
+
+    for (const p of items) {
+
+      const c = normalizeItemTypeToCode(p.itemType)
+
+      if (c === 'WIP') wip += 1
+
+      else if (c === 'RAW') raw += 1
+
+      else if (c === 'FG') fg += 1
+
+      if (p.safetyStock != null && p.safetyStock > 0) safety += 1
+
+    }
+
+    return { total: items.length, wip, raw, fg, safety }
+
+  }, [items])
+
+
+
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize))
+
+
+
+  useEffect(() => {
+
+    if (page > totalPages) setPage(totalPages)
+
+  }, [page, totalPages])
+
+
+
+  const pageItems = useMemo(() => {
+
+    const start = (page - 1) * pageSize
+
+    return items.slice(start, start + pageSize)
+
+  }, [items, page, pageSize])
+
+
+
+  const applyFilters = () => {
+
+    setFilters({ ...draftFilters })
+
+    setPage(1)
+
+  }
+
+
+
+  const resetFilters = () => {
+
+    const empty = { q: '', itemType: '', status: '' }
+
+    setDraftFilters(empty)
+
+    setFilters(empty)
+
+    setPage(1)
+
+  }
 
 
 
@@ -746,23 +947,19 @@ export function ProductsPage() {
 
   const selectedRowId = panelOpen && editingId != null ? editingId : null
 
-  const modalTitle = editingId == null ? '신규 등록' : '수정'
-
-  const editingRow = editingId != null ? items.find((x) => x.id === editingId) : null
-
 
 
   return (
 
-    <div className="mesPage mesPageWide">
+    <div className="mesPage mesPageWide mesProductsPage">
 
-      <header className="mesPageHeadRow">
+      <header className="mesProdHead">
 
-        <div>
+        <div className="mesProdHeadMain">
 
-          <h1 className="mesPageTitle">품목</h1>
+          <h1 className="mesProdTitle">품목</h1>
 
-          <p className="mesPageDesc">
+          <p className="mesProdDesc">
 
             제품 마스터(products)와 생산·구매·품질·재고·외주 확장 프로필을 함께 관리합니다.
 
@@ -770,7 +967,27 @@ export function ProductsPage() {
 
         </div>
 
-        <span className="mesCountPill">{loading ? '…' : `${items.length}건`}</span>
+        <div className="mesProdHeadActions">
+
+          <span className="mesProdCountBadge">{loading ? '…' : `${items.length}건`}</span>
+
+          <button type="button" className="mesProdBtn mesProdBtn--primary" onClick={openNew}>
+
+            <IconPlus />
+
+            새 품목
+
+          </button>
+
+          <button type="button" className="mesProdBtn mesProdBtn--secondary" onClick={() => void load()}>
+
+            <IconRefresh />
+
+            새로고침
+
+          </button>
+
+        </div>
 
       </header>
 
@@ -800,55 +1017,49 @@ export function ProductsPage() {
 
 
 
-      <div className="mesCrudMain">
+      <div className="mesProdFilterCard">
 
-        <div className="mesToolbar mesToolbarCompact">
+        <div className="mesProdField mesProdField--search">
 
-          <button type="button" className="mesBtnPrimary" onClick={openNew}>
+          <span className="mesProdFieldLabel">검색</span>
 
-            새 품목
+          <div className="mesProdInputWrap">
 
-          </button>
+            <span className="mesProdInputIcon"><IconSearch /></span>
 
-          <button type="button" className="mesBtnSecondary" onClick={() => void load()}>
+            <input
 
-            새로고침
+              className="mesProdInput mesProdInput--search"
 
-          </button>
+              placeholder="코드 / 품명 / 품번 / 바코드"
+
+              value={draftFilters.q}
+
+              onChange={(ev) => setDraftFilters((f) => ({ ...f, q: ev.target.value }))}
+
+              onKeyDown={(ev) => {
+
+                if (ev.key === 'Enter') applyFilters()
+
+              }}
+
+            />
+
+          </div>
 
         </div>
 
+        <div className="mesProdField mesProdField--select">
 
-
-        <div className="mesToolbar mesToolbarCompact" style={{ gap: 8, flexWrap: 'wrap' }}>
-
-          <input
-
-            className="mesInput"
-
-            style={{ minWidth: 240 }}
-
-            placeholder="검색: 코드/품명/품번/바코드"
-
-            value={filters.q}
-
-            onChange={(ev) => setFilters((f) => ({ ...f, q: ev.target.value }))}
-
-            onKeyDown={(ev) => {
-
-              if (ev.key === 'Enter') void load()
-
-            }}
-
-          />
+          <span className="mesProdFieldLabel">유형</span>
 
           <select
 
-            className="mesInput"
+            className="mesProdSelect"
 
-            value={filters.itemType}
+            value={draftFilters.itemType}
 
-            onChange={(ev) => setFilters((f) => ({ ...f, itemType: ev.target.value }))}
+            onChange={(ev) => setDraftFilters((f) => ({ ...f, itemType: ev.target.value }))}
 
             aria-label="품목 유형 필터"
 
@@ -864,13 +1075,19 @@ export function ProductsPage() {
 
           </select>
 
+        </div>
+
+        <div className="mesProdField mesProdField--select">
+
+          <span className="mesProdFieldLabel">상태</span>
+
           <select
 
-            className="mesInput"
+            className="mesProdSelect"
 
-            value={filters.status}
+            value={draftFilters.status}
 
-            onChange={(ev) => setFilters((f) => ({ ...f, status: ev.target.value }))}
+            onChange={(ev) => setDraftFilters((f) => ({ ...f, status: ev.target.value }))}
 
             aria-label="상태 필터"
 
@@ -884,33 +1101,21 @@ export function ProductsPage() {
 
           </select>
 
-          <button
+        </div>
 
-            type="button"
+        <div className="mesProdFilterActions">
 
-            className="mesBtnSecondary"
+          <button type="button" className="mesProdBtn mesProdBtn--secondary" onClick={resetFilters}>
 
-            onClick={() =>
-
-              setFilters({
-
-                q: '',
-
-                itemType: '',
-
-                status: '',
-
-              })
-
-            }
-
-          >
+            <IconReset />
 
             필터 초기화
 
           </button>
 
-          <button type="button" className="mesBtnPrimary" onClick={() => void load()}>
+          <button type="button" className="mesProdBtn mesProdBtn--primary" onClick={applyFilters}>
+
+            <IconFilter />
 
             필터 적용
 
@@ -918,11 +1123,111 @@ export function ProductsPage() {
 
         </div>
 
+      </div>
 
 
-        <div className="mesTableViewport">
 
-          <table className="mesTable mesTableSticky mesTableClick">
+      <div className="mesProdStatsStrip" aria-label="품목 요약">
+
+        <div className="mesProdStatItem">
+
+          <div className="mesProdStatIcon mesProdStatIcon--gold"><IconBox /></div>
+
+          <div className="mesProdStatMeta">
+
+            <p className="mesProdStatLabel">전체 품목</p>
+
+            <p className="mesProdStatValue">
+
+              {loading ? '…' : <><span className="mesProdStatValueNum">{stats.total}</span><span className="mesProdStatValueUnit">건</span></>}
+
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="mesProdStatItem">
+
+          <div className="mesProdStatIcon mesProdStatIcon--gold"><IconTag /></div>
+
+          <div className="mesProdStatMeta">
+
+            <p className="mesProdStatLabel">반제품</p>
+
+            <p className="mesProdStatValue">
+
+              {loading ? '…' : <><span className="mesProdStatValueNum">{stats.wip}</span><span className="mesProdStatValueUnit">건</span></>}
+
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="mesProdStatItem">
+
+          <div className="mesProdStatIcon mesProdStatIcon--gold"><IconPackage /></div>
+
+          <div className="mesProdStatMeta">
+
+            <p className="mesProdStatLabel">원자재</p>
+
+            <p className="mesProdStatValue">
+
+              {loading ? '…' : <><span className="mesProdStatValueNum">{stats.raw}</span><span className="mesProdStatValueUnit">건</span></>}
+
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="mesProdStatItem">
+
+          <div className="mesProdStatIcon mesProdStatIcon--green"><IconGrid /></div>
+
+          <div className="mesProdStatMeta">
+
+            <p className="mesProdStatLabel">완제품</p>
+
+            <p className="mesProdStatValue">
+
+              {loading ? '…' : <><span className="mesProdStatValueNum">{stats.fg}</span><span className="mesProdStatValueUnit">건</span></>}
+
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="mesProdStatItem">
+
+          <div className="mesProdStatIcon mesProdStatIcon--gold"><IconShield /></div>
+
+          <div className="mesProdStatMeta">
+
+            <p className="mesProdStatLabel">안전재고 보유</p>
+
+            <p className="mesProdStatValue">
+
+              {loading ? '…' : <><span className="mesProdStatValueNum">{stats.safety}</span><span className="mesProdStatValueUnit">건</span></>}
+
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <div className="mesProdTableCard">
+
+        <div className="mesProdTableViewport">
+
+          <table className="mesProdTable">
 
             <thead>
 
@@ -952,7 +1257,7 @@ export function ProductsPage() {
 
                 <th>상태</th>
 
-                <th className="mesThActions">작업</th>
+                <th className="mesProdThActions">작업</th>
 
               </tr>
 
@@ -964,7 +1269,7 @@ export function ProductsPage() {
 
                 <tr>
 
-                  <td colSpan={13} className="muted">
+                  <td colSpan={13} className="mesProdEmpty">
 
                     로딩 중…
 
@@ -976,9 +1281,9 @@ export function ProductsPage() {
 
                 <tr>
 
-                  <td colSpan={13} className="muted">
+                  <td colSpan={13} className="mesProdEmpty">
 
-                    데이터가 없습니다. <strong>새 품목</strong>으로 모달에서 추가하세요.
+                    데이터가 없습니다. <strong>새 품목</strong>으로 추가하세요.
 
                   </td>
 
@@ -986,13 +1291,13 @@ export function ProductsPage() {
 
               ) : (
 
-                items.map((p) => (
+                pageItems.map((p) => (
 
                   <tr
 
                     key={p.id}
 
-                    className={selectedRowId === p.id ? 'mesRowSelected' : undefined}
+                    className={selectedRowId === p.id ? 'mesProdRowSelected' : undefined}
 
                     onClick={() => openEdit(p)}
 
@@ -1004,7 +1309,11 @@ export function ProductsPage() {
 
                     <td className="mono">{p.itemNumber ?? '—'}</td>
 
-                    <td>{itemTypeLabel(p.itemType)}</td>
+                    <td>
+
+                      <span className={itemTypeBadgeClass(p.itemType)}>{itemTypeLabel(p.itemType)}</span>
+
+                    </td>
 
                     <td>{p.unit}</td>
 
@@ -1020,19 +1329,33 @@ export function ProductsPage() {
 
                     <td className="mono">{p.barcode ?? '—'}</td>
 
-                    <td>{p.status}</td>
+                    <td>
 
-                    <td className="mesTdActions">
+                      <span
+
+                        className={`mesProdStatusBadge ${p.status === 'INACTIVE' ? 'mesProdStatusBadge--inactive' : 'mesProdStatusBadge--active'}`}
+
+                      >
+
+                        {p.status}
+
+                      </span>
+
+                    </td>
+
+                    <td className="mesProdTdActions">
 
                       <button
 
                         type="button"
 
-                        className="mesBtnSm mesBtnDanger"
+                        className="mesProdBtn mesProdBtn--danger"
 
                         onClick={(ev) => void remove(p.id, ev)}
 
                       >
+
+                        <IconTrash />
 
                         삭제
 
@@ -1052,727 +1375,172 @@ export function ProductsPage() {
 
         </div>
 
+
+
+        <footer className="mesProdPager">
+
+          <span className="mesProdPagerTotal">전체 {items.length}건</span>
+
+          <nav className="mesProdPagerNav" aria-label="페이지">
+
+            <button
+
+              type="button"
+
+              className="mesProdPagerBtn"
+
+              disabled={page <= 1}
+
+              onClick={() => setPage(1)}
+
+              aria-label="첫 페이지"
+
+            >
+
+              «
+
+            </button>
+
+            <button
+
+              type="button"
+
+              className="mesProdPagerBtn"
+
+              disabled={page <= 1}
+
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+
+              aria-label="이전 페이지"
+
+            >
+
+              ‹
+
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+
+              .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+
+              .map((n, idx, arr) => {
+
+                const prev = arr[idx - 1]
+
+                const showEllipsis = prev != null && n - prev > 1
+
+                return (
+
+                  <span key={n} style={{ display: 'contents' }}>
+
+                    {showEllipsis ? <span className="mesProdPagerBtn" style={{ border: 'none', background: 'transparent' }}>…</span> : null}
+
+                    <button
+
+                      type="button"
+
+                      className={`mesProdPagerBtn${n === page ? ' mesProdPagerBtn--active' : ''}`}
+
+                      onClick={() => setPage(n)}
+
+                    >
+
+                      {n}
+
+                    </button>
+
+                  </span>
+
+                )
+
+              })}
+
+            <button
+
+              type="button"
+
+              className="mesProdPagerBtn"
+
+              disabled={page >= totalPages}
+
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+
+              aria-label="다음 페이지"
+
+            >
+
+              ›
+
+            </button>
+
+            <button
+
+              type="button"
+
+              className="mesProdPagerBtn"
+
+              disabled={page >= totalPages}
+
+              onClick={() => setPage(totalPages)}
+
+              aria-label="마지막 페이지"
+
+            >
+
+              »
+
+            </button>
+
+          </nav>
+
+          <div className="mesProdPageSize">
+
+            <select
+
+              value={pageSize}
+
+              onChange={(ev) => {
+
+                setPageSize(Number(ev.target.value))
+
+                setPage(1)
+
+              }}
+
+              aria-label="페이지당 표시 건수"
+
+            >
+
+              <option value={10}>10개씩 보기</option>
+
+              <option value={20}>20개씩 보기</option>
+
+              <option value={50}>50개씩 보기</option>
+
+            </select>
+
+          </div>
+
+        </footer>
+
       </div>
 
 
 
-      {panelOpen ? (
-
-        <div className="mesModalRoot" role="presentation">
-
-          <button type="button" className="mesModalBackdrop" aria-label="닫기" onClick={closePanel} />
-
-          <div
-
-            className="mesModalDialog"
-
-            role="dialog"
-
-            aria-modal="true"
-
-            aria-labelledby="mes-product-modal-title"
-
-          >
-
-            <div className="mesModalHead">
-
-              <div>
-
-                <h2 className="mesModalTitle" id="mes-product-modal-title">
-
-                  {modalTitle}
-
-                </h2>
-
-                {editingId != null ? (
-
-                  <div className="mesModalMeta muted">ID {editingId}</div>
-
-                ) : null}
-
-              </div>
-
-              <div className="mesModalHeadActions">
-
-                <button type="button" className="mesBtnPrimary" disabled={saving} onClick={() => void save()}>
-
-                  {saving ? '저장 중…' : '저장'}
-
-                </button>
-
-                <button type="button" className="mesBtnSecondary" disabled={saving} onClick={closePanel}>
-
-                  취소
-
-                </button>
-
-                <button type="button" className="mesBtnGhost" onClick={closePanel}>
-
-                  닫기
-
-                </button>
-
-              </div>
-
-            </div>
-
-            <div className="mesModalBody mesProductModalBody">
-
-              <div className="mesProductFormGrid">
-
-                <section className="mesProductCard">
-
-                  <h3 className="mesProductCardTitle">기본정보</h3>
-
-                  <div className="mesFieldRow">
-
-                    <label className="mesLabel">
-
-                      품목코드 (product_code)
-
-                      <input
-
-                        className="mesInput"
-
-                        value={form.productCode}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, productCode: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      품목명 (product_name)
-
-                      <input
-
-                        className="mesInput"
-
-                        value={form.productName}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, productName: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                  </div>
-
-                  <div className="mesFieldRow mesFieldRow3">
-
-                    <label className="mesLabel">
-
-                      품번 (item_number)
-
-                      <input
-
-                        className="mesInput"
-
-                        placeholder="내부 품번 등"
-
-                        value={form.itemNumber}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, itemNumber: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      품목 유형 (item_type)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={isStandardItemType(form.itemType) ? normalizeItemTypeToCode(form.itemType)! : form.itemType}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, itemType: ev.target.value }))}
-
-                      >
-
-                        <option value="FG">완제품</option>
-
-                        <option value="WIP">반제품</option>
-
-                        <option value="RAW">원자재</option>
-
-                        {!isStandardItemType(form.itemType) && form.itemType.trim() !== '' ? (
-
-                          <option value={form.itemType}>기타 (현재: {form.itemType})</option>
-
-                        ) : null}
-
-                      </select>
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      생산 가능 (is_production)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.isProduction}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, isProduction: ev.target.value as 'Y' | 'N' }))}
-
-                      >
-
-                        <option value="Y">Y</option>
-
-                        <option value="N">N</option>
-
-                      </select>
-
-                    </label>
-
-                  </div>
-
-                  <div className="mesFieldRow">
-
-                    <label className="mesLabel">
-
-                      상태 (status)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.status}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, status: ev.target.value }))}
-
-                      >
-
-                        <option value="ACTIVE">ACTIVE</option>
-
-                        <option value="INACTIVE">INACTIVE</option>
-
-                      </select>
-
-                    </label>
-
-                    <div />
-
-                  </div>
-
-                </section>
-
-
-
-                <section className="mesProductCard">
-
-                  <h3 className="mesProductCardTitle">포장/물류</h3>
-
-                  <div className="mesFieldRow mesFieldRow3">
-
-                    <label className="mesLabel">
-
-                      기본 단위 (unit)
-
-                      <input
-
-                        className="mesInput"
-
-                        value={form.unit}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, unit: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      표준 포장 수량
-
-                      <input
-
-                        className="mesInput"
-
-                        placeholder="예: 12"
-
-                        value={form.standardPackQty}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, standardPackQty: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      바코드 (barcode)
-
-                      <input
-
-                        className="mesInput"
-
-                        value={form.barcode}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, barcode: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                  </div>
-
-                  <div className="mesFieldRow mesFieldRow3">
-
-                    <label className="mesLabel">
-
-                      단위 중량 (unit_weight)
-
-                      <input
-
-                        className="mesInput"
-
-                        placeholder="예: 0.25"
-
-                        value={form.unitWeight}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, unitWeight: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      규격 (spec_json.spec)
-
-                      <input
-
-                        className="mesInput"
-
-                        placeholder="예: 10A / SCH40 / 316L"
-
-                        value={form.spec}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, spec: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      안전재고 / 최대재고
-
-                      <div className="mesFieldRow mesFieldRowTight">
-
-                        <input
-
-                          className="mesInput"
-
-                          placeholder="safety_stock"
-
-                          value={form.safetyStock}
-
-                          onChange={(ev) => setForm((f) => ({ ...f, safetyStock: ev.target.value }))}
-
-                        />
-
-                        <input
-
-                          className="mesInput"
-
-                          placeholder="max_stock"
-
-                          value={form.maxStock}
-
-                          onChange={(ev) => setForm((f) => ({ ...f, maxStock: ev.target.value }))}
-
-                        />
-
-                      </div>
-
-                    </label>
-
-                  </div>
-
-                </section>
-
-
-
-                <section className="mesProductCard">
-
-                  <h3 className="mesProductCardTitle">구매/자재</h3>
-
-                  <div className="mesFieldRow mesFieldRow3">
-
-                    <label className="mesLabel">
-
-                      구매 가능 (is_purchasable)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.isPurchasable}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, isPurchasable: ev.target.value as 'Y' | 'N' }))}
-
-                      >
-
-                        <option value="Y">Y</option>
-
-                        <option value="N">N</option>
-
-                      </select>
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      기본 공급업체 (default_supplier)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.defaultSupplierId}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, defaultSupplierId: ev.target.value }))}
-
-                      >
-
-                        <option value="">(없음)</option>
-
-                        {customers
-
-                          .filter((c) => c.type === 'SUPPLIER')
-
-                          .map((c) => (
-
-                            <option key={c.id} value={String(c.id)}>
-
-                              {c.customerCode} · {c.customerName}
-
-                            </option>
-
-                          ))}
-
-                      </select>
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      구매 단위 (purchase_unit)
-
-                      <input
-
-                        className="mesInput"
-
-                        placeholder="BOX / KG ..."
-
-                        value={form.purchaseUnit}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, purchaseUnit: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                  </div>
-
-                  <div className="mesFieldRow mesFieldRow3">
-
-                    <label className="mesLabel">
-
-                      단가 (purchase_price)
-
-                      <input
-
-                        className="mesInput"
-
-                        placeholder="예: 1200"
-
-                        value={form.purchasePrice}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, purchasePrice: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      MOQ (moq)
-
-                      <input
-
-                        className="mesInput"
-
-                        placeholder="예: 100"
-
-                        value={form.moq}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, moq: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                    <div />
-
-                  </div>
-
-                </section>
-
-
-
-                <section className="mesProductCard">
-
-                  <h3 className="mesProductCardTitle">품질</h3>
-
-                  <div className="mesFieldRow mesFieldRow3">
-
-                    <label className="mesLabel">
-
-                      검사 필수 (inspection_required_yn)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.inspectionRequiredYn}
-
-                        onChange={(ev) =>
-
-                          setForm((f) => ({ ...f, inspectionRequiredYn: ev.target.value as 'Y' | 'N' }))
-
-                        }
-
-                      >
-
-                        <option value="Y">Y</option>
-
-                        <option value="N">N</option>
-
-                      </select>
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      검사 방식 (inspection_type)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.inspectionType}
-
-                        onChange={(ev) =>
-
-                          setForm((f) => ({ ...f, inspectionType: ev.target.value as FormState['inspectionType'] }))
-
-                        }
-
-                      >
-
-                        <option value="MANUAL">MANUAL</option>
-
-                        <option value="VISION">VISION</option>
-
-                        <option value="SAMPLING">SAMPLING</option>
-
-                      </select>
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      허용 불량률 % (defect_tolerance_rate)
-
-                      <input
-
-                        className="mesInput"
-
-                        placeholder="예: 1.5"
-
-                        value={form.defectToleranceRate}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, defectToleranceRate: ev.target.value }))}
-
-                      />
-
-                    </label>
-
-                  </div>
-
-                </section>
-
-
-
-                <section className="mesProductCard">
-
-                  <h3 className="mesProductCardTitle">재고/물류</h3>
-
-                  <div className="mesFieldRow mesFieldRow3">
-
-                    <label className="mesLabel">
-
-                      LOT 관리 (lot_control_yn)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.lotControlYn}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, lotControlYn: ev.target.value as 'Y' | 'N' }))}
-
-                      >
-
-                        <option value="Y">Y</option>
-
-                        <option value="N">N</option>
-
-                      </select>
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      매입처 (고객사)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.purchaserCustomerId}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, purchaserCustomerId: ev.target.value }))}
-
-                      >
-
-                        <option value="">(없음)</option>
-
-                        {customers
-
-                          .filter((c) => c.type === 'CUSTOMER')
-
-                          .map((c) => (
-
-                            <option key={c.id} value={String(c.id)}>
-
-                              {c.customerCode} · {c.customerName}
-
-                            </option>
-
-                          ))}
-
-                      </select>
-
-                    </label>
-
-                    <div />
-
-                  </div>
-
-                </section>
-
-
-
-                <section className="mesProductCard">
-
-                  <h3 className="mesProductCardTitle">외주</h3>
-
-                  <div className="mesFieldRow mesFieldRow3">
-
-                    <label className="mesLabel">
-
-                      외주 여부 (is_outsourcing)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.isOutsourcing}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, isOutsourcing: ev.target.value as 'Y' | 'N' }))}
-
-                      >
-
-                        <option value="Y">Y</option>
-
-                        <option value="N">N</option>
-
-                      </select>
-
-                    </label>
-
-                    <label className="mesLabel">
-
-                      기본 외주업체 (default_vendor)
-
-                      <select
-
-                        className="mesInput"
-
-                        value={form.defaultVendorId}
-
-                        onChange={(ev) => setForm((f) => ({ ...f, defaultVendorId: ev.target.value }))}
-
-                      >
-
-                        <option value="">(없음)</option>
-
-                        {customers
-
-                          .filter((c) => c.type === 'OUTSOURCING')
-
-                          .map((c) => (
-
-                            <option key={c.id} value={String(c.id)}>
-
-                              {c.customerCode} · {c.customerName}
-
-                            </option>
-
-                          ))}
-
-                      </select>
-
-                    </label>
-
-                    <div />
-
-                  </div>
-
-                </section>
-
-              </div>
-
-
-
-              {editingRow ? (
-
-                <div className="muted mesModalMeta">
-
-                  생성 {new Date(editingRow.createdAt).toLocaleString()} · 수정 {new Date(editingRow.updatedAt).toLocaleString()}
-
-                </div>
-
-              ) : null}
-
-            </div>
-
-          </div>
-
-        </div>
-
-      ) : null}
+      <ProductFormModal
+        open={panelOpen}
+        editingId={editingId}
+        saving={saving}
+        form={form}
+        setForm={setForm}
+        customers={customers}
+        editingTimestamps={(() => {
+          const row = editingId != null ? items.find((x) => x.id === editingId) : null
+          return row ? { createdAt: row.createdAt, updatedAt: row.updatedAt } : null
+        })()}
+        onSave={() => void save()}
+        onClose={closePanel}
+      />
 
     </div>
 

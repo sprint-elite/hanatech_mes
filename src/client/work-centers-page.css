@@ -1,0 +1,647 @@
+/* 작업장 페이지 v2 */
+
+.mesWorkCentersPage {
+  --wc-bg: #0c0e14;
+  --wc-surface: #12151e;
+  --wc-surface2: #181c28;
+  --wc-border: rgba(255, 255, 255, 0.08);
+  --wc-border-strong: rgba(255, 255, 255, 0.14);
+  --wc-text: #eef1f6;
+  --wc-muted: #9aa3b2;
+  --wc-accent: #e8c24a;
+  --wc-accent-text: #1a1406;
+  --wc-ok: #3dba72;
+  --wc-danger: #e85d5d;
+  --wc-line: #5ba4e8;
+  --wc-equip: #a78bfa;
+  --wc-out: #4ecf8a;
+  --wc-radius: 12px;
+  --wc-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesWorkCentersPage {
+  --wc-bg: #f4f5f8;
+  --wc-surface: #ffffff;
+  --wc-surface2: #f3f4f8;
+  --wc-border: rgba(0, 0, 0, 0.08);
+  --wc-border-strong: rgba(0, 0, 0, 0.12);
+  --wc-text: #141820;
+  --wc-muted: #5f6775;
+  --wc-accent: #c9a227;
+}
+
+.mesWorkCentersPage .mesWcHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesWorkCentersPage .mesWcTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--wc-text);
+}
+
+.mesWorkCentersPage .mesWcDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--wc-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesWorkCentersPage .mesWcHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mesWorkCentersPage .mesWcCountBadge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: var(--wc-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--wc-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesWorkCentersPage .mesWcBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--wc-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.mesWorkCentersPage .mesWcBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWorkCentersPage .mesWcBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--wc-accent) 100%);
+  color: var(--wc-accent-text);
+  border-color: #a8841c;
+}
+
+.mesWorkCentersPage .mesWcBtn--secondary {
+  background: var(--wc-surface2);
+  color: var(--wc-text);
+  border-color: var(--wc-border-strong);
+}
+
+.mesWorkCentersPage .mesWcFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--wc-radius);
+  background: var(--wc-surface);
+  border: 1px solid var(--wc-border);
+}
+
+.mesWorkCentersPage .mesWcField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesWorkCentersPage .mesWcField--search {
+  flex: 1 1 240px;
+}
+
+.mesWorkCentersPage .mesWcField--select {
+  flex: 0 1 150px;
+  min-width: 130px;
+}
+
+.mesWorkCentersPage .mesWcFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wc-muted);
+}
+
+.mesWorkCentersPage .mesWcInputWrap {
+  position: relative;
+}
+
+.mesWorkCentersPage .mesWcInputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--wc-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesWorkCentersPage .mesWcInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWorkCentersPage .mesWcInput,
+.mesWorkCentersPage .mesWcSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--wc-radius-sm);
+  border: 1px solid var(--wc-border-strong);
+  background: var(--wc-surface2);
+  color: var(--wc-text);
+  font-size: 13px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.mesWorkCentersPage .mesWcInput--search {
+  padding-left: 34px;
+}
+
+.mesWorkCentersPage .mesWcFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesWorkCentersPage .mesWcTableCard {
+  border-radius: var(--wc-radius);
+  background: var(--wc-surface);
+  border: 1px solid var(--wc-border);
+  overflow: hidden;
+}
+
+.mesWorkCentersPage .mesWcTableViewport {
+  overflow-x: auto;
+}
+
+.mesWorkCentersPage .mesWcTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesWorkCentersPage .mesWcTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wc-muted);
+  background: var(--wc-surface2);
+  border-bottom: 1px solid var(--wc-border);
+  white-space: nowrap;
+}
+
+.mesWorkCentersPage .mesWcTable td {
+  padding: 12px 14px;
+  color: var(--wc-text);
+  border-bottom: 1px solid var(--wc-border);
+  vertical-align: middle;
+}
+
+.mesWorkCentersPage .mesWcTable tbody tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.mesWorkCentersPage .mesWcTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesWorkCentersPage .mesWcTable tbody tr.mesWcRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesWorkCentersPage .mesWcTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesWorkCentersPage .mesWcTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesWorkCentersPage .mesWcThActions,
+.mesWorkCentersPage .mesWcTdActions {
+  text-align: right;
+  width: 140px;
+}
+
+.mesWorkCentersPage .mesWcRowActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.mesWorkCentersPage .mesWcActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--wc-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--wc-border-strong);
+  background: var(--wc-surface2);
+  color: var(--wc-text);
+}
+
+.mesWorkCentersPage .mesWcActionBtn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.mesWorkCentersPage .mesWcActionBtn--danger {
+  color: var(--wc-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+}
+
+.mesWorkCentersPage .mesWcTypeBadge {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.mesWorkCentersPage .mesWcTypeBadge--line {
+  color: var(--wc-line);
+  background: rgba(91, 164, 232, 0.12);
+  border-color: rgba(91, 164, 232, 0.35);
+}
+
+.mesWorkCentersPage .mesWcTypeBadge--equip {
+  color: var(--wc-equip);
+  background: rgba(167, 139, 250, 0.12);
+  border-color: rgba(167, 139, 250, 0.35);
+}
+
+.mesWorkCentersPage .mesWcTypeBadge--out {
+  color: var(--wc-out);
+  background: rgba(78, 207, 138, 0.12);
+  border-color: rgba(78, 207, 138, 0.35);
+}
+
+.mesWorkCentersPage .mesWcUseBadge {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.mesWorkCentersPage .mesWcUseBadge--y {
+  color: var(--wc-ok);
+  background: rgba(61, 186, 114, 0.12);
+  border: 1px solid rgba(61, 186, 114, 0.35);
+}
+
+.mesWorkCentersPage .mesWcUseBadge--n {
+  color: var(--wc-muted);
+  background: rgba(154, 163, 178, 0.1);
+  border: 1px solid var(--wc-border-strong);
+}
+
+.mesWorkCentersPage .mesWcEmpty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--wc-muted);
+}
+
+.mesWorkCentersPage .mesWcPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--wc-border);
+  background: var(--wc-surface2);
+  font-size: 13px;
+  color: var(--wc-muted);
+}
+
+.mesWorkCentersPage .mesWcPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesWorkCentersPage .mesWcPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--wc-radius-sm);
+  border: 1px solid var(--wc-border-strong);
+  background: var(--wc-surface);
+  color: var(--wc-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesWorkCentersPage .mesWcPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesWorkCentersPage .mesWcPagerBtn--active {
+  background: var(--wc-accent);
+  color: var(--wc-accent-text);
+  border-color: #a8841c;
+}
+
+/* —— 작업장 모달 —— */
+.mesWcModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mesWcModalRoot > * {
+  pointer-events: auto;
+}
+
+.mesWcModalRoot .mesModalBackdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.mesWcModalDialog {
+  position: relative;
+  z-index: 1;
+  width: min(920px, 96vw);
+  max-height: min(92vh, 860px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesWcModalDialog {
+  background: #ffffff;
+}
+
+.mesWcModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesWcModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesWcModalHeadIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: #e8c24a;
+  flex-shrink: 0;
+}
+
+.mesWcModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesWcModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesWcModalSub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #9aa3b2;
+}
+
+.mesWcModalHeadBadges {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mesWcModalBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mesWcModalStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 10px;
+  background: #181c28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.mesWcModalStripItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+}
+
+.mesWcModalStripItem:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mesWcModalStripLabel {
+  font-size: 13px;
+  color: #9aa3b2;
+  font-weight: 600;
+}
+
+.mesWcModalStripVal {
+  font-size: 15px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesWcModalGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .mesWcModalGrid {
+    grid-template-columns: 1fr;
+  }
+  .mesWcModalStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesWcModalCard {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #181c28;
+  padding: 18px 20px;
+}
+
+.mesWcModalCardTitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #eef1f6;
+}
+
+.mesWcModalFieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+.mesWcModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesWcModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mesWcModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9aa3b2;
+}
+
+.mesWcModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0a0d14;
+  color: #eef1f6;
+  font-size: 14px;
+  font-family: inherit;
+  min-height: 42px;
+}
+
+.mesWcModalInfoList {
+  display: flex;
+  flex-direction: column;
+}
+
+.mesWcModalInfoRow {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+}
+
+.mesWcModalInfoRow:last-child {
+  border-bottom: none;
+}
+
+.mesWcModalInfoRow span {
+  color: #9aa3b2;
+  font-weight: 600;
+}
+
+.mesWcModalInfoRow strong {
+  color: #eef1f6;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.mesWcModalFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesWcModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesWcModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWcModalBtn--cancel {
+  background: #181c28;
+  color: #eef1f6;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mesWcModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, #e8c24a 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesWcModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react'
 import { apiJson } from '../lib/api'
 import { itemTypeLabel, productItemTypeCode } from '../lib/itemType'
+import '../ebom-page.css'
 
 type Product = { id: number; productCode: string; productName: string; itemType: string; specJson?: unknown }
 type EbomLine = {
@@ -63,7 +64,10 @@ export function EbomPage() {
       ])
       setParents(tree.parents)
       setProducts(prod.items)
-      if (tree.parents.length > 0 && !selectedParentId) setSelectedParentId(tree.parents[0].parentProduct.id)
+      setSelectedParentId((prev) => {
+        if (prev != null && tree.parents.some((g) => g.parentProduct.id === prev)) return prev
+        return tree.parents.length > 0 ? tree.parents[0].parentProduct.id : null
+      })
       setErr(null)
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
@@ -72,7 +76,7 @@ export function EbomPage() {
     } finally {
       setLoading(false)
     }
-  }, [selectedParentId])
+  }, [])
 
   useEffect(() => {
     void load()
@@ -90,7 +94,7 @@ export function EbomPage() {
           if (q === '') return true
           return p.productCode.toLowerCase().includes(q) || p.productName.toLowerCase().includes(q)
         })
-        .sort((a, b) => a.productCode.localeCompare(b.productCode)),
+        .sort((a, b) => a.productCode.localeCompare(b.productCode, 'ko')),
     [products, childSearch],
   )
 
@@ -182,17 +186,22 @@ export function EbomPage() {
   }
 
   return (
-    <div className="mesPage mesPageWide">
-      <header className="mesPageHeadRow">
+    <div className="mesPage mesPageWide mesEbomPage">
+      <header className="mesPageHeadRow mesEbomHeadRow">
         <div>
           <h1 className="mesPageTitle">EBOM</h1>
-          <p className="mesPageDesc">좌측 상위 BOM 목록, 우측 하위 BOM 상세/편집 구조로 관리합니다.</p>
+          <p className="mesPageDesc">상위 BOM을 선택한 뒤 하위 구성을 바로 추가·수정합니다.</p>
         </div>
-        <span className="mesCountPill">{loading ? '…' : `${parents.length}개 상위 BOM`}</span>
+        <div className="mesEbomHeadMeta">
+          <span className="mesCountPill mesEbomCountPill">{loading ? '…' : `${parents.length}개 상위 BOM`}</span>
+          <button type="button" className="mesBtnSecondary mesEbomRefreshBtn" onClick={() => void load()}>
+            새로고침
+          </button>
+        </div>
       </header>
 
-      <div className="mesPanelCard" style={{ marginBottom: 10 }}>
-        <div className="mesFieldRow mesFieldRow3" style={{ marginBottom: 0 }}>
+      <div className="mesPanelCard mesEbomFilterCard">
+        <div className="mesFieldRow mesFieldRow3 mesEbomFilterRow">
           <label className="mesLabel">
             BOM 검색
             <input
@@ -207,7 +216,10 @@ export function EbomPage() {
             <select
               className="mesInput"
               value={selectedParentId ?? ''}
-              onChange={(e) => setSelectedParentId(e.target.value === '' ? null : Number(e.target.value))}
+              onChange={(e) => {
+                setSelectedParentId(e.target.value === '' ? null : Number(e.target.value))
+                resetForm()
+              }}
             >
               <option value="">선택하세요</option>
               {filteredParents.map((g) => (
@@ -219,7 +231,7 @@ export function EbomPage() {
           </label>
           <div className="mesLabel">
             검색 결과
-            <div className="mesInput mono" style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="mesInput mono mesEbomResultCount" aria-live="polite">
               {filteredParents.length}건
             </div>
           </div>
@@ -238,156 +250,167 @@ export function EbomPage() {
         </div>
       ) : null}
 
-      <section className="mesCrudMain">
+      <section className="mesCrudMain mesEbomCrudMain">
         {selectedParent ? (
           <>
-            <div className="mesPanelCard" style={{ marginBottom: 8 }}>
-            <div className="mesPanelHead">
-              <div className="mesEbomPanelHeadText">
-                <div className="mesPanelTitle">하위 BOM 추가/수정</div>
-                <span
-                  className="mesOpsPlanContextChip mesEbomContextChip"
-                  title={`${selectedParent.parentProduct.productCode} · ${selectedParent.parentProduct.productName}`}
-                >
-                  <span className="mesOpsPlanContextChipName">{selectedParent.parentProduct.productName}</span>
-                </span>
+            <div className="mesPanelCard mesEbomFormCard">
+              <div className="mesPanelHead mesEbomFormHead">
+                <div className="mesEbomPanelHeadText">
+                  <div className="mesPanelTitle">
+                    {editingRow == null ? '하위 BOM 추가' : '하위 BOM 수정'}
+                  </div>
+                  <span
+                    className="mesOpsPlanContextChip mesEbomContextChip"
+                    title={`${selectedParent.parentProduct.productCode} · ${selectedParent.parentProduct.productName}`}
+                  >
+                    <span className="mesOpsPlanContextChipName">{selectedParent.parentProduct.productName}</span>
+                  </span>
+                </div>
+                <div className="mesModalHeadActions">
+                  <button type="button" className="mesBtnPrimary" disabled={!selectedParentId || saving} onClick={() => void saveLine()}>
+                    {saving ? '저장 중…' : editingRow ? '행 수정' : '하위 BOM 추가'}
+                  </button>
+                  <button type="button" className="mesBtnSecondary" onClick={resetForm}>
+                    입력 초기화
+                  </button>
+                </div>
               </div>
-              <div className="mesModalHeadActions">
-                <button type="button" className="mesBtnPrimary" disabled={!selectedParentId || saving} onClick={() => void saveLine()}>
-                  {saving ? '저장 중…' : editingRow ? '행 수정' : '하위 BOM 추가'}
-                </button>
-                <button type="button" className="mesBtnSecondary" onClick={resetForm}>
-                  입력 초기화
-                </button>
+              <div className="mesEbomFormGrid">
+                <label className="mesLabel mesEbomSpan3">
+                  하위 품목 검색
+                  <input
+                    className="mesInput mono"
+                    placeholder="코드/품명 검색"
+                    value={childSearch}
+                    onChange={(e) => setChildSearch(e.target.value)}
+                  />
+                </label>
+                <label className="mesLabel mesEbomSpan3">
+                  하위 품목
+                  <select className="mesInput" value={childProductId} onChange={(e) => setChildProductId(e.target.value)}>
+                    <option value="">선택하세요</option>
+                    {childOptions.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {optionLabel(p)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="mesLabel mesEbomSpan3">
+                  규격
+                  <input className="mesInput" value={spec} onChange={(e) => setSpec(e.target.value)} />
+                </label>
+                <label className="mesLabel mesEbomSpan1">
+                  수량
+                  <input className="mesInput" value={qty} onChange={(e) => setQty(e.target.value)} />
+                </label>
+                <label className="mesLabel mesEbomSpan2">
+                  단위
+                  <input className="mesInput" value={unit} onChange={(e) => setUnit(e.target.value)} />
+                </label>
+                <label className="mesLabel mesEbomSpan2">
+                  경로순서
+                  <input className="mesInput" value={pathSequence} onChange={(e) => setPathSequence(e.target.value)} />
+                </label>
+                <label className="mesLabel mesEbomSpan2">
+                  표시순서
+                  <input className="mesInput" value={sequence} onChange={(e) => setSequence(e.target.value)} />
+                </label>
+                <label className="mesLabel mesEbomSpan3">
+                  비고
+                  <input className="mesInput" value={remark} onChange={(e) => setRemark(e.target.value)} />
+                </label>
+                <label className="mesLabel mesEbomSpan1">
+                  사용여부
+                  <select className="mesInput" value={useYn} onChange={(e) => setUseYn(e.target.value as 'Y' | 'N')}>
+                    <option value="Y">Y</option>
+                    <option value="N">N</option>
+                  </select>
+                </label>
+                <label className="mesLabel mesEbomSpan2">
+                  입고단가
+                  <input className="mesInput" value={inUnitPrice} onChange={(e) => setInUnitPrice(e.target.value)} />
+                </label>
+                <label className="mesLabel mesEbomSpan2">
+                  판매단가
+                  <input className="mesInput" value={outUnitPrice} onChange={(e) => setOutUnitPrice(e.target.value)} />
+                </label>
               </div>
             </div>
-            <div className="mesEbomFormGrid">
-              <label className="mesLabel mesEbomSpan3">
-                하위 품목 검색
-                <input
-                  className="mesInput mono"
-                  placeholder="코드/품명 검색"
-                  value={childSearch}
-                  onChange={(e) => setChildSearch(e.target.value)}
-                />
-              </label>
-              <label className="mesLabel mesEbomSpan3">
-                하위 품목
-                <select className="mesInput" value={childProductId} onChange={(e) => setChildProductId(e.target.value)}>
-                  <option value="">선택하세요</option>
-                  {childOptions.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {optionLabel(p)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="mesLabel mesEbomSpan3">
-                규격
-                <input className="mesInput" value={spec} onChange={(e) => setSpec(e.target.value)} />
-              </label>
-              <label className="mesLabel mesEbomSpan1">
-                수량
-                <input className="mesInput" value={qty} onChange={(e) => setQty(e.target.value)} />
-              </label>
-              <label className="mesLabel mesEbomSpan2">
-                단위
-                <input className="mesInput" value={unit} onChange={(e) => setUnit(e.target.value)} />
-              </label>
 
-              <label className="mesLabel mesEbomSpan2">
-                경로순서
-                <input className="mesInput" value={pathSequence} onChange={(e) => setPathSequence(e.target.value)} />
-              </label>
-              <label className="mesLabel mesEbomSpan2">
-                표시순서
-                <input className="mesInput" value={sequence} onChange={(e) => setSequence(e.target.value)} />
-              </label>
-              <label className="mesLabel mesEbomSpan3">
-                비고
-                <input className="mesInput" value={remark} onChange={(e) => setRemark(e.target.value)} />
-              </label>
-              <label className="mesLabel mesEbomSpan1">
-                사용여부
-                <select className="mesInput" value={useYn} onChange={(e) => setUseYn(e.target.value as 'Y' | 'N')}>
-                  <option value="Y">Y</option>
-                  <option value="N">N</option>
-                </select>
-              </label>
-              <label className="mesLabel mesEbomSpan2">
-                입고단가
-                <input className="mesInput" value={inUnitPrice} onChange={(e) => setInUnitPrice(e.target.value)} />
-              </label>
-              <label className="mesLabel mesEbomSpan2">
-                판매단가
-                <input className="mesInput" value={outUnitPrice} onChange={(e) => setOutUnitPrice(e.target.value)} />
-              </label>
-            </div>
-            </div>
-
-            <div className="mesTableViewport mesEbomLinesTable">
-              <table className="mesTable mesTableSticky mesTableClick mesEbomLinesGrid">
-              <colgroup>
-                <col className="mesEbomColCode" />
-                <col className="mesEbomColName" />
-                <col className="mesEbomColSpec" />
-                <col className="mesEbomColQty" />
-                <col className="mesEbomColPath" />
-                <col className="mesEbomColUseYn" />
-                <col className="mesEbomColPrice" />
-                <col className="mesEbomColPrice" />
-                <col className="mesEbomColRemark" />
-                <col className="mesEbomColAction" />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th style={{ textAlign: 'center' }}>품번</th>
-                  <th style={{ textAlign: 'center' }}>품명</th>
-                  <th style={{ textAlign: 'center' }}>규격</th>
-                  <th style={{ textAlign: 'center' }}>수량</th>
-                  <th style={{ textAlign: 'center' }}>경로순서</th>
-                  <th style={{ textAlign: 'center' }}>사용여부</th>
-                  <th style={{ textAlign: 'center' }}>입고단가</th>
-                  <th style={{ textAlign: 'center' }}>판매단가</th>
-                  <th style={{ textAlign: 'center' }}>비고</th>
-                  <th className="mesThActions" style={{ textAlign: 'center' }}>작업</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedParent.lines.length === 0 ? (
-                  <tr>
-                    <td colSpan={10} className="muted">등록된 하위 BOM이 없습니다.</td>
-                  </tr>
-                ) : (
-                  selectedParent.lines.map((r) => (
-                    <tr
-                      key={r.id}
-                      className={editingRow === r.id ? 'mesRowSelected' : undefined}
-                      onClick={() => onEditLine(r)}
-                    >
-                      <td className="mono" style={{ textAlign: 'center' }}>{r.childProduct?.productCode ?? r.childProductId}</td>
-                      <td style={{ textAlign: 'center' }}>{r.childProduct?.productName ?? '-'}</td>
-                      <td style={{ textAlign: 'center' }}>{(r.spec ?? specFromJson(r.childProduct?.specJson)) || '-'}</td>
-                      <td className="mono" style={{ textAlign: 'center' }}>{r.qty}</td>
-                      <td style={{ textAlign: 'center' }}>{r.pathSequence ?? r.sequence}</td>
-                      <td style={{ textAlign: 'center' }}>{r.useYn}</td>
-                      <td className="mono mesEbomNum">{r.inUnitPrice ?? '0'}</td>
-                      <td className="mono mesEbomNum">{r.outUnitPrice ?? '0'}</td>
-                      <td style={{ textAlign: 'center' }}>{r.remark ?? '-'}</td>
-                      <td className="mesTdActions">
-                        <button type="button" className="mesBtnSm mesBtnDanger" onClick={(ev) => void remove(r.id, ev)}>
-                          삭제
-                        </button>
-                      </td>
+            <div className="mesPanelCard mesEbomTableCard">
+              <div className="mesPanelHead mesEbomTableHead">
+                <div className="mesPanelTitle">하위 BOM 목록</div>
+                <span className="mesEbomLineCount">{selectedParent.lines.length}건</span>
+              </div>
+              <div className="mesTableViewport mesEbomLinesTable">
+                <table className="mesTable mesTableSticky mesTableClick mesEbomLinesGrid">
+                  <colgroup>
+                    <col className="mesEbomColCode" />
+                    <col className="mesEbomColName" />
+                    <col className="mesEbomColSpec" />
+                    <col className="mesEbomColQty" />
+                    <col className="mesEbomColPath" />
+                    <col className="mesEbomColUseYn" />
+                    <col className="mesEbomColPrice" />
+                    <col className="mesEbomColPrice" />
+                    <col className="mesEbomColRemark" />
+                    <col className="mesEbomColAction" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>품번</th>
+                      <th>품명</th>
+                      <th>규격</th>
+                      <th>수량</th>
+                      <th>경로순서</th>
+                      <th>사용여부</th>
+                      <th>입고단가</th>
+                      <th>판매단가</th>
+                      <th>비고</th>
+                      <th className="mesThActions">작업</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {selectedParent.lines.length === 0 ? (
+                      <tr>
+                        <td colSpan={10} className="muted mesEbomEmptyCell">등록된 하위 BOM이 없습니다.</td>
+                      </tr>
+                    ) : (
+                      selectedParent.lines.map((r) => (
+                        <tr
+                          key={r.id}
+                          className={editingRow === r.id ? 'mesRowSelected' : undefined}
+                          onClick={() => onEditLine(r)}
+                        >
+                          <td className="mono">{r.childProduct?.productCode ?? r.childProductId}</td>
+                          <td>{r.childProduct?.productName ?? '-'}</td>
+                          <td>{(r.spec ?? specFromJson(r.childProduct?.specJson)) || '-'}</td>
+                          <td className="mono">{r.qty}</td>
+                          <td>{r.pathSequence ?? r.sequence}</td>
+                          <td>
+                            <span className={r.useYn === 'Y' ? 'mesEbomUseYn mesEbomUseYn--y' : 'mesEbomUseYn mesEbomUseYn--n'}>
+                              {r.useYn}
+                            </span>
+                          </td>
+                          <td className="mono mesEbomNum">{r.inUnitPrice ?? '0'}</td>
+                          <td className="mono mesEbomNum">{r.outUnitPrice ?? '0'}</td>
+                          <td>{r.remark ?? '-'}</td>
+                          <td className="mesTdActions">
+                            <button type="button" className="mesBtnSm mesBtnDanger" onClick={(ev) => void remove(r.id, ev)}>
+                              삭제
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </>
         ) : (
-          <div className="mesPanelCard">
+          <div className="mesPanelCard mesEbomEmptyCard">
             <p className="mesPanelHint">상단 필터에서 BOM을 검색하고 선택하면 하위 BOM 표가 표시됩니다.</p>
           </div>
         )}

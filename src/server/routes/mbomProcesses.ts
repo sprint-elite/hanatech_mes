@@ -3,8 +3,11 @@ import { z } from 'zod'
 import { prisma } from '../db/prisma'
 import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
+import type { Prisma } from '@prisma/client'
 
 const useYn = z.enum(['Y', 'N'])
+
+const positiveSeconds = z.number().finite().positive()
 
 const createBody = z.object({
   productId: z.number().int().positive(),
@@ -12,6 +15,9 @@ const createBody = z.object({
   processName: z.string().trim().min(1).max(200),
   sequence: z.number().int().positive(),
   workCenterId: z.number().int().positive().optional().nullable(),
+  standardTime: positiveSeconds.optional().nullable(),
+  baseQty: z.number().int().positive().optional().nullable(),
+  remark: z.string().trim().max(500).optional().nullable(),
   isOutsourcing: useYn.optional(),
   useYn: useYn.optional(),
 })
@@ -25,11 +31,29 @@ const listSelect = {
   processName: true,
   sequence: true,
   workCenterId: true,
+  standardTime: true,
+  baseQty: true,
+  remark: true,
   isOutsourcing: true,
   useYn: true,
   product: { select: { productCode: true, productName: true } },
   workCenter: { select: { centerCode: true, centerName: true } },
 } as const
+
+type MbomProcessRow = Prisma.MbomProcessGetPayload<{ select: typeof listSelect }>
+
+function toStandardTimeInput(value: number | null | undefined): string | null | undefined {
+  if (value === undefined) return undefined
+  if (value === null) return null
+  return String(value)
+}
+
+function serializeMbomProcess(item: MbomProcessRow) {
+  return {
+    ...item,
+    standardTime: item.standardTime == null ? null : Number(item.standardTime.toString()),
+  }
+}
 
 export const mbomProcessesRouter = Router()
 
@@ -78,14 +102,14 @@ mbomProcessesRouter.get('/mbom-processes', async (req, res) => {
         orderBy: [{ productId: 'asc' }, { sequence: 'asc' }],
         select: listSelect,
       })
-      return res.json({ ok: true, items })
+      return res.json({ ok: true, items: items.map(serializeMbomProcess) })
     }
     const items = await prisma.mbomProcess.findMany({
       take: 500,
       orderBy: [{ id: 'desc' }],
       select: listSelect,
     })
-    return res.json({ ok: true, items })
+    return res.json({ ok: true, items: items.map(serializeMbomProcess) })
   } catch (e) {
     return prismaFail(res, e)
   }
@@ -100,7 +124,7 @@ mbomProcessesRouter.get('/mbom-processes/:id', async (req, res) => {
       select: listSelect,
     })
     if (!item) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
-    return res.json({ ok: true, item })
+    return res.json({ ok: true, item: serializeMbomProcess(item) })
   } catch (e) {
     return prismaFail(res, e)
   }
@@ -120,12 +144,15 @@ mbomProcessesRouter.post('/mbom-processes', async (req, res) => {
         processName: b.processName,
         sequence: b.sequence,
         workCenterId: b.workCenterId ?? undefined,
+        standardTime: toStandardTimeInput(b.standardTime),
+        baseQty: b.baseQty ?? undefined,
+        remark: b.remark ?? undefined,
         isOutsourcing: b.isOutsourcing ?? 'N',
         useYn: b.useYn ?? 'Y',
       },
       select: listSelect,
     })
-    return res.status(201).json({ ok: true, item })
+    return res.status(201).json({ ok: true, item: serializeMbomProcess(item) })
   } catch (e) {
     return prismaFail(res, e)
   }
@@ -147,6 +174,9 @@ mbomProcessesRouter.patch('/mbom-processes/:id', async (req, res) => {
       ...(b.processName !== undefined ? { processName: b.processName } : {}),
       ...(b.sequence !== undefined ? { sequence: b.sequence } : {}),
       ...(b.workCenterId !== undefined ? { workCenterId: b.workCenterId } : {}),
+      ...(b.standardTime !== undefined ? { standardTime: toStandardTimeInput(b.standardTime) } : {}),
+      ...(b.baseQty !== undefined ? { baseQty: b.baseQty } : {}),
+      ...(b.remark !== undefined ? { remark: b.remark } : {}),
       ...(b.isOutsourcing !== undefined ? { isOutsourcing: b.isOutsourcing } : {}),
       ...(b.useYn !== undefined ? { useYn: b.useYn } : {}),
     }
@@ -155,7 +185,7 @@ mbomProcessesRouter.patch('/mbom-processes/:id', async (req, res) => {
       data,
       select: listSelect,
     })
-    return res.json({ ok: true, item })
+    return res.json({ ok: true, item: serializeMbomProcess(item) })
   } catch (e) {
     return prismaFail(res, e)
   }

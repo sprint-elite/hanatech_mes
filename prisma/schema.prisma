@@ -153,6 +153,13 @@ model User {
   productsUpdated Product[]      @relation("ProductUpdatedBy")
   plansCreated    ProductionPlan[] @relation("PlanCreatedBy")
   ordersCreated   WorkOrder[]    @relation("WoCreatedBy")
+  leaveBalances   AnnualLeaveBalance[]
+  leaveRequests   AnnualLeaveRequest[] @relation("LeaveApplicant")
+  leaveManagerActions AnnualLeaveRequest[] @relation("LeaveManagerBy")
+  leaveCeoActions     AnnualLeaveRequest[] @relation("LeaveCeoBy")
+  erpSchedulesCreated ErpSchedule[]        @relation("ErpScheduleCreatedBy")
+  payStubRunsCreated  PayStubRun[]           @relation("PayStubRunCreatedBy")
+  payStubs            PayStub[]
 
   @@map("users")
 }
@@ -390,9 +397,11 @@ model MbomProcess {
   processName       String    @map("process_name")
   sequence          Int
   workCenterId      Int?      @map("work_center_id")
-  standardTime      Int?      @map("standard_time")
+  standardTime      Decimal?  @map("standard_time") @db.Decimal(14, 4)
+  baseQty           Int?      @map("base_qty")
   setupTime         Int?      @map("setup_time")
   capacityPerHour   Int?      @map("capacity_per_hour")
+  remark            String?   @db.VarChar(500)
   isOutsourcing     UseYn     @default(N) @map("is_outsourcing")
   useYn             UseYn     @default(Y) @map("use_yn")
   createdAt         DateTime  @default(now()) @map("created_at")
@@ -955,4 +964,201 @@ model VisionRawLog {
 
   @@index([lotId, processId])
   @@map("vision_raw_log")
+}
+
+// 스마트공장 사업관리시스템 로그 수집 API (smart-factory.kr) 전송 대기열
+model SmartFactoryLogOutbox {
+  id            Int       @id @default(autoincrement())
+  useSe         String    @map("use_se") @db.VarChar(20)
+  sysUser       String    @map("sys_user") @db.VarChar(60)
+  conectIp      String    @map("conect_ip") @db.VarChar(30)
+  dataUsgqty    Int       @default(0) @map("data_usgqty")
+  logDt         DateTime  @map("log_dt")
+  priority      Int       @default(50)
+  status        String    @default("PENDING") @db.VarChar(20)
+  httpMethod    String?   @map("http_method") @db.VarChar(10)
+  apiPath       String?   @map("api_path") @db.VarChar(255)
+  recptnRsltCd  String?   @map("recptn_rslt_cd") @db.VarChar(10)
+  recptnRslt    String?   @map("recptn_rslt") @db.VarChar(200)
+  recptnRsltDtl String?   @map("recptn_rslt_dtl") @db.Text
+  sentAt        DateTime? @map("sent_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([status, priority, createdAt])
+  @@index([logDt])
+  @@map("smart_factory_log_outbox")
+}
+
+model SmartFactoryLogSenderState {
+  id                   Int       @id @default(1)
+  lastSentAt           DateTime? @map("last_sent_at")
+  requestCountDate     String?   @map("request_count_date") @db.VarChar(10)
+  requestCount         Int       @default(0) @map("request_count")
+  successCountDate     String?   @map("success_count_date") @db.VarChar(10)
+  successCount         Int       @default(0) @map("success_count")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  @@map("smart_factory_log_sender_state")
+}
+
+enum LeaveRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum LeaveApprovalDecision {
+  PENDING
+  APPROVED
+  REJECTED
+  NA
+}
+
+model AnnualLeaveBalance {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  year      Int
+  totalDays Decimal  @map("total_days") @db.Decimal(5, 1)
+  usedDays  Decimal  @default(0) @map("used_days") @db.Decimal(5, 1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, year])
+  @@map("annual_leave_balance")
+}
+
+model AnnualLeaveRequest {
+  id              Int                   @id @default(autoincrement())
+  userId          Int                   @map("user_id")
+  startDate       DateTime              @map("start_date") @db.Date
+  endDate         DateTime              @map("end_date") @db.Date
+  days            Decimal               @db.Decimal(5, 1)
+  leaveType       String                @default("연차") @map("leave_type") @db.VarChar(32)
+  reason          String                @db.VarChar(500)
+  emergencyContact String?              @map("emergency_contact") @db.VarChar(64)
+  status          LeaveRequestStatus    @default(PENDING)
+  managerDecision LeaveApprovalDecision @default(PENDING) @map("manager_decision")
+  ceoDecision     LeaveApprovalDecision @default(PENDING) @map("ceo_decision")
+  managerById     Int?                  @map("manager_by_id")
+  managerAt       DateTime?             @map("manager_at")
+  ceoById         Int?                  @map("ceo_by_id")
+  ceoAt           DateTime?             @map("ceo_at")
+  rejectReason    String?               @map("reject_reason") @db.VarChar(500)
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+
+  user      User  @relation("LeaveApplicant", fields: [userId], references: [id], onDelete: Cascade)
+  managerBy User? @relation("LeaveManagerBy", fields: [managerById], references: [id])
+  ceoBy     User? @relation("LeaveCeoBy", fields: [ceoById], references: [id])
+
+  @@index([userId, startDate])
+  @@index([status, startDate])
+  @@map("annual_leave_request")
+}
+
+enum ErpScheduleStatus {
+  PLANNED
+  IN_PROGRESS
+  DONE
+  HOLD
+}
+
+enum ErpSchedulePriority {
+  LOW
+  NORMAL
+  HIGH
+}
+
+model ErpSchedule {
+  id          Int                 @id @default(autoincrement())
+  title       String              @db.VarChar(200)
+  description String?             @db.VarChar(1000)
+  category    String?             @db.VarChar(64)
+  startDate   DateTime            @map("start_date") @db.Date
+  endDate     DateTime?           @map("end_date") @db.Date
+  allDay      Boolean             @default(true) @map("all_day")
+  startTime   String?             @map("start_time") @db.VarChar(5)
+  endTime     String?             @map("end_time") @db.VarChar(5)
+  status      ErpScheduleStatus   @default(PLANNED)
+  priority    ErpSchedulePriority @default(NORMAL)
+  assignee    String?             @db.VarChar(64)
+  color       String?             @db.VarChar(16)
+  sortOrder   Int                 @default(0) @map("sort_order")
+  createdById Int                 @map("created_by_id")
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  createdBy User @relation("ErpScheduleCreatedBy", fields: [createdById], references: [id])
+
+  @@index([startDate, status])
+  @@index([status, sortOrder])
+  @@map("erp_schedule")
+}
+
+enum PayStubRunStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum PayStubLineType {
+  EARNING
+  DEDUCTION
+}
+
+model PayStubRun {
+  id          Int              @id @default(autoincrement())
+  yearMonth   String           @map("year_month") @db.VarChar(7)
+  title       String?          @db.VarChar(100)
+  payDate     DateTime?        @map("pay_date") @db.Date
+  status      PayStubRunStatus @default(DRAFT)
+  publishedAt DateTime?        @map("published_at")
+  createdById Int              @map("created_by_id")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  createdBy User      @relation("PayStubRunCreatedBy", fields: [createdById], references: [id])
+  payStubs  PayStub[]
+
+  @@unique([yearMonth])
+  @@map("pay_stub_run")
+}
+
+model PayStub {
+  id             Int      @id @default(autoincrement())
+  runId          Int      @map("run_id")
+  userId         Int      @map("user_id")
+  dept           String?  @db.VarChar(64)
+  position       String?  @db.VarChar(64)
+  workDays       Decimal? @map("work_days") @db.Decimal(5, 1)
+  totalEarning   Decimal  @default(0) @map("total_earning") @db.Decimal(14, 0)
+  totalDeduction Decimal  @default(0) @map("total_deduction") @db.Decimal(14, 0)
+  netPay         Decimal  @default(0) @map("net_pay") @db.Decimal(14, 0)
+  remark         String?  @db.VarChar(500)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  run   PayStubRun    @relation(fields: [runId], references: [id], onDelete: Cascade)
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lines PayStubLine[]
+
+  @@unique([runId, userId])
+  @@index([userId])
+  @@map("pay_stub")
+}
+
+model PayStubLine {
+  id        Int             @id @default(autoincrement())
+  payStubId Int             @map("pay_stub_id")
+  lineType  PayStubLineType @map("line_type")
+  label     String          @db.VarChar(64)
+  amount    Decimal         @db.Decimal(14, 0)
+  sortOrder Int             @default(0) @map("sort_order")
+
+  payStub PayStub @relation(fields: [payStubId], references: [id], onDelete: Cascade)
+
+  @@index([payStubId, lineType, sortOrder])
+  @@map("pay_stub_line")
 }

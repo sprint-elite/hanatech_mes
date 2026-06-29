@@ -1,0 +1,721 @@
+/* 고객/업체 페이지 */
+
+.mesCustomersPage {
+  --cp-bg: #0c0e14;
+  --cp-surface: #12151e;
+  --cp-surface2: #181c28;
+  --cp-border: rgba(255, 255, 255, 0.08);
+  --cp-border-strong: rgba(255, 255, 255, 0.14);
+  --cp-text: #eef1f6;
+  --cp-muted: #9aa3b2;
+  --cp-accent: #e8c24a;
+  --cp-accent-text: #1a1406;
+  --cp-ok: #3dba72;
+  --cp-danger: #e85d5d;
+  --cp-info: #5ba4e8;
+  --cp-customer: #5ba4e8;
+  --cp-supplier: #4ecf8a;
+  --cp-outsource: #a78bfa;
+  --cp-radius: 12px;
+  --cp-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesCustomersPage {
+  --cp-bg: #f4f5f8;
+  --cp-surface: #ffffff;
+  --cp-surface2: #f3f4f8;
+  --cp-border: rgba(0, 0, 0, 0.08);
+  --cp-border-strong: rgba(0, 0, 0, 0.12);
+  --cp-text: #141820;
+  --cp-muted: #5f6775;
+  --cp-accent: #c9a227;
+}
+
+.mesCustomersPage .mesCustHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesCustomersPage .mesCustHeadMain {
+  min-width: 0;
+}
+
+.mesCustomersPage .mesCustTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cp-text);
+}
+
+.mesCustomersPage .mesCustDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--cp-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesCustomersPage .mesCustHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mesCustomersPage .mesCustCountBadge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: var(--cp-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--cp-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesCustomersPage .mesCustBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--cp-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.mesCustomersPage .mesCustBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesCustomersPage .mesCustBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--cp-accent) 100%);
+  color: var(--cp-accent-text);
+  border-color: #a8841c;
+}
+
+.mesCustomersPage .mesCustBtn--secondary {
+  background: var(--cp-surface2);
+  color: var(--cp-text);
+  border-color: var(--cp-border-strong);
+}
+
+.mesCustomersPage .mesCustBtn--danger {
+  background: transparent;
+  color: var(--cp-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesCustomersPage .mesCustFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--cp-radius);
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+}
+
+.mesCustomersPage .mesCustField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesCustomersPage .mesCustField--search {
+  flex: 1 1 240px;
+}
+
+.mesCustomersPage .mesCustField--select {
+  flex: 0 1 150px;
+  min-width: 130px;
+}
+
+.mesCustomersPage .mesCustFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cp-muted);
+}
+
+.mesCustomersPage .mesCustInputWrap {
+  position: relative;
+}
+
+.mesCustomersPage .mesCustInputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cp-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesCustomersPage .mesCustInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesCustomersPage .mesCustInput,
+.mesCustomersPage .mesCustSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--cp-radius-sm);
+  border: 1px solid var(--cp-border-strong);
+  background: var(--cp-surface2);
+  color: var(--cp-text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mesCustomersPage .mesCustInput--search {
+  padding-left: 34px;
+}
+
+.mesCustomersPage .mesCustFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesCustomersPage .mesCustStatsStrip {
+  display: flex;
+  margin-bottom: 16px;
+  border-radius: var(--cp-radius);
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  overflow-x: auto;
+}
+
+.mesCustomersPage .mesCustStatItem {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  min-width: 140px;
+  position: relative;
+}
+
+.mesCustomersPage .mesCustStatItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--cp-border-strong);
+}
+
+.mesCustomersPage .mesCustStatIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.mesCustomersPage .mesCustStatIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesCustomersPage .mesCustStatIcon--gold { color: var(--cp-accent); }
+.mesCustomersPage .mesCustStatIcon--blue { color: var(--cp-customer); }
+.mesCustomersPage .mesCustStatIcon--green { color: var(--cp-supplier); }
+.mesCustomersPage .mesCustStatIcon--purple { color: var(--cp-outsource); }
+
+.mesCustomersPage .mesCustStatLabel {
+  margin: 0;
+  font-size: 13px;
+  color: var(--cp-muted);
+}
+
+.mesCustomersPage .mesCustStatValue {
+  margin: 4px 0 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--cp-text);
+}
+
+.mesCustomersPage .mesCustTableCard {
+  border-radius: var(--cp-radius);
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  overflow: hidden;
+}
+
+.mesCustomersPage .mesCustTableViewport {
+  overflow-x: auto;
+}
+
+.mesCustomersPage .mesCustTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesCustomersPage .mesCustTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cp-muted);
+  background: var(--cp-surface2);
+  border-bottom: 1px solid var(--cp-border);
+  white-space: nowrap;
+}
+
+.mesCustomersPage .mesCustTable td {
+  padding: 12px 14px;
+  color: var(--cp-text);
+  border-bottom: 1px solid var(--cp-border);
+  vertical-align: middle;
+}
+
+.mesCustomersPage .mesCustTable tbody tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.mesCustomersPage .mesCustTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesCustomersPage .mesCustTable tbody tr.mesCustRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesCustomersPage .mesCustTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesCustomersPage .mesCustTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesCustomersPage .mesCustThActions,
+.mesCustomersPage .mesCustTdActions {
+  text-align: right;
+  width: 120px;
+}
+
+.mesCustomersPage .mesCustRowActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.mesCustomersPage .mesCustActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--cp-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--cp-border-strong);
+  background: var(--cp-surface2);
+  color: var(--cp-text);
+}
+
+.mesCustomersPage .mesCustActionBtn--danger {
+  color: var(--cp-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  background: transparent;
+}
+
+.mesCustomersPage .mesCustTypeBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.mesCustomersPage .mesCustTypeBadge--customer {
+  color: var(--cp-customer);
+  background: rgba(91, 164, 232, 0.12);
+  border-color: rgba(91, 164, 232, 0.35);
+}
+
+.mesCustomersPage .mesCustTypeBadge--supplier {
+  color: var(--cp-supplier);
+  background: rgba(78, 207, 138, 0.12);
+  border-color: rgba(78, 207, 138, 0.35);
+}
+
+.mesCustomersPage .mesCustTypeBadge--outsourcing {
+  color: var(--cp-outsource);
+  background: rgba(167, 139, 250, 0.12);
+  border-color: rgba(167, 139, 250, 0.35);
+}
+
+.mesCustomersPage .mesCustUseBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesCustomersPage .mesCustUseBadge--y {
+  color: var(--cp-ok);
+  background: rgba(61, 186, 114, 0.12);
+  border: 1px solid rgba(61, 186, 114, 0.35);
+}
+
+.mesCustomersPage .mesCustUseBadge--n {
+  color: var(--cp-muted);
+  background: var(--cp-surface2);
+  border: 1px solid var(--cp-border-strong);
+}
+
+.mesCustomersPage .mesCustEmpty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--cp-muted);
+}
+
+.mesCustomersPage .mesCustPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--cp-border);
+  background: var(--cp-surface2);
+  font-size: 13px;
+  color: var(--cp-muted);
+}
+
+.mesCustomersPage .mesCustPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesCustomersPage .mesCustPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--cp-radius-sm);
+  border: 1px solid var(--cp-border-strong);
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesCustomersPage .mesCustPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesCustomersPage .mesCustPagerBtn--active {
+  background: var(--cp-accent);
+  color: var(--cp-accent-text);
+  border-color: #a8841c;
+}
+
+/* —— 고객/업체 모달 —— */
+.mesCustModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mesCustModalRoot > * {
+  pointer-events: auto;
+}
+
+.mesCustModalRoot .mesModalBackdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.mesCustModalDialog {
+  position: relative;
+  z-index: 1;
+  width: min(920px, 96vw);
+  max-height: min(92vh, 860px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesCustModalDialog {
+  background: #ffffff;
+}
+
+.mesCustModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesCustModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesCustModalHeadIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: #e8c24a;
+  flex-shrink: 0;
+}
+
+.mesCustModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesCustModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesCustModalSub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #9aa3b2;
+}
+
+.mesCustModalHeadBadges {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mesCustModalBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mesCustModalStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 10px;
+  background: #181c28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.mesCustModalStripItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+}
+
+.mesCustModalStripItem:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mesCustModalStripLabel {
+  font-size: 13px;
+  color: #9aa3b2;
+  font-weight: 600;
+}
+
+.mesCustModalStripVal {
+  font-size: 17px;
+  font-weight: 800;
+  color: #eef1f6;
+}
+
+.mesCustModalGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .mesCustModalGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesCustModalCard {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #181c28;
+  padding: 18px 20px;
+}
+
+.mesCustModalCardTitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #eef1f6;
+}
+
+.mesCustModalFieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+.mesCustModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesCustModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mesCustModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9aa3b2;
+}
+
+.mesCustModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0a0d14;
+  color: #eef1f6;
+  font-size: 14px;
+  font-family: inherit;
+  min-height: 42px;
+}
+
+.mesCustModalTextarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.mesCustModalInfoList {
+  display: flex;
+  flex-direction: column;
+}
+
+.mesCustModalInfoRow {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+}
+
+.mesCustModalInfoRow:last-child {
+  border-bottom: none;
+}
+
+.mesCustModalInfoRow span {
+  color: #9aa3b2;
+  font-weight: 600;
+}
+
+.mesCustModalInfoRow strong {
+  color: #eef1f6;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.mesCustModalFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #12151e;
+}
+
+.mesCustModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesCustModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesCustModalBtn--cancel {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #eef1f6;
+}
+
+.mesCustModalBtn--save {
+  background: linear-gradient(180deg, #efd06a 0%, #e8c24a 100%);
+  color: #1a1406;
+  border-color: #c9a832;
+}
+
+.mesCustModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

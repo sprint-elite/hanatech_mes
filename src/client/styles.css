@@ -468,6 +468,101 @@ body {
   border-top: 1px solid var(--status-strip-border);
 }
 
+.mesAuthStrip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--status-strip-border);
+}
+
+.mesAuthUser {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mesAuthName {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--side-text);
+}
+
+.mesAuthId {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.mesAuthLogout,
+.mesAuthLoginLink {
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.mesLoginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.mesLoginCard {
+  width: 100%;
+  max-width: 380px;
+  padding: 28px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.mesLoginBrand {
+  margin-bottom: 16px;
+}
+
+.mesLoginTitle {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.mesLoginDesc {
+  margin: 0 0 20px;
+  font-size: 13px;
+}
+
+.mesLoginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mesLoginSubmit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.mesLoginError {
+  margin: 0;
+  font-size: 13px;
+  color: var(--danger, #c0392b);
+}
+
+.mesLoginFoot {
+  margin: 18px 0 0;
+  font-size: 12px;
+  text-align: center;
+}
+
+.mesLoginFoot a {
+  color: var(--accent);
+}
+
 .mesStatusLed {
   width: 7px;
   height: 7px;

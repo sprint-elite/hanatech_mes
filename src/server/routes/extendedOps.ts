@@ -173,11 +173,10 @@ const woBody = z.object({
 function resolveWorkOrderHoldFields(
   status: WorkOrderStatus,
   holdReason: string | null | undefined,
-): { holdReason: string | null } | { error: string } {
+): { holdReason: string | null } {
   if (status === WorkOrderStatus.HOLD) {
     const reason = holdReason?.trim() ?? ''
-    if (!reason) return { error: '보류 상태일 때 보류 사유를 입력해야 합니다.' }
-    return { holdReason: reason }
+    return { holdReason: reason || null }
   }
   return { holdReason: null }
 }
@@ -189,9 +188,6 @@ extendedOpsRouter.post('/work-orders', async (req, res) => {
   const workerIds = b.workerIds ?? []
   const status = b.status ?? WorkOrderStatus.READY
   const holdFields = resolveWorkOrderHoldFields(status, b.holdReason)
-  if ('error' in holdFields) {
-    return res.status(400).json({ ok: false, error: 'HOLD_REASON_REQUIRED', message: holdFields.error })
-  }
   try {
     const uniqueWorkers = await normalizeWorkerIds(workerIds)
     if (uniqueWorkers === null) {
@@ -251,9 +247,6 @@ extendedOpsRouter.patch('/work-orders/:id', async (req, res) => {
           ? current.holdReason
           : undefined
     const holdFields = resolveWorkOrderHoldFields(nextStatus, holdReasonInput)
-    if ('error' in holdFields) {
-      return res.status(400).json({ ok: false, error: 'HOLD_REASON_REQUIRED', message: holdFields.error })
-    }
 
     let uniqueWorkers: number[] | null | undefined
     if (workerIds !== undefined) {
