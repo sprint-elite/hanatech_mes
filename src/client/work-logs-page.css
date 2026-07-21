@@ -1,0 +1,1031 @@
+.mesWlPage {
+  --wl-green: #0d9488;
+  --wl-green-soft: rgba(61, 186, 114, 0.12);
+  --wl-blue: #3b82f6;
+  --wl-blue-soft: rgba(59, 130, 246, 0.12);
+  --wl-orange: #f0a030;
+  --wl-orange-soft: rgba(240, 160, 48, 0.15);
+  --wl-red: #e85d5d;
+  --wl-gray-soft: rgba(100, 116, 139, 0.15);
+  --wl-accent: #c9a227;
+  --wl-muted: #5f6775;
+  --wl-border: rgba(0, 0, 0, 0.08);
+  --wl-border-strong: rgba(0, 0, 0, 0.12);
+  --wl-card: #ffffff;
+  --wl-surface2: #f3f4f8;
+  --wl-bg: #ffffff;
+  --wl-text: #141820;
+  color: var(--wl-text);
+}
+
+[data-theme='dark'] .mesWlPage {
+  --wl-accent: #e8c24a;
+  --wl-muted: #9aa3b2;
+  --wl-border: rgba(255, 255, 255, 0.08);
+  --wl-border-strong: rgba(255, 255, 255, 0.14);
+  --wl-card: #12151e;
+  --wl-surface2: #181c28;
+  --wl-bg: #0c0e14;
+  --wl-text: #eef1f6;
+}
+
+.mesWlPage .mesWlTopBar { margin-bottom: 18px; }
+.mesWlPage .mesWlTopTitle { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.mesWlPage .mesWlTopSub { margin: 6px 0 0; font-size: 13px; color: var(--wl-muted); line-height: 1.5; }
+
+.mesWlPage .mesWlLoginNotice {
+  padding: 32px;
+  text-align: center;
+  border: 1px solid var(--wl-border);
+  border-radius: 12px;
+  background: var(--wl-card);
+}
+
+.mesWlPage .mesWlToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--wl-border);
+  border-radius: 12px;
+  background: var(--wl-surface2);
+}
+
+.mesWlPage .mesWlToolbarLeft,
+.mesWlPage .mesWlToolbarRight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesWlPage .mesWlMonthLabel {
+  min-width: 96px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.mesWlPage .mesWlMonthInput {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--wl-border);
+  background: var(--wl-bg);
+  color: inherit;
+  font: inherit;
+}
+
+.mesWlPage .mesWlToolbarMeta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.mesWlPage .mesWlBtn--green { background: var(--wl-green); color: #fff; }
+.mesWlPage .mesWlBtn--ghost { background: var(--wl-card); border-color: var(--wl-border); color: inherit; }
+.mesWlPage .mesWlBtn--danger { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+
+.mesWlPage .mesWlIconBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--wl-border);
+  background: var(--wl-bg);
+  cursor: pointer;
+  font-size: 18px;
+  color: inherit;
+}
+
+.mesWlPage .mesWlCalendarCard,
+.mesWlPage .mesWlKanbanCard {
+  border: 1px solid var(--wl-border);
+  border-radius: 12px;
+  background: var(--wl-card);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.mesWlPage .mesWlCalendarBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  min-height: 460px;
+}
+
+@media (max-width: 960px) {
+  .mesWlPage .mesWlCalendarBody { grid-template-columns: 1fr; }
+}
+
+.mesWlPage .mesWlCalendarMain {
+  border-right: 1px solid var(--wl-border);
+}
+
+@media (max-width: 960px) {
+  .mesWlPage .mesWlCalendarMain { border-right: none; border-bottom: 1px solid var(--wl-border); }
+}
+
+.mesWlPage .mesWlCalGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.mesWlPage .mesWlCalDow {
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--wl-muted);
+  background: var(--wl-bg);
+  border-bottom: 1px solid var(--wl-border);
+}
+
+.mesWlPage .mesWlCalDow--sun { color: #dc2626; }
+.mesWlPage .mesWlCalDow--sat { color: #2563eb; }
+
+.mesWlPage .mesWlCalCell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 104px;
+  padding: 6px 8px 8px;
+  border: none;
+  border-right: 1px solid var(--wl-border);
+  border-bottom: 1px solid var(--wl-border);
+  background: var(--wl-card);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.mesWlPage .mesWlCalCell:nth-child(7n) { border-right: none; }
+.mesWlPage .mesWlCalCell--empty { background: var(--wl-bg); cursor: default; }
+.mesWlPage .mesWlCalCell--today .mesWlCalDayNum {
+  background: var(--wl-green);
+  color: #fff;
+  border-radius: 999px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mesWlPage .mesWlCalCell--selected {
+  background: var(--wl-green-soft);
+  box-shadow: inset 0 0 0 2px var(--wl-green);
+}
+
+.mesWlPage .mesWlCalCell--sun { background: rgba(220, 38, 38, 0.04); }
+.mesWlPage .mesWlCalCell--sat { background: rgba(37, 99, 235, 0.05); }
+.mesWlPage .mesWlCalCell--holiday { background: rgba(220, 38, 38, 0.08); }
+
+.mesWlPage .mesWlCalDayNum {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.mesWlPage .mesWlCalCell--sun .mesWlCalDayNum { color: #dc2626; }
+.mesWlPage .mesWlCalCell--sat .mesWlCalDayNum { color: #2563eb; }
+.mesWlPage .mesWlCalCell--holiday .mesWlCalDayNum { color: #dc2626; }
+
+.mesWlPage .mesWlCalHoliday {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  max-width: calc(100% - 36px);
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesWlPage .mesWlCalBadges {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 26px;
+}
+
+.mesWlPage .mesWlCalBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 10px;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.mesWlPage .mesWlCalBadgeTime {
+  flex-shrink: 0;
+  font-style: normal;
+  font-size: 9px;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+.mesWlPage .mesWlCalBadge span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesWlPage .mesWlCalMore {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlAgenda {
+  display: flex;
+  flex-direction: column;
+  background: var(--wl-bg);
+  min-height: 0;
+}
+
+.mesWlPage .mesWlAgendaHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--wl-border);
+}
+
+.mesWlPage .mesWlAgendaHead h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.mesWlPage .mesWlAgendaHoliday {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.mesWlPage .mesWlAgendaHead span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlAgendaEmpty {
+  margin: 16px 14px;
+  font-size: 13px;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlAgendaList {
+  flex: 1;
+  overflow: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesWlPage .mesWlAgendaItem {
+  display: block;
+  width: 100%;
+  padding: 10px 10px 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--wl-border);
+  border-left-width: 4px;
+  background: var(--wl-card);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.mesWlPage .mesWlAgendaItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.mesWlPage .mesWlAgendaTime {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--wl-blue);
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mesWlPage .mesWlAgendaMain {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mesWlPage .mesWlAgendaMain strong {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.mesWlPage .mesWlAgendaSub {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlAgendaAuthor {
+  margin: 4px 0 0;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--wl-green);
+}
+
+.mesWlPage .mesWlAgendaPreview {
+  margin: 6px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlAgendaAdd {
+  margin: 0 10px 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px dashed var(--wl-border);
+  background: transparent;
+  color: var(--wl-green);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mesWlPage .mesWlStatusChip {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--wl-bg);
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlStatusChip--planned { background: var(--wl-blue-soft); color: #1d4ed8; }
+.mesWlPage .mesWlStatusChip--in_progress { background: var(--wl-orange-soft); color: #b45309; }
+.mesWlPage .mesWlStatusChip--done { background: var(--wl-green-soft); color: #15803d; }
+.mesWlPage .mesWlStatusChip--hold { background: var(--wl-gray-soft); color: var(--wl-muted); }
+
+.mesWlPage .mesWlKanbanHead {
+  padding: 14px 16px 0;
+}
+
+.mesWlPage .mesWlKanbanHead h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.mesWlPage .mesWlKanbanHead p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlKanban {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 14px 16px 16px;
+  overflow-x: auto;
+}
+
+.mesWlPage .mesWlKanbanCol {
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  border-radius: 10px;
+  border: 1px solid var(--wl-border);
+  background: var(--wl-bg);
+}
+
+.mesWlPage .mesWlKanbanColHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--wl-border);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.mesWlPage .mesWlKanbanColHead em {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlKanbanCol--planned .mesWlKanbanColHead { background: var(--wl-blue-soft); }
+.mesWlPage .mesWlKanbanCol--in_progress .mesWlKanbanColHead { background: var(--wl-orange-soft); }
+.mesWlPage .mesWlKanbanCol--done .mesWlKanbanColHead { background: var(--wl-green-soft); }
+.mesWlPage .mesWlKanbanCol--hold .mesWlKanbanColHead { background: var(--wl-gray-soft); }
+
+.mesWlPage .mesWlKanbanColBody {
+  flex: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesWlPage .mesWlKanbanEmpty {
+  margin: auto;
+  font-size: 12px;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlCard {
+  position: relative;
+  padding: 10px 10px 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--wl-border);
+  border-left-width: 4px;
+  background: var(--wl-card);
+  cursor: pointer;
+}
+
+.mesWlPage .mesWlCard--alert {
+  padding-top: 22px;
+}
+
+.mesWlPage .mesWlCardAlert {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.mesWlPage .mesWlCardAlert--delay {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+}
+
+.mesWlPage .mesWlCardAlert--overdue {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.mesWlPage .mesWlCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.mesWlPage .mesWlCard--highlight {
+  box-shadow: inset 0 0 0 2px var(--wl-green);
+}
+
+.mesWlPage .mesWlCardTime {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--wl-blue);
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mesWlPage .mesWlCardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.mesWlPage .mesWlCardTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.mesWlPage .mesWlCardLabel {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.mesWlPage .mesWlCardLabel--cat {
+  background: rgba(13, 148, 136, 0.18);
+  color: #0d9488;
+  border: 1px solid rgba(13, 148, 136, 0.35);
+}
+
+.mesWlPage .mesWlCardLabel--planned { background: var(--wl-blue-soft); color: #1d4ed8; }
+.mesWlPage .mesWlCardLabel--in_progress { background: var(--wl-orange-soft); color: #b45309; }
+.mesWlPage .mesWlCardLabel--done { background: var(--wl-green-soft); color: #15803d; }
+.mesWlPage .mesWlCardLabel--hold { background: var(--wl-gray-soft); color: var(--wl-muted); }
+
+.mesWlPage .mesWlCardTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.mesWlPage .mesWlCardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--wl-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.mesWlPage .mesWlCardMetaSep {
+  opacity: 0.55;
+  font-weight: 400;
+}
+
+.mesWlPage .mesWlCardMetaName {
+  font-weight: 700;
+  color: var(--wl-text);
+  opacity: 0.85;
+}
+
+.mesWlPage .mesWlCardHead strong {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.mesWlPage .mesWlPriority {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--wl-bg);
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlPriority--HIGH { background: rgba(232, 93, 93, 0.15); color: #b91c1c; }
+
+.mesWlPage .mesWlCardSub {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlModalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.mesWlPage .mesWlModalRoot--stack {
+  z-index: 1300;
+}
+
+.mesWlPage .mesWlModal {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid var(--wl-border);
+  background: var(--wl-card);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+}
+
+.mesWlPage .mesWlModalHead,
+.mesWlPage .mesWlModalFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--wl-border);
+}
+
+.mesWlPage .mesWlModalFoot {
+  border-bottom: none;
+  border-top: 1px solid var(--wl-border);
+}
+
+.mesWlPage .mesWlModalHead h2 { margin: 0; font-size: 17px; font-weight: 800; }
+
+.mesWlPage .mesWlModalBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mesWlPage .mesWlField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mesWlPage .mesWlFieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mesWlPage .mesWlWhenBlock {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--wl-border);
+  background: var(--wl-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesWlPage .mesWlWhenRow {
+  display: grid;
+  grid-template-columns: 44px 1fr 108px;
+  gap: 8px;
+  align-items: center;
+}
+
+.mesWlPage .mesWlWhenLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--wl-border);
+  background: var(--wl-card);
+  color: inherit;
+  font: inherit;
+}
+
+.mesWlPage .mesWlInput--time {
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.mesWlPage .mesWlInput:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mesWlPage .mesWlCheck {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlColorPick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mesWlPage .mesWlColorDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.mesWlPage .mesWlColorDot--on {
+  border-color: var(--wl-text);
+  box-shadow: 0 0 0 2px var(--wl-card);
+}
+
+.mesWlPage .mesWlModalFootActions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 560px) {
+  .mesWlPage .mesWlWhenRow {
+    grid-template-columns: 1fr;
+  }
+
+  .mesWlPage .mesWlWhenLabel {
+    margin-bottom: -4px;
+  }
+}
+
+/* —— 리스트 뷰 —— */
+.mesWlPage .mesWlListCard {
+  border: 1px solid var(--wl-border);
+  border-radius: 12px;
+  background: var(--wl-card);
+  overflow: hidden;
+}
+
+.mesWlPage .mesWlListHead {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--wl-border);
+}
+
+.mesWlPage .mesWlListHead h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.mesWlPage .mesWlListHead p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlListEmpty {
+  margin: 0;
+  padding: 32px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlTableWrap {
+  overflow-x: auto;
+}
+
+.mesWlPage .mesWlTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesWlPage .mesWlTable th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--wl-muted);
+  background: var(--wl-bg);
+  border-bottom: 1px solid var(--wl-border);
+  white-space: nowrap;
+}
+
+.mesWlPage .mesWlTable td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--wl-border);
+  vertical-align: middle;
+}
+
+.mesWlPage .mesWlTableRow--clickable {
+  cursor: pointer;
+}
+
+.mesWlPage .mesWlTableRow--clickable:hover td {
+  background: var(--wl-green-soft);
+}
+
+.mesWlPage .mesWlTableDate {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.mesWlPage .mesWlTableTitle {
+  font-weight: 700;
+  min-width: 140px;
+}
+
+.mesWlPage .mesWlTableTitleBar {
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  margin-right: 8px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+.mesWlPage .mesWlTablePreview {
+  max-width: 280px;
+  color: var(--wl-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* —— 칸반 모달 —— */
+.mesWlPage .mesWlModal--wide {
+  width: min(1120px, 100%);
+  max-height: calc(100vh - 32px);
+}
+
+.mesWlPage .mesWlModalSub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlModalBody--kanban {
+  padding: 12px 16px 16px;
+  overflow: auto;
+}
+
+.mesWlPage .mesWlKanban--modal {
+  padding: 0;
+  min-height: 360px;
+}
+
+.mesWlPage .mesWlModalFootHint {
+  font-size: 12px;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlFormKanbanLink {
+  padding-top: 4px;
+  border-top: 1px dashed var(--wl-border);
+}
+
+.mesWlPage .mesWlBtn--block {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* —— 달력(3) + 리스트(1) 가로 배치 —— */
+.mesWlPage .mesWlSplitLayout--3to1 {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .mesWlPage .mesWlSplitLayout--3to1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesWlPage .mesWlSplitCalendar {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.mesWlPage .mesWlSplitCalendar .mesWlCalCell {
+  min-height: 96px;
+}
+
+.mesWlPage .mesWlListCard--side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  margin-bottom: 0;
+  max-height: none;
+}
+
+.mesWlPage .mesWlListCard--side .mesWlListHead h2 {
+  font-size: 14px;
+}
+
+.mesWlPage .mesWlListCard--side .mesWlListHead p {
+  font-size: 11px;
+}
+
+.mesWlPage .mesWlSideListBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mesWlPage .mesWlSideListItem {
+  display: block;
+  width: 100%;
+  padding: 8px 8px 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--wl-border);
+  border-left-width: 3px;
+  background: var(--wl-card);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.mesWlPage .mesWlSideListItem:hover {
+  background: var(--wl-green-soft);
+}
+
+.mesWlPage .mesWlSideListItem--selected {
+  background: var(--wl-green-soft);
+  box-shadow: inset 0 0 0 1px rgba(13, 148, 136, 0.35);
+}
+
+.mesWlPage .mesWlSideListItem .mesWlCardTop {
+  gap: 4px;
+}
+
+.mesWlPage .mesWlSideListItem .mesWlCardTitle {
+  font-size: 12px;
+}
+
+.mesWlPage .mesWlSideListItem .mesWlCardLabel {
+  font-size: 9px;
+  padding: 1px 5px;
+}
+
+.mesWlPage .mesWlSideListItem .mesWlCardMeta {
+  margin-top: 6px;
+  font-size: 10px;
+}
+
+.mesWlPage .mesWlCalendarSideHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--wl-border);
+}
+
+.mesWlPage .mesWlCalendarSideHead h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.mesWlPage .mesWlCalendarSideHead span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wl-muted);
+}
+
+.mesWlPage .mesWlCalendarSideAdd {
+  display: block;
+  width: calc(100% - 20px);
+  margin: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px dashed var(--wl-border);
+  background: transparent;
+  color: var(--wl-green);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mesWlPage .mesWlTableRow--selected {
+  background: var(--wl-green-soft);
+}

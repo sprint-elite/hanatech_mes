@@ -20,7 +20,7 @@
 }
 
 [data-theme='light'] .mesDefectHistoryPage {
-  --dh-bg: #f4f5f8;
+  --dh-bg: #ffffff;
   --dh-surface: #ffffff;
   --dh-surface2: #f3f4f8;
   --dh-border: rgba(0, 0, 0, 0.08);

@@ -18,7 +18,7 @@
 }
 
 [data-theme='light'] .mesEbomPage {
-  --eb-bg: #f4f5f8;
+  --eb-bg: #ffffff;
   --eb-surface: #ffffff;
   --eb-surface2: #f3f4f8;
   --eb-border: rgba(0, 0, 0, 0.08);

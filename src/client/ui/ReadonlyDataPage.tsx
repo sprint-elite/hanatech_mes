@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { apiJson } from '../lib/api'
+import '../list-page.css'
 
 type Col<T> = {
   header: string
@@ -37,50 +38,55 @@ export function ReadonlyDataPage<T>({ title, description, fetchPath, columns }: 
   }, [load])
 
   return (
-    <div className="mesPage">
-      <header className="mesPageHead">
-        <h1 className="mesPageTitle">{title}</h1>
-        <p className="mesPageDesc">{description}</p>
+    <div className="mesPage mesPageWide mesListPage">
+      <header className="mesListHead">
+        <div className="mesListHeadMain">
+          <h1 className="mesListTitle">{title}</h1>
+          <p className="mesListDesc">{description}</p>
+        </div>
+        <div className="mesListHeadActions">
+          <span className="mesListCountBadge">{rows.length}건</span>
+          <button type="button" className="mesListBtn mesListBtn--secondary" onClick={() => void load()}>
+            새로고침
+          </button>
+        </div>
       </header>
-      <div className="mesToolbar">
-        <button type="button" className="mesBtnPrimary" onClick={() => void load()}>
-          새로고침
-        </button>
-      </div>
-      {err ? <div className="error mesBanner">{err}</div> : null}
-      <div className="mesTableWrap mesTableScroll">
-        <table className="mesTable">
-          <thead>
-            <tr>
-              {columns.map((c) => (
-                <th key={c.header}>{c.header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+      {err ? <div className="error mesBanner mesListNotice">{err}</div> : null}
+      <div className="mesListTableCard">
+        <div className="mesTableWrap mesListTableViewport">
+          <table className="mesTable">
+            <thead>
               <tr>
-                <td colSpan={columns.length} className="muted">
-                  로딩 중…
-                </td>
+                {columns.map((c) => (
+                  <th key={c.header}>{c.header}</th>
+                ))}
               </tr>
-            ) : rows.length === 0 ? (
-              <tr>
-                <td colSpan={columns.length} className="muted">
-                  데이터 없음
-                </td>
-              </tr>
-            ) : (
-              rows.map((row, i) => (
-                <tr key={i}>
-                  {columns.map((c) => (
-                    <td key={c.header}>{c.cell(row)}</td>
-                  ))}
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={columns.length} className="muted">
+                    로딩 중…
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : rows.length === 0 ? (
+                <tr>
+                  <td colSpan={columns.length} className="muted">
+                    데이터 없음
+                  </td>
+                </tr>
+              ) : (
+                rows.map((row, i) => (
+                  <tr key={i}>
+                    {columns.map((c) => (
+                      <td key={c.header}>{c.cell(row)}</td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )

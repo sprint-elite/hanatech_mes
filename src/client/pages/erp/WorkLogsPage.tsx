@@ -1,10 +1,6 @@
-import { ErpShellPage } from '../../ui/ErpShellPage'
+import { Navigate } from 'react-router-dom'
 
+/** 업무일지 기능은 일정관리로 통합되었습니다. */
 export function WorkLogsPage() {
-  return (
-    <ErpShellPage
-      title="업무일지"
-      description="직원별 일일 업무 내용·특이사항·진행 상태를 등록·조회합니다."
-    />
-  )
+  return <Navigate to="/erp/schedules" replace />
 }

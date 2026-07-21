@@ -5,7 +5,9 @@ import {
   calcLongTermCarePremium,
   calcPensionPremium,
   getInsuranceRates,
+  resolvePensionIncome,
 } from './payrollRates'
+import { calcLocalIncomeTax, calcWithholdingIncomeTax } from './payrollWithholding'
 
 export type CalcLine = { label: string; amount: number; itemCode: string }
 
@@ -21,7 +23,10 @@ export type CalcResult = {
   warnings: string[]
 }
 
+export type WorkQuantities = Record<number, number>
+
 type AllowanceItem = {
+  id: number
   itemCode: string
   itemName: string
   paymentType: string
@@ -45,15 +50,10 @@ type Profile = {
   baseSalary: { toString(): string }
   hourlyWage: { toString(): string } | null
   ordinaryWage: { toString(): string } | null
+  pensionBaseSalary: { toString(): string } | null
   dependants: number
-}
-
-type Work = {
-  workDays: { toString(): string }
-  overtimeHours: { toString(): string }
-  nightHours: { toString(): string }
-  holidayHours: { toString(): string }
-  annualLeaveDays: { toString(): string }
+  children8to20: number
+  withholdingRatePct: number
 }
 
 function n(v: { toString(): string } | null | undefined): number {
@@ -80,52 +80,30 @@ function nonTaxableCap(type: string | null): number {
   return 0
 }
 
-function calcIncomeTax(taxable: number, dependants: number): number {
-  const allowance = Math.max(0, dependants - 1) * 150_000
-  const base = Math.max(0, taxable - allowance)
-  if (base <= 1_060_000) return 0
-  if (base <= 3_000_000) return roundWon((base - 1_060_000) * 0.06)
-  if (base <= 5_000_000) return roundWon(116_400 + (base - 3_000_000) * 0.15)
-  return roundWon(416_400 + (base - 5_000_000) * 0.24)
+function calcIncomeTax(
+  taxableIncome: number,
+  profile: { dependants: number; children8to20: number; withholdingRatePct: number },
+): number {
+  return calcWithholdingIncomeTax({
+    monthlyTaxableWon: taxableIncome,
+    familyCount: profile.dependants,
+    children8to20: profile.children8to20,
+    withholdingRatePct: profile.withholdingRatePct,
+  })
 }
 
 function calcAllowance(item: AllowanceItem, ctx: {
   profile: Profile
-  work: Work | null
+  workQuantities: WorkQuantities
   yearMonth: string
   hourlyRate: number
   dailyRate: number
-  monthDayCount: number
 }): number {
-  const name = item.itemName
   const mult = item.multiplier != null ? n(item.multiplier) : null
-  const work = ctx.work
+  const qty = ctx.workQuantities[item.id] ?? 0
 
-  if (includesAny(name, ['기본급']) || item.itemCode === '01') {
+  if (includesAny(item.itemName, ['기본급']) || item.itemCode === '01') {
     return roundWon(n(ctx.profile.baseSalary))
-  }
-
-  if (includesAny(name, ['연장'])) {
-    const hours = work ? n(work.overtimeHours) : 0
-    const rate = mult ?? 1.5
-    return roundWon(ctx.hourlyRate * hours * rate)
-  }
-
-  if (includesAny(name, ['야간'])) {
-    const hours = work ? n(work.nightHours) : 0
-    const rate = mult ?? 1.5
-    return roundWon(ctx.hourlyRate * hours * rate)
-  }
-
-  if (includesAny(name, ['휴일'])) {
-    const hours = work ? n(work.holidayHours) : 0
-    const rate = mult ?? 1.5
-    return roundWon(ctx.hourlyRate * hours * rate)
-  }
-
-  if (includesAny(name, ['연차'])) {
-    const days = work ? n(work.annualLeaveDays) : 0
-    return roundWon(ctx.dailyRate * days)
   }
 
   if (item.paymentType === 'FIXED') {
@@ -133,13 +111,13 @@ function calcAllowance(item: AllowanceItem, ctx: {
   }
 
   if (item.paymentType === 'VARIABLE_TIME') {
-    const hours = work ? n(work.regularHours) : 0
-    return roundWon(ctx.hourlyRate * hours * (mult ?? 1))
+    const rate = mult ?? 1.5
+    return roundWon(ctx.hourlyRate * qty * rate)
   }
 
   if (item.paymentType === 'VARIABLE_DAY') {
-    const days = work ? n(work.workDays) : 0
-    return roundWon(ctx.dailyRate * days * (mult ?? 1))
+    const rate = mult ?? 1
+    return roundWon(ctx.dailyRate * qty * rate)
   }
 
   return 0
@@ -149,7 +127,7 @@ function calcDeduction(
   item: DeductionItem,
   ctx: {
     taxableIncome: number
-    dependants: number
+    profile: Profile
     yearMonth: string
     computed: Record<string, number>
   },
@@ -159,7 +137,9 @@ function calcDeduction(
   const rates = getInsuranceRates(ctx.yearMonth)
 
   if (includesAny(name, ['국민연금']) || includesAny(formula, ['국민연금'])) {
-    return calcPensionPremium(ctx.taxableIncome, rates)
+    const reported = ctx.profile.pensionBaseSalary != null ? n(ctx.profile.pensionBaseSalary) : null
+    const pensionIncome = resolvePensionIncome(ctx.taxableIncome, reported)
+    return calcPensionPremium(pensionIncome, rates)
   }
 
   if (includesAny(name, ['건강보험']) && !includesAny(name, ['장기'])) {
@@ -177,29 +157,42 @@ function calcDeduction(
   }
 
   if (includesAny(name, ['주민세', '지방소득', '지방'])) {
-    const incomeTax = ctx.computed['소득세'] ?? calcIncomeTax(ctx.taxableIncome, ctx.dependants)
-    return roundWon(incomeTax * 0.1)
+    const incomeTax = ctx.computed['소득세'] ?? calcIncomeTax(ctx.taxableIncome, ctx.profile)
+    return calcLocalIncomeTax(incomeTax)
   }
 
   if (includesAny(name, ['소득세']) && !includesAny(name, ['지방', '주민'])) {
-    return calcIncomeTax(ctx.taxableIncome, ctx.dependants)
+    return calcIncomeTax(ctx.taxableIncome, ctx.profile)
   }
 
   return 0
 }
 
+export function aggregateWorkQuantities(
+  lines: { allowanceItemId: number; quantity: { toString(): string } }[],
+): WorkQuantities {
+  const map: WorkQuantities = {}
+  for (const line of lines) {
+    map[line.allowanceItemId] = (map[line.allowanceItemId] ?? 0) + n(line.quantity)
+  }
+  return map
+}
+
 export function calculatePayroll(input: {
   profile: Profile
-  work: Work | null
+  workQuantities: WorkQuantities
   yearMonth: string
   allowances: AllowanceItem[]
   deductions: DeductionItem[]
 }): CalcResult {
   const warnings: string[] = []
-  const { profile, work, yearMonth, allowances, deductions } = input
+  const { profile, workQuantities, yearMonth, allowances, deductions } = input
 
-  if (!work) {
-    warnings.push('해당 월 근무입력이 없습니다. 시간/일수 기반 수당은 0원으로 계산됩니다.')
+  const hasVariableWork = allowances.some(
+    (a) => a.paymentType !== 'FIXED' && !includesAny(a.itemName, ['기본급']) && (workQuantities[a.id] ?? 0) > 0,
+  )
+  if (!hasVariableWork) {
+    warnings.push('해당 월 변동 근무입력이 없습니다. 시간/일수 기반 수당은 0원으로 계산됩니다.')
   }
 
   const ordinary = n(profile.ordinaryWage) || n(profile.baseSalary)
@@ -207,7 +200,7 @@ export function calculatePayroll(input: {
   const monthDayCount = monthDays(yearMonth)
   const dailyRate = ordinary / monthDayCount
 
-  const ctx = { profile, work, yearMonth, hourlyRate, dailyRate, monthDayCount }
+  const ctx = { profile, workQuantities, yearMonth, hourlyRate, dailyRate }
 
   const earnings: CalcLine[] = allowances.map((item) => ({
     itemCode: item.itemCode,
@@ -232,7 +225,7 @@ export function calculatePayroll(input: {
   for (const item of deductions) {
     const amount = calcDeduction(item, {
       taxableIncome,
-      dependants: profile.dependants,
+      profile,
       yearMonth,
       computed,
     })
@@ -253,7 +246,7 @@ export function calculatePayroll(input: {
     totalEarning,
     totalDeduction,
     netPay: totalEarning - totalDeduction,
-    workDays: work ? n(work.workDays) : null,
+    workDays: null,
     dept: profile.dept ?? '',
     position: profile.position ?? '',
     warnings,
@@ -261,18 +254,20 @@ export function calculatePayroll(input: {
 }
 
 export async function loadPayrollCalcInput(userId: number, yearMonth: string) {
-  const [profile, work, allowances, deductions] = await Promise.all([
+  const [profile, lines, allowances, deductions] = await Promise.all([
     prisma.payEmployeeProfile.findUnique({ where: { userId } }),
-    prisma.payWorkRecord.findUnique({ where: { userId_yearMonth: { userId, yearMonth } } }),
+    prisma.payWorkRecordLine.findMany({ where: { userId, yearMonth } }),
     prisma.payAllowanceItem.findMany({ where: { status: 'ACTIVE' }, orderBy: [{ displayOrder: 'asc' }, { itemCode: 'asc' }] }),
     prisma.payDeductionItem.findMany({ where: { status: 'ACTIVE' }, orderBy: [{ displayOrder: 'asc' }, { itemCode: 'asc' }] }),
   ])
 
-  return { profile, work, allowances, deductions }
+  const workQuantities = aggregateWorkQuantities(lines)
+
+  return { profile, workQuantities, allowances, deductions }
 }
 
 export async function calculatePayrollForUser(userId: number, yearMonth: string): Promise<CalcResult> {
-  const { profile, work, allowances, deductions } = await loadPayrollCalcInput(userId, yearMonth)
+  const { profile, workQuantities, allowances, deductions } = await loadPayrollCalcInput(userId, yearMonth)
 
   if (!profile || profile.status !== 'ACTIVE') {
     throw Object.assign(new Error('급여 직원정보가 없거나 비활성 상태입니다.'), { status: 400 })
@@ -284,5 +279,5 @@ export async function calculatePayrollForUser(userId: number, yearMonth: string)
     throw Object.assign(new Error('활성 공제항목이 없습니다. 공제항목을 먼저 등록하세요.'), { status: 400 })
   }
 
-  return calculatePayroll({ profile, work, yearMonth, allowances, deductions })
+  return calculatePayroll({ profile, workQuantities, yearMonth, allowances, deductions })
 }

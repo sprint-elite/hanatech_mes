@@ -21,7 +21,7 @@
 }
 
 [data-theme='light'] .mesLocationsPage {
-  --loc-bg: #f4f5f8;
+  --loc-bg: #ffffff;
   --loc-surface: #ffffff;
   --loc-surface2: #f3f4f8;
   --loc-border: rgba(0, 0, 0, 0.08);

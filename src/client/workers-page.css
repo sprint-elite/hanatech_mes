@@ -19,7 +19,7 @@
 }
 
 [data-theme='light'] .mesWorkersPage {
-  --wr-bg: #f4f5f8;
+  --wr-bg: #ffffff;
   --wr-surface: #ffffff;
   --wr-surface2: #f3f4f8;
   --wr-border: rgba(0, 0, 0, 0.08);

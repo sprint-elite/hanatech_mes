@@ -157,11 +157,16 @@ model User {
   leaveRequests   AnnualLeaveRequest[] @relation("LeaveApplicant")
   leaveManagerActions AnnualLeaveRequest[] @relation("LeaveManagerBy")
   leaveCeoActions     AnnualLeaveRequest[] @relation("LeaveCeoBy")
+  expenseReports          ExpenseReport[] @relation("ExpenseApplicant")
+  expenseManagerActions   ExpenseReport[] @relation("ExpenseManagerBy")
+  expenseCeoActions       ExpenseReport[] @relation("ExpenseCeoBy")
   erpSchedulesCreated ErpSchedule[]        @relation("ErpScheduleCreatedBy")
+  erpWorkLogs         ErpWorkLog[]
   payStubRunsCreated  PayStubRun[]           @relation("PayStubRunCreatedBy")
   payStubs            PayStub[]
   payEmployeeProfile  PayEmployeeProfile?
   payWorkRecords      PayWorkRecord[]
+  payWorkRecordLines  PayWorkRecordLine[]
 
   @@map("users")
 }
@@ -540,6 +545,7 @@ model WorkOrderMaterial {
 model ProductionLot {
   id               Int        @id @default(autoincrement())
   lotNo            String     @unique @map("lot_no")
+  barcode          String?    @unique @map("barcode")
   woId             Int?       @map("wo_id")
   productId        Int        @map("product_id")
   lotQty           Int        @map("lot_qty")
@@ -1061,6 +1067,47 @@ model AnnualLeaveRequest {
   @@map("annual_leave_request")
 }
 
+model ExpenseReport {
+  id              Int                   @id @default(autoincrement())
+  userId          Int                   @map("user_id")
+  reportDate      DateTime              @map("report_date") @db.Date
+  totalAmount     Int                   @map("total_amount")
+  receiptDataUrl  String?               @map("receipt_data_url") @db.LongText
+  status          LeaveRequestStatus    @default(PENDING)
+  managerDecision LeaveApprovalDecision @default(PENDING) @map("manager_decision")
+  ceoDecision     LeaveApprovalDecision @default(PENDING) @map("ceo_decision")
+  managerById     Int?                  @map("manager_by_id")
+  managerAt       DateTime?             @map("manager_at")
+  ceoById         Int?                  @map("ceo_by_id")
+  ceoAt           DateTime?             @map("ceo_at")
+  rejectReason    String?               @map("reject_reason") @db.VarChar(500)
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+
+  user      User  @relation("ExpenseApplicant", fields: [userId], references: [id], onDelete: Cascade)
+  managerBy User? @relation("ExpenseManagerBy", fields: [managerById], references: [id])
+  ceoBy     User? @relation("ExpenseCeoBy", fields: [ceoById], references: [id])
+  lines     ExpenseReportLine[]
+
+  @@index([userId, reportDate])
+  @@index([status, reportDate])
+  @@map("expense_report")
+}
+
+model ExpenseReportLine {
+  id              Int    @id @default(autoincrement())
+  expenseReportId Int    @map("expense_report_id")
+  vendor          String @db.VarChar(200)
+  description     String @db.VarChar(500)
+  amount          Int
+  sortOrder       Int    @default(0) @map("sort_order")
+
+  expenseReport ExpenseReport @relation(fields: [expenseReportId], references: [id], onDelete: Cascade)
+
+  @@index([expenseReportId])
+  @@map("expense_report_line")
+}
+
 enum ErpScheduleStatus {
   PLANNED
   IN_PROGRESS
@@ -1098,6 +1145,34 @@ model ErpSchedule {
   @@index([startDate, status])
   @@index([status, sortOrder])
   @@map("erp_schedule")
+}
+
+enum ErpWorkLogStatus {
+  PLANNED
+  IN_PROGRESS
+  DONE
+  HOLD
+}
+
+model ErpWorkLog {
+  id        Int              @id @default(autoincrement())
+  userId    Int              @map("user_id")
+  workDate  DateTime         @map("work_date") @db.Date
+  workTime  String?          @map("work_time") @db.VarChar(5)
+  title     String           @db.VarChar(200)
+  content   String?          @db.Text
+  category  String?          @db.VarChar(64)
+  status    ErpWorkLogStatus @default(PLANNED)
+  sortOrder Int              @default(0) @map("sort_order")
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([workDate, status])
+  @@index([userId, workDate])
+  @@index([status, sortOrder])
+  @@map("erp_work_log")
 }
 
 enum PayStubRunStatus {
@@ -1190,6 +1265,8 @@ model PayAllowanceItem {
   createdAt       DateTime       @default(now()) @map("created_at")
   updatedAt       DateTime       @updatedAt @map("updated_at")
 
+  workRecordLines PayWorkRecordLine[]
+
   @@index([status, displayOrder])
   @@map("pay_allowance_item")
 }
@@ -1224,11 +1301,14 @@ model PayEmployeeProfile {
   baseSalary    Decimal           @default(0) @map("base_salary") @db.Decimal(14, 0)
   hourlyWage    Decimal?          @map("hourly_wage") @db.Decimal(10, 0)
   ordinaryWage  Decimal?          @map("ordinary_wage") @db.Decimal(14, 0)
+  pensionBaseSalary Decimal?        @map("pension_base_salary") @db.Decimal(14, 0)
   paymentDay    Int?              @map("payment_day")
   bankName      String?           @map("bank_name") @db.VarChar(32)
   bankAccount   String?           @map("bank_account") @db.VarChar(32)
   accountHolder String?           @map("account_holder") @db.VarChar(64)
   dependants    Int               @default(1)
+  children8to20 Int               @default(0) @map("children_8to20")
+  withholdingRatePct Int          @default(100) @map("withholding_rate_pct")
   status        PayEmployeeStatus @default(ACTIVE)
   remark        String?           @db.VarChar(500)
   createdAt     DateTime          @default(now()) @map("created_at")
@@ -1261,4 +1341,25 @@ model PayWorkRecord {
   @@unique([userId, yearMonth])
   @@index([yearMonth])
   @@map("pay_work_record")
+}
+
+/// eCount 스타일 근무입력 — 일자·사원·수당항목별 근무기록 행
+model PayWorkRecordLine {
+  id              Int      @id @default(autoincrement())
+  workDate        DateTime @map("work_date") @db.Date
+  userId          Int      @map("user_id")
+  allowanceItemId Int      @map("allowance_item_id")
+  yearMonth       String   @map("year_month") @db.VarChar(7)
+  quantity        Decimal  @default(0) @db.Decimal(8, 2)
+  sortOrder       Int      @default(0) @map("sort_order")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  allowanceItem PayAllowanceItem @relation(fields: [allowanceItemId], references: [id], onDelete: Restrict)
+
+  @@index([workDate])
+  @@index([yearMonth])
+  @@index([userId, yearMonth])
+  @@map("pay_work_record_line")
 }

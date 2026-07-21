@@ -49,10 +49,8 @@ export function PayStubSheet({ stub }: Props) {
             <td>{stub.hireDate ? fmtKrDate(stub.hireDate) : ''}</td>
           </tr>
           <tr>
-            <th scope="row">근무일수</th>
-            <td>{stub.workDays != null ? `${stub.workDays}일` : ''}</td>
             <th scope="row">지급일</th>
-            <td>{payDate ? fmtKrDate(payDate) : ''}</td>
+            <td colSpan={3}>{payDate ? fmtKrDate(payDate) : ''}</td>
           </tr>
         </tbody>
       </table>

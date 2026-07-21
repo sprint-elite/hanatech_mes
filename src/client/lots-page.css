@@ -1,0 +1,792 @@
+/* 생산 LOT 리스트 페이지 (mesLotPage) */
+
+.mesLotPage {
+  --lot-bg: #0c0e14;
+  --lot-surface: #12151e;
+  --lot-surface2: #181c28;
+  --lot-border: rgba(255, 255, 255, 0.08);
+  --lot-border-strong: rgba(255, 255, 255, 0.14);
+  --lot-text: #eef1f6;
+  --lot-muted: #9aa3b2;
+  --lot-accent: #e8c24a;
+  --lot-accent-text: #1a1406;
+  --lot-ok: #3dba72;
+  --lot-danger: #e85d5d;
+  --lot-info: #5ba4e8;
+  --lot-wip: #a78bfa;
+  --lot-raw: #4ecf8a;
+  --lot-fg: #5ba4e8;
+  --lot-radius: 12px;
+  --lot-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesLotPage {
+  --lot-bg: #ffffff;
+  --lot-surface: #ffffff;
+  --lot-surface2: #f3f4f8;
+  --lot-border: rgba(0, 0, 0, 0.08);
+  --lot-border-strong: rgba(0, 0, 0, 0.12);
+  --lot-text: #141820;
+  --lot-muted: #5f6775;
+  --lot-accent: #c9a227;
+  --lot-accent-text: #1a1406;
+}
+
+.mesLotPage .mesLotHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesLotPage .mesLotHeadMain {
+  min-width: 0;
+}
+
+.mesLotPage .mesLotTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--lot-text);
+}
+
+.mesLotPage .mesLotDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--lot-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesLotPage .mesLotHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mesLotPage .mesLotCountBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--lot-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--lot-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesLotPage .mesLotBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--lot-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.mesLotPage .mesLotBtn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.mesLotPage .mesLotBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--lot-accent) 100%);
+  color: var(--lot-accent-text);
+  border-color: #a8841c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesLotPage .mesLotBtn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.mesLotPage .mesLotBtn--secondary {
+  background: var(--lot-surface2);
+  color: var(--lot-text);
+  border-color: var(--lot-border-strong);
+}
+
+.mesLotPage .mesLotBtn--secondary:hover {
+  border-color: var(--lot-accent);
+  color: var(--lot-accent);
+}
+
+.mesLotPage .mesLotBtn--danger {
+  background: transparent;
+  color: var(--lot-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesLotPage .mesLotBtn--danger:hover {
+  background: rgba(232, 93, 93, 0.1);
+}
+
+.mesLotPage .mesLotFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--lot-radius);
+  background: var(--lot-surface);
+  border: 1px solid var(--lot-border);
+}
+
+.mesLotPage .mesLotField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesLotPage .mesLotField--search {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.mesLotPage .mesLotField--select {
+  flex: 0 1 140px;
+  min-width: 120px;
+}
+
+.mesLotPage .mesLotField--period {
+  flex: 0 1 280px;
+  min-width: 240px;
+}
+
+.mesLotPage .mesLotPeriodRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesLotPage .mesLotPeriodSep {
+  color: var(--lot-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.mesLotPage .mesLotBtn--edit {
+  background: var(--lot-surface2);
+  color: var(--lot-text);
+  border-color: var(--lot-border-strong);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesLotPage .mesLotBtn--edit:hover {
+  border-color: var(--lot-accent);
+  color: var(--lot-accent);
+}
+
+.mesLotPage .mesLotFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lot-muted);
+}
+
+.mesLotPage .mesLotInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mesLotPage .mesLotInputIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--lot-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesLotPage .mesLotInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesLotPage .mesLotInput,
+.mesLotPage .mesLotSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--lot-radius-sm);
+  border: 1px solid var(--lot-border-strong);
+  background: var(--lot-surface2);
+  color: var(--lot-text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mesLotPage .mesLotInput--search {
+  padding-left: 34px;
+}
+
+.mesLotPage .mesLotFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesLotPage .mesLotStatsStrip {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 16px;
+  border-radius: var(--lot-radius);
+  background: var(--lot-surface);
+  border: 1px solid var(--lot-border);
+  overflow-x: auto;
+}
+
+.mesLotPage .mesLotStatItem {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  min-width: 150px;
+  position: relative;
+}
+
+.mesLotPage .mesLotStatItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--lot-border-strong);
+}
+
+.mesLotPage .mesLotStatIcon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='light'] .mesLotPage .mesLotStatIcon {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--lot-border);
+}
+
+.mesLotPage .mesLotStatIcon--gold {
+  color: var(--lot-accent);
+}
+
+.mesLotPage .mesLotStatIcon--blue {
+  color: var(--lot-info);
+}
+
+.mesLotPage .mesLotStatIcon--purple {
+  color: var(--lot-wip);
+}
+
+.mesLotPage .mesLotStatIcon--green {
+  color: #5cd68a;
+}
+
+.mesLotPage .mesLotStatIcon--orange {
+  color: #f0a030;
+}
+
+.mesLotPage .mesLotStatIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesLotPage .mesLotStatMeta {
+  min-width: 0;
+}
+
+.mesLotPage .mesLotStatLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lot-muted);
+  line-height: 1.3;
+}
+
+.mesLotPage .mesLotStatValue {
+  margin: 4px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  line-height: 1.1;
+}
+
+.mesLotPage .mesLotStatValueNum {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--lot-text);
+  letter-spacing: -0.03em;
+}
+
+.mesLotPage .mesLotStatValueUnit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lot-muted);
+}
+
+.mesLotPage .mesLotTableCard {
+  border-radius: var(--lot-radius);
+  background: var(--lot-surface);
+  border: 1px solid var(--lot-border);
+  overflow: hidden;
+}
+
+.mesLotPage .mesLotTableViewport {
+  overflow-x: auto;
+}
+
+.mesLotPage .mesLotTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesLotPage .mesLotTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lot-muted);
+  background: var(--lot-surface2);
+  border-bottom: 1px solid var(--lot-border);
+  white-space: nowrap;
+}
+
+.mesLotPage .mesLotTable td {
+  padding: 12px 14px;
+  color: var(--lot-text);
+  border-bottom: 1px solid var(--lot-border);
+  vertical-align: middle;
+}
+
+.mesLotPage .mesLotTable tbody tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.mesLotPage .mesLotTable tbody tr.mesLotRowScanHit {
+  background: rgba(91, 164, 232, 0.12);
+  outline: 2px solid rgba(91, 164, 232, 0.35);
+  outline-offset: -2px;
+}
+
+.mesLotPage .mesLotTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesLotPage .mesLotTable tbody tr.mesLotRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesLotPage .mesLotTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesLotPage .mesLotTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesLotPage .mesLotThActions,
+.mesLotPage .mesLotTdActions {
+  text-align: center;
+  width: 160px;
+  white-space: nowrap;
+}
+
+.mesLotPage .mesLotTdActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mesLotPage .mesLotStatusBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesLotPage .mesLotStatusBadge--created {
+  color: var(--lot-info);
+  border: 1px solid rgba(91, 164, 232, 0.45);
+  background: rgba(91, 164, 232, 0.08);
+}
+
+.mesLotPage .mesLotStatusBadge--progress {
+  color: var(--lot-wip);
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.08);
+}
+
+.mesLotPage .mesLotStatusBadge--done {
+  color: var(--lot-ok);
+  border: 1px solid rgba(61, 186, 114, 0.45);
+  background: rgba(61, 186, 114, 0.08);
+}
+
+.mesLotPage .mesLotStatusBadge--outsource {
+  color: #f0a030;
+  border: 1px solid rgba(240, 160, 48, 0.45);
+  background: rgba(240, 160, 48, 0.08);
+}
+
+
+.mesLotPage .mesLotPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--lot-border);
+  background: var(--lot-surface2);
+  font-size: 13px;
+  color: var(--lot-muted);
+}
+
+.mesLotPage .mesLotPagerTotal {
+  font-weight: 600;
+}
+
+.mesLotPage .mesLotPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesLotPage .mesLotPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--lot-radius-sm);
+  border: 1px solid var(--lot-border-strong);
+  background: var(--lot-surface);
+  color: var(--lot-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesLotPage .mesLotPagerBtn:hover:not(:disabled) {
+  border-color: var(--lot-accent);
+  color: var(--lot-accent);
+}
+
+.mesLotPage .mesLotPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesLotPage .mesLotPagerBtn--active {
+  background: var(--lot-accent);
+  color: var(--lot-accent-text);
+  border-color: #a8841c;
+}
+
+.mesLotPage .mesLotPageSize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesLotPage .mesLotPageSize select {
+  padding: 6px 10px;
+  border-radius: var(--lot-radius-sm);
+  border: 1px solid var(--lot-border-strong);
+  background: var(--lot-surface);
+  color: var(--lot-text);
+  font-size: 12px;
+}
+
+.mesLotPage .mesLotEmpty {
+  text-align: center;
+  padding: 32px 16px !important;
+  color: var(--lot-muted);
+}
+
+.mesLotPage .mesNotice {
+  margin-bottom: 14px;
+}
+
+/* —— 품목 등록/수정 모달 —— */
+.mesLotModalRoot .mesModalBackdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.mesLotModalDialog {
+  width: min(1180px, 96vw) !important;
+  max-width: 1180px !important;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid var(--lot-border-strong, rgba(255, 255, 255, 0.12));
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesLotModalDialog {
+  background: #ffffff;
+}
+
+.mesLotModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--lot-border, rgba(255, 255, 255, 0.08));
+  flex-shrink: 0;
+}
+
+.mesLotModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesLotModalHeadIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: var(--lot-accent, #e8c24a);
+}
+
+.mesLotModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesLotModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--lot-text, #eef1f6);
+  letter-spacing: -0.02em;
+}
+
+.mesLotModalSub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--lot-muted, #9aa3b2);
+}
+
+.mesLotModalHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.mesLotModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.mesLotModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesLotModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mesLotModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, var(--lot-accent, #e8c24a) 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesLotModalBtn--save:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.mesLotModalBtn--cancel {
+  background: transparent;
+  color: var(--lot-text, #eef1f6);
+  border-color: var(--lot-border-strong, rgba(255, 255, 255, 0.2));
+}
+
+.mesLotModalBtn--cancel:hover:not(:disabled) {
+  border-color: var(--lot-accent, #e8c24a);
+}
+
+.mesLotModalBtn--close {
+  background: transparent;
+  color: var(--lot-muted, #9aa3b2);
+  border-color: transparent;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mesLotModalBtn--close:hover {
+  color: var(--lot-text, #eef1f6);
+}
+
+.mesLotModalBody {
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.mesLotModalGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .mesLotModalGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesLotModalSection {
+  border-radius: 12px;
+  border: 1px solid var(--lot-border, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+[data-theme='light'] .mesLotModalSection {
+  background: var(--lot-surface2, #f3f4f8);
+}
+
+.mesLotModalSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lot-text, #eef1f6);
+}
+
+.mesLotModalSectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 194, 74, 0.1);
+  color: var(--lot-accent, #e8c24a);
+  flex-shrink: 0;
+}
+
+.mesLotModalSectionIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesLotModalSectionBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.mesLotModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesLotModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesLotModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lot-text, #eef1f6);
+  line-height: 1.35;
+}
+
+.mesLotModalFieldKey {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lot-muted, #9aa3b2);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mesLotModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--lot-border-strong, rgba(255, 255, 255, 0.14));
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--lot-text, #eef1f6);
+  font-size: 13px;
+}
+
+[data-theme='light'] .mesLotModalInput {
+  background: #ffffff;
+}
+
+.mesLotModalInput::placeholder {
+  color: var(--lot-muted, #9aa3b2);
+  opacity: 0.85;
+}
+
+.mesLotModalInput:focus {
+  outline: none;
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 2px rgba(232, 194, 74, 0.12);
+}
+
+.mesLotModalFootMeta {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--lot-muted, #9aa3b2);
+}

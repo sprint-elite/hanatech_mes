@@ -20,7 +20,7 @@
 }
 
 [data-theme='light'] .mesMbomPage {
-  --mb-bg: #f4f5f8;
+  --mb-bg: #ffffff;
   --mb-surface: #ffffff;
   --mb-surface2: #f3f4f8;
   --mb-border: rgba(0, 0, 0, 0.08);

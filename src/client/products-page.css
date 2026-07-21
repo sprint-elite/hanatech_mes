@@ -22,7 +22,7 @@
 }
 
 [data-theme='light'] .mesProductsPage {
-  --pp-bg: #f4f5f8;
+  --pp-bg: #ffffff;
   --pp-surface: #ffffff;
   --pp-surface2: #f3f4f8;
   --pp-border: rgba(0, 0, 0, 0.08);

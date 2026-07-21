@@ -21,7 +21,7 @@
 
 [data-theme='light'] .mesPageOps {
   --opsv2-surface: #ffffff;
-  --opsv2-surface2: #f3f4f8;
+  --opsv2-surface2: #f8f9fc;
   --opsv2-border: rgba(0, 0, 0, 0.08);
   --opsv2-border-strong: rgba(0, 0, 0, 0.12);
   --opsv2-text: #141820;
@@ -565,22 +565,31 @@
   font-size: 12px;
 }
 
-.mesPageOps .mesOpsV2PlanBadge {
+.mesPageOps .mesOpsV2PlanBadge,
+.mesPageOps .mesOpsV2WoBadge,
+.mesPageOps .mesOpsV2LotBadge {
   display: inline-flex;
+  align-items: center;
   padding: 3px 10px;
   border-radius: 999px;
   font-size: 11px;
   font-weight: 700;
+  line-height: 1.4;
   border: 1px solid transparent;
+  white-space: nowrap;
 }
 
-.mesPageOps .mesOpsV2PlanBadge--planned {
+.mesPageOps .mesOpsV2PlanBadge--planned,
+.mesPageOps .mesOpsV2WoBadge--ready,
+.mesPageOps .mesOpsV2LotBadge--created {
   color: var(--opsv2-info);
   background: rgba(91, 164, 232, 0.12);
   border-color: rgba(91, 164, 232, 0.35);
 }
 
-.mesPageOps .mesOpsV2PlanBadge--confirmed {
+.mesPageOps .mesOpsV2PlanBadge--confirmed,
+.mesPageOps .mesOpsV2WoBadge--done,
+.mesPageOps .mesOpsV2LotBadge--done {
   color: var(--opsv2-ok);
   background: rgba(61, 186, 114, 0.12);
   border-color: rgba(61, 186, 114, 0.35);
@@ -590,6 +599,34 @@
   color: var(--opsv2-muted);
   background: var(--opsv2-surface2);
   border-color: var(--opsv2-border-strong);
+}
+
+.mesPageOps .mesOpsV2WoBadge--progress,
+.mesPageOps .mesOpsV2LotBadge--progress {
+  color: #b45309;
+  background: rgba(232, 194, 74, 0.14);
+  border-color: rgba(232, 194, 74, 0.4);
+}
+
+.mesPageOps .mesOpsV2WoBadge--hold {
+  color: var(--opsv2-danger);
+  background: rgba(232, 93, 93, 0.12);
+  border-color: rgba(232, 93, 93, 0.35);
+}
+
+.mesPageOps .mesOpsV2LotBadge--outsource {
+  color: #7c3aed;
+  background: rgba(167, 139, 250, 0.14);
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+[data-theme='light'] .mesPageOps .mesOpsV2WoBadge--progress,
+[data-theme='light'] .mesPageOps .mesOpsV2LotBadge--progress {
+  color: #a16207;
+}
+
+[data-theme='light'] .mesPageOps .mesOpsV2LotBadge--outsource {
+  color: #6d28d9;
 }
 
 .mesPageOps .mesOpsV2RowActions {
@@ -834,42 +871,6 @@
   color: var(--opsv2-muted);
 }
 
-.mesPageOps .mesOpsV2WoBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.4;
-  border: 1px solid transparent;
-}
-
-.mesPageOps .mesOpsV2WoBadge--ready {
-  color: #93c5fd;
-  background: rgba(30, 64, 175, 0.35);
-  border-color: rgba(59, 130, 246, 0.45);
-}
-
-.mesPageOps .mesOpsV2WoBadge--progress {
-  color: #fcd34d;
-  background: rgba(180, 120, 20, 0.25);
-  border-color: rgba(212, 168, 44, 0.45);
-}
-
-.mesPageOps .mesOpsV2WoBadge--done {
-  color: #86efac;
-  background: rgba(22, 101, 52, 0.35);
-  border-color: rgba(34, 197, 94, 0.4);
-}
-
-.mesPageOps .mesOpsV2WoBadge--hold {
-  color: #fca5a5;
-  background: rgba(127, 29, 29, 0.35);
-  border-color: rgba(239, 68, 68, 0.4);
-}
-
-/* —— 생산 LOT 탭 —— */
 .mesPageOps .mesOpsV2SummaryStrip--lot {
   grid-template-columns:
     minmax(80px, 0.65fr)
@@ -879,41 +880,6 @@
     minmax(64px, 0.55fr)
     minmax(72px, 0.8fr)
     minmax(64px, 0.55fr);
-}
-
-.mesPageOps .mesOpsV2LotBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.4;
-  border: 1px solid transparent;
-}
-
-.mesPageOps .mesOpsV2LotBadge--created {
-  color: #93c5fd;
-  background: rgba(30, 64, 175, 0.35);
-  border-color: rgba(59, 130, 246, 0.45);
-}
-
-.mesPageOps .mesOpsV2LotBadge--progress {
-  color: #fcd34d;
-  background: rgba(180, 120, 20, 0.25);
-  border-color: rgba(212, 168, 44, 0.45);
-}
-
-.mesPageOps .mesOpsV2LotBadge--done {
-  color: #86efac;
-  background: rgba(22, 101, 52, 0.35);
-  border-color: rgba(34, 197, 94, 0.4);
-}
-
-.mesPageOps .mesOpsV2LotBadge--outsource {
-  color: #c4b5fd;
-  background: rgba(91, 33, 182, 0.3);
-  border-color: rgba(139, 92, 246, 0.45);
 }
 
 /* —— 재고현황 탭 —— */
@@ -980,13 +946,16 @@
 .mesPageOps .mesOpsV2InvStatus,
 .mesPageOps .mesOpsV2InvTxType {
   display: inline-flex;
-  padding: 3px 8px;
+  align-items: center;
+  padding: 3px 10px;
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
   color: var(--opsv2-muted);
   background: var(--opsv2-surface2);
-  border: 1px solid var(--opsv2-border);
+  border: 1px solid var(--opsv2-border-strong);
+  white-space: nowrap;
 }
 
 /* —— 생산계획 등록/수정 모달 —— */
@@ -1403,32 +1372,91 @@
   filter: brightness(1.05);
 }
 
-/* 모달 내 계획 상태 뱃지 (페이지 스코프 밖에서도 동작) */
-.mesOpsPlanModalStatus.mesOpsV2PlanBadge {
+/* 모달 내 계획/지시/LOT 상태 뱃지 (페이지 스코프와 동일 톤) */
+.mesOpsPlanModalStatus.mesOpsV2PlanBadge,
+.mesOpsPlanModalStatus.mesOpsV2WoBadge,
+.mesOpsPlanModalStatus.mesOpsV2LotBadge {
   display: inline-flex;
+  align-items: center;
   padding: 5px 12px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  line-height: 1.4;
   border: 1px solid transparent;
+  white-space: nowrap;
 }
 
-.mesOpsPlanModalStatus.mesOpsV2PlanBadge--planned {
-  color: #5ba4e8;
+.mesOpsPlanModalStatus.mesOpsV2PlanBadge--planned,
+.mesOpsPlanModalStatus.mesOpsV2WoBadge--ready,
+.mesOpsPlanModalStatus.mesOpsV2LotBadge--created {
+  color: #3b82f6;
   background: rgba(91, 164, 232, 0.12);
   border-color: rgba(91, 164, 232, 0.35);
 }
 
-.mesOpsPlanModalStatus.mesOpsV2PlanBadge--confirmed {
-  color: #3dba72;
+.mesOpsPlanModalStatus.mesOpsV2PlanBadge--confirmed,
+.mesOpsPlanModalStatus.mesOpsV2WoBadge--done,
+.mesOpsPlanModalStatus.mesOpsV2LotBadge--done {
+  color: #16a34a;
   background: rgba(61, 186, 114, 0.12);
   border-color: rgba(61, 186, 114, 0.35);
 }
 
 .mesOpsPlanModalStatus.mesOpsV2PlanBadge--closed {
+  color: #6b7280;
+  background: #f3f4f8;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2WoBadge--progress,
+.mesOpsPlanModalStatus.mesOpsV2LotBadge--progress {
+  color: #a16207;
+  background: rgba(232, 194, 74, 0.14);
+  border-color: rgba(232, 194, 74, 0.4);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2WoBadge--hold {
+  color: #dc2626;
+  background: rgba(232, 93, 93, 0.12);
+  border-color: rgba(232, 93, 93, 0.35);
+}
+
+.mesOpsPlanModalStatus.mesOpsV2LotBadge--outsource {
+  color: #6d28d9;
+  background: rgba(167, 139, 250, 0.14);
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2PlanBadge--planned,
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2WoBadge--ready,
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2LotBadge--created {
+  color: #5ba4e8;
+}
+
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2PlanBadge--confirmed,
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2WoBadge--done,
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2LotBadge--done {
+  color: #3dba72;
+}
+
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2PlanBadge--closed {
   color: #9aa3b2;
   background: #181c28;
   border-color: rgba(255, 255, 255, 0.14);
+}
+
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2WoBadge--progress,
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2LotBadge--progress {
+  color: #e8c24a;
+}
+
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2WoBadge--hold {
+  color: #e85d5d;
+}
+
+[data-theme='dark'] .mesOpsPlanModalStatus.mesOpsV2LotBadge--outsource {
+  color: #a78bfa;
 }
 
 .mesOpsPlanModalDialog--wide {
@@ -1588,63 +1616,4 @@
   margin-top: 2px;
   accent-color: #e8c24a;
   flex-shrink: 0;
-}
-
-/* 모달 내 작업지시·LOT 상태 뱃지 */
-.mesOpsPlanModalStatus.mesOpsV2WoBadge,
-.mesOpsPlanModalStatus.mesOpsV2LotBadge {
-  display: inline-flex;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  border: 1px solid transparent;
-}
-
-.mesOpsPlanModalStatus.mesOpsV2WoBadge--ready {
-  color: #93c5fd;
-  background: rgba(30, 64, 175, 0.35);
-  border-color: rgba(59, 130, 246, 0.45);
-}
-
-.mesOpsPlanModalStatus.mesOpsV2WoBadge--progress {
-  color: #fcd34d;
-  background: rgba(180, 120, 20, 0.25);
-  border-color: rgba(212, 168, 44, 0.45);
-}
-
-.mesOpsPlanModalStatus.mesOpsV2WoBadge--done {
-  color: #86efac;
-  background: rgba(22, 101, 52, 0.35);
-  border-color: rgba(34, 197, 94, 0.4);
-}
-
-.mesOpsPlanModalStatus.mesOpsV2WoBadge--hold {
-  color: #fca5a5;
-  background: rgba(127, 29, 29, 0.35);
-  border-color: rgba(239, 68, 68, 0.4);
-}
-
-.mesOpsPlanModalStatus.mesOpsV2LotBadge--created {
-  color: #93c5fd;
-  background: rgba(30, 64, 175, 0.35);
-  border-color: rgba(59, 130, 246, 0.45);
-}
-
-.mesOpsPlanModalStatus.mesOpsV2LotBadge--progress {
-  color: #fcd34d;
-  background: rgba(180, 120, 20, 0.25);
-  border-color: rgba(212, 168, 44, 0.45);
-}
-
-.mesOpsPlanModalStatus.mesOpsV2LotBadge--done {
-  color: #86efac;
-  background: rgba(22, 101, 52, 0.35);
-  border-color: rgba(34, 197, 94, 0.4);
-}
-
-.mesOpsPlanModalStatus.mesOpsV2LotBadge--outsource {
-  color: #c4b5fd;
-  background: rgba(91, 33, 182, 0.3);
-  border-color: rgba(139, 92, 246, 0.45);
 }

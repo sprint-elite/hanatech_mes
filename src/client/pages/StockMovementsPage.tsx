@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiJson } from '../lib/api'
+import '../stock-movements-page.css'
 import { normalizeItemTypeToCode } from '../lib/itemType'
 
 type ItemTypeCode = 'RAW' | 'WIP' | 'FG'
 type MovementType = 'IN' | 'OUT'
+type MovementFilter = 'ALL' | 'IN' | 'OUT'
 
 type Product = {
   id: number
@@ -72,11 +74,15 @@ type LotChoice = {
   lotNo: string
 }
 
+type Filters = { q: string; movement: MovementFilter }
+
 const ITEM_TABS: { code: ItemTypeCode; label: string }[] = [
   { code: 'RAW', label: '원자재' },
   { code: 'WIP', label: '반제품' },
   { code: 'FG', label: '상품' },
 ]
+
+const emptyFilters = (): Filters => ({ q: '', movement: 'ALL' })
 
 const movementLabel = (t: InventoryTxRow['transactionType']) => {
   if (t === 'IN') return '입고'
@@ -114,6 +120,104 @@ const txRemark = (r: InventoryTxRow) => {
   return '—'
 }
 
+function matchesFilters(row: InventoryTxDisplayRow, filters: Filters): boolean {
+  const q = filters.q.trim().toLowerCase()
+  if (q) {
+    const hay = [
+      txRemark(row),
+      row.remark ?? '',
+      row.product?.productCode ?? '',
+      row.product?.productName ?? '',
+      row.lot?.lotNo ?? '',
+      row.materialLot?.lotNo ?? '',
+      String(row.productId),
+    ]
+      .join(' ')
+      .toLowerCase()
+    if (!hay.includes(q)) return false
+  }
+  if (filters.movement !== 'ALL' && row.transactionType !== filters.movement) return false
+  return true
+}
+
+function IconRefresh() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+      <path d="M21 3v6h-6" />
+    </svg>
+  )
+}
+
+function IconSearch() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  )
+}
+
+function IconFilter() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M4 6h16M7 12h10M10 18h4" />
+    </svg>
+  )
+}
+
+function IconReset() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 12a9 9 0 1 0 9-9" />
+      <path d="M3 3v6h6" />
+    </svg>
+  )
+}
+
+function IconTrash() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
+    </svg>
+  )
+}
+
+function IconClipboard() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+      <rect x="9" y="3" width="6" height="4" rx="1" />
+      <path d="M9 12h6M9 16h6" />
+    </svg>
+  )
+}
+
+function IconArrowDown() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 5v14M5 12l7 7 7-7" />
+    </svg>
+  )
+}
+
+function IconArrowUp() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  )
+}
+
+function IconStack() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 2 2 7l10 5 10-5-10-5Z" />
+      <path d="m2 12 10 5 10-5M2 17l10 5 10-5" />
+    </svg>
+  )
+}
+
 export function StockMovementsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -135,6 +239,11 @@ export function StockMovementsPage() {
   const [lotChoice, setLotChoice] = useState<string>('')
   const [materialLotNo, setMaterialLotNo] = useState<string>('')
   const [remark, setRemark] = useState<string>('')
+
+  const [filters, setFilters] = useState<Filters>(emptyFilters)
+  const [draftFilters, setDraftFilters] = useState<Filters>(emptyFilters)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -178,6 +287,10 @@ export function StockMovementsPage() {
     const exists = tabProducts.some((p) => String(p.id) === selectedProductId)
     if (!exists) setSelectedProductId(String(tabProducts[0].id))
   }, [tabProducts, selectedProductId])
+
+  useEffect(() => {
+    setPage(1)
+  }, [selectedProductId])
 
   const selectedPid = Number(selectedProductId)
   const selectedProduct = useMemo(
@@ -233,7 +346,6 @@ export function StockMovementsPage() {
     }
     return [...baseRows]
       .sort((a, b) => b.id - a.id)
-      .slice(0, 80)
       .map((r) => {
         const x = computed.get(r.id)
         return {
@@ -243,6 +355,51 @@ export function StockMovementsPage() {
         }
       })
   }, [txRows, selectedPid])
+
+  const filteredTxRows = useMemo(
+    () => productTxRows.filter((r) => matchesFilters(r, filters)),
+    [productTxRows, filters],
+  )
+
+  const stats = useMemo(() => {
+    let inCount = 0
+    let outCount = 0
+    let inQty = 0
+    let outQty = 0
+    for (const r of filteredTxRows) {
+      if (r.transactionType === 'IN') {
+        inCount += 1
+        inQty += r.qty
+      } else if (r.transactionType === 'OUT') {
+        outCount += 1
+        outQty += r.qty
+      }
+    }
+    return { total: filteredTxRows.length, inCount, outCount, inQty, outQty }
+  }, [filteredTxRows])
+
+  const totalPages = Math.max(1, Math.ceil(filteredTxRows.length / pageSize))
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages)
+  }, [page, totalPages])
+
+  const pageItems = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredTxRows.slice(start, start + pageSize)
+  }, [filteredTxRows, page, pageSize])
+
+  const applyFilters = () => {
+    setFilters({ ...draftFilters })
+    setPage(1)
+  }
+
+  const resetFilters = () => {
+    const empty = emptyFilters()
+    setDraftFilters(empty)
+    setFilters(empty)
+    setPage(1)
+  }
 
   const submitMovement = async () => {
     const pid = Number(selectedProductId)
@@ -306,38 +463,63 @@ export function StockMovementsPage() {
   }
 
   return (
-    <div className="mesPage">
-      <header className="mesPageHead">
-        <h1 className="mesPageTitle">입출고관리</h1>
-        <p className="mesPageDesc">원자재·반제품·상품을 품목별로 선택해 LOT 선택(옵션) 방식으로 입고/출고를 입력합니다.</p>
+    <div className="mesPage mesPageWide mesSmPage">
+      <header className="mesSmHead">
+        <div className="mesSmHeadMain">
+          <h1 className="mesSmTitle">입출고관리</h1>
+          <p className="mesSmDesc">
+            원자재·반제품·상품을 품목별로 선택해 LOT 선택(옵션) 방식으로 입고/출고를 입력합니다.
+          </p>
+        </div>
+        <div className="mesSmHeadActions">
+          <span className="mesSmCountBadge">{loading ? '…' : `${filteredTxRows.length}건`}</span>
+          <button type="button" className="mesSmBtn mesSmBtn--secondary" onClick={() => void load()}>
+            <IconRefresh />
+            새로고침
+          </button>
+        </div>
       </header>
 
-      <section className="mesCard">
-        <div className="mesToolbar" style={{ marginBottom: 10 }}>
+      {err ? (
+        <div className="mesNotice mesNoticeError mesSmNotice" role="alert">
+          <div className="mesNoticeBody">
+            <span className="mesNoticeTitle">오류</span>
+            <span className="mesNoticeText">{err}</span>
+          </div>
+          <button type="button" className="mesNoticeDismiss" onClick={() => setErr(null)} aria-label="닫기">
+            ×
+          </button>
+        </div>
+      ) : null}
+
+      {okMsg ? (
+        <div className="mesSmOkNotice" role="status">
+          {okMsg}
+        </div>
+      ) : null}
+
+      <section className="mesSmFormCard">
+        <div className="mesSmTabRow" role="tablist" aria-label="품목 유형">
           {ITEM_TABS.map((t) => (
             <button
               key={t.code}
               type="button"
-              className={itemType === t.code ? 'mesBtnPrimary' : 'mesBtnSecondary'}
+              role="tab"
+              aria-selected={itemType === t.code}
+              className={`mesSmTab${itemType === t.code ? ' mesSmTab--active' : ''}`}
               onClick={() => setItemType(t.code)}
             >
               {t.label}
             </button>
           ))}
-          <button type="button" className="mesBtnSecondary" onClick={() => void load()}>
-            새로고침
-          </button>
         </div>
 
-        {err ? <div className="error mesBanner">{err}</div> : null}
-        {okMsg ? <div className="mesBanner muted">{okMsg}</div> : null}
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(280px, 340px)', gap: 12, alignItems: 'start' }}>
-          <div>
-            <div className="mesFieldRow" style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
-              <label className="mesLabel">
-                품목
-                <select className="mesInput" value={selectedProductId} onChange={(ev) => setSelectedProductId(ev.target.value)}>
+        <div className="mesSmFormGrid">
+          <div className="mesSmFormMain">
+            <div className="mesSmFormRow mesSmFormRow--2">
+              <label className="mesSmField">
+                <span className="mesSmFieldLabel">품목</span>
+                <select className="mesSmSelect" value={selectedProductId} onChange={(ev) => setSelectedProductId(ev.target.value)}>
                   {tabProducts.length === 0 ? <option value="">선택 가능한 품목 없음</option> : null}
                   {tabProducts.map((p) => (
                     <option key={p.id} value={String(p.id)}>
@@ -346,12 +528,12 @@ export function StockMovementsPage() {
                   ))}
                 </select>
               </label>
-              <label className="mesLabel">
-                {isRawIn ? '자재 LOT 번호 (입고 시 생성/증가)' : 'LOT (선택)'}
+              <label className="mesSmField">
+                <span className="mesSmFieldLabel">{isRawIn ? '자재 LOT 번호 (입고 시 생성/증가)' : 'LOT (선택)'}</span>
                 {isRawIn ? (
                   <>
                     <input
-                      className="mesInput mono"
+                      className="mesSmInput mono"
                       value={materialLotNo}
                       onChange={(ev) => setMaterialLotNo(ev.target.value)}
                       placeholder="예: ML-2026-0001"
@@ -365,7 +547,7 @@ export function StockMovementsPage() {
                     </datalist>
                   </>
                 ) : (
-                  <select className="mesInput" value={lotChoice} onChange={(ev) => setLotChoice(ev.target.value)} disabled={!selectedProductId}>
+                  <select className="mesSmSelect" value={lotChoice} onChange={(ev) => setLotChoice(ev.target.value)} disabled={!selectedProductId}>
                     <option value="">미지정 (품목 재고)</option>
                     {lotChoices.map((l) => (
                       <option key={l.key} value={l.key}>
@@ -377,21 +559,21 @@ export function StockMovementsPage() {
               </label>
             </div>
 
-            <div className="mesFieldRow" style={{ gridTemplateColumns: 'repeat(5, minmax(0, 1fr))' }}>
-              <label className="mesLabel">
-                구분
-                <select className="mesInput" value={movementType} onChange={(ev) => setMovementType(ev.target.value as MovementType)}>
+            <div className="mesSmFormRow mesSmFormRow--5">
+              <label className="mesSmField">
+                <span className="mesSmFieldLabel">구분</span>
+                <select className="mesSmSelect" value={movementType} onChange={(ev) => setMovementType(ev.target.value as MovementType)}>
                   <option value="IN">입고</option>
                   <option value="OUT">출고</option>
                 </select>
               </label>
-              <label className="mesLabel">
-                수량
-                <input className="mesInput" value={qty} onChange={(ev) => setQty(ev.target.value)} />
+              <label className="mesSmField">
+                <span className="mesSmFieldLabel">수량</span>
+                <input className="mesSmInput" value={qty} onChange={(ev) => setQty(ev.target.value)} />
               </label>
-              <label className="mesLabel">
-                위치(선택)
-                <select className="mesInput" value={locationId} onChange={(ev) => setLocationId(ev.target.value)}>
+              <label className="mesSmField">
+                <span className="mesSmFieldLabel">위치(선택)</span>
+                <select className="mesSmSelect" value={locationId} onChange={(ev) => setLocationId(ev.target.value)}>
                   <option value="">미지정</option>
                   {locations.map((loc) => (
                     <option key={loc.id} value={String(loc.id)}>
@@ -400,27 +582,32 @@ export function StockMovementsPage() {
                   ))}
                 </select>
               </label>
-              <label className="mesLabel">
-                비고(직접입력)
+              <label className="mesSmField">
+                <span className="mesSmFieldLabel">비고(직접입력)</span>
                 <input
-                  className="mesInput"
+                  className="mesSmInput"
                   value={remark}
                   onChange={(ev) => setRemark(ev.target.value)}
                   placeholder="예: 긴급보충, 반품재고 재입고"
                 />
               </label>
-              <div className="mesLabel">
-                <span>처리</span>
-                <button type="button" className="mesBtnPrimary" disabled={saving || loading || !selectedProductId} onClick={() => void submitMovement()}>
+              <div className="mesSmField mesSmField--submit">
+                <span className="mesSmFieldLabel">처리</span>
+                <button
+                  type="button"
+                  className="mesSmBtn mesSmBtn--primary"
+                  disabled={saving || loading || !selectedProductId}
+                  onClick={() => void submitMovement()}
+                >
                   {saving ? '처리 중…' : movementType === 'IN' ? '입고 등록' : '출고 등록'}
                 </button>
               </div>
             </div>
           </div>
 
-          <aside className="mesCard mesCardNarrow" style={{ margin: 0 }}>
-            <div className="mesCardTitle">품목 재고 요약</div>
-            <table className="mesTable">
+          <aside className="mesSmSideCard">
+            <h2 className="mesSmSideTitle">품목 재고 요약</h2>
+            <table className="mesSmSideTable">
               <tbody>
                 <tr>
                   <th>품목</th>
@@ -444,10 +631,142 @@ export function StockMovementsPage() {
         </div>
       </section>
 
-      <section className="mesCard" style={{ marginTop: 12 }}>
-        <div className="mesCardTitle">최근 입출고 이력</div>
-        <div className="mesTableWrap mesTableScroll">
-          <table className="mesTable">
+      <div className="mesSmFilterCard">
+        <div className="mesSmField mesSmField--search">
+          <span className="mesSmFieldLabel">검색</span>
+          <div className="mesSmInputWrap">
+            <span className="mesSmInputIcon">
+              <IconSearch />
+            </span>
+            <input
+              className="mesSmInput mesSmInput--search"
+              placeholder="비고 / 품목 / LOT 검색"
+              value={draftFilters.q}
+              onChange={(ev) => setDraftFilters((f) => ({ ...f, q: ev.target.value }))}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter') applyFilters()
+              }}
+            />
+          </div>
+        </div>
+        <div className="mesSmField mesSmField--select">
+          <span className="mesSmFieldLabel">구분</span>
+          <select
+            className="mesSmSelect"
+            value={draftFilters.movement}
+            onChange={(ev) => setDraftFilters((f) => ({ ...f, movement: ev.target.value as MovementFilter }))}
+            aria-label="입출고 구분 필터"
+          >
+            <option value="ALL">전체</option>
+            <option value="IN">입고</option>
+            <option value="OUT">출고</option>
+          </select>
+        </div>
+        <div className="mesSmFilterActions">
+          <button type="button" className="mesSmBtn mesSmBtn--secondary" onClick={resetFilters}>
+            <IconReset />
+            필터 초기화
+          </button>
+          <button type="button" className="mesSmBtn mesSmBtn--primary" onClick={applyFilters}>
+            <IconFilter />
+            필터 적용
+          </button>
+        </div>
+      </div>
+
+      <div className="mesSmStatsStrip" aria-label="선택 품목 입출고 요약">
+        <div className="mesSmStatItem">
+          <div className="mesSmStatIcon mesSmStatIcon--gold">
+            <IconClipboard />
+          </div>
+          <div className="mesSmStatMeta">
+            <p className="mesSmStatLabel">전체</p>
+            <p className="mesSmStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesSmStatValueNum">{stats.total}</span>
+                  <span className="mesSmStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesSmStatItem">
+          <div className="mesSmStatIcon mesSmStatIcon--green">
+            <IconArrowDown />
+          </div>
+          <div className="mesSmStatMeta">
+            <p className="mesSmStatLabel">입고 건수</p>
+            <p className="mesSmStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesSmStatValueNum">{stats.inCount}</span>
+                  <span className="mesSmStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesSmStatItem">
+          <div className="mesSmStatIcon mesSmStatIcon--orange">
+            <IconArrowUp />
+          </div>
+          <div className="mesSmStatMeta">
+            <p className="mesSmStatLabel">출고 건수</p>
+            <p className="mesSmStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesSmStatValueNum">{stats.outCount}</span>
+                  <span className="mesSmStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesSmStatItem">
+          <div className="mesSmStatIcon mesSmStatIcon--green">
+            <IconStack />
+          </div>
+          <div className="mesSmStatMeta">
+            <p className="mesSmStatLabel">입고 수량합</p>
+            <p className="mesSmStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <span className="mesSmStatValueNum">{stats.inQty.toLocaleString()}</span>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesSmStatItem">
+          <div className="mesSmStatIcon mesSmStatIcon--orange">
+            <IconStack />
+          </div>
+          <div className="mesSmStatMeta">
+            <p className="mesSmStatLabel">출고 수량합</p>
+            <p className="mesSmStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <span className="mesSmStatValueNum">{stats.outQty.toLocaleString()}</span>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <section className="mesSmTableCard">
+        <div className="mesSmTableHead">
+          <h2 className="mesSmTableTitle">최근 입출고 이력</h2>
+        </div>
+        <div className="mesSmTableViewport">
+          <table className="mesSmTable">
             <thead>
               <tr>
                 <th>일시</th>
@@ -456,46 +775,55 @@ export function StockMovementsPage() {
                 <th>수량</th>
                 <th>비고</th>
                 <th>전→후</th>
-                <th>작업</th>
+                <th className="mesSmThActions">작업</th>
               </tr>
             </thead>
             <tbody>
               {!selectedProductId ? (
                 <tr>
-                  <td colSpan={7} className="muted">
+                  <td colSpan={7} className="mesSmEmpty">
                     품목을 선택하세요.
                   </td>
                 </tr>
               ) : loading ? (
                 <tr>
-                  <td colSpan={7} className="muted">
+                  <td colSpan={7} className="mesSmEmpty">
                     로딩 중…
                   </td>
                 </tr>
-              ) : productTxRows.length === 0 ? (
+              ) : filteredTxRows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="muted">
-                    이력이 없습니다.
+                  <td colSpan={7} className="mesSmEmpty">
+                    {productTxRows.length === 0 ? '이력이 없습니다.' : '필터 조건에 맞는 이력이 없습니다.'}
                   </td>
                 </tr>
               ) : (
-                productTxRows.map((r) => (
+                pageItems.map((r) => (
                   <tr key={r.id}>
                     <td className="muted small">{fmtWhen(r.createdAt)}</td>
-                    <td>{movementLabel(r.transactionType)}</td>
+                    <td>
+                      <span
+                        className={`mesSmMoveBadge ${
+                          r.transactionType === 'IN' ? 'mesSmMoveBadge--in' : 'mesSmMoveBadge--out'
+                        }`}
+                      >
+                        {movementLabel(r.transactionType)}
+                      </span>
+                    </td>
                     <td>{r.product ? `${r.product.productCode} · ${r.product.productName}` : `품목#${r.productId}`}</td>
                     <td>{r.qty}</td>
                     <td>{txRemark(r)}</td>
-                    <td className="muted small">
+                    <td className="muted small mono">
                       {`${r.computedBeforeQty} → ${r.computedAfterQty}`}
                     </td>
-                    <td className="mesTdActions">
+                    <td className="mesSmTdActions">
                       <button
                         type="button"
-                        className="mesBtnSm danger"
+                        className="mesSmBtn mesSmBtn--danger"
                         disabled={r.refType !== 'ADJUST'}
                         onClick={() => void removeMovement(r.id)}
                       >
+                        <IconTrash />
                         삭제
                       </button>
                     </td>
@@ -505,8 +833,79 @@ export function StockMovementsPage() {
             </tbody>
           </table>
         </div>
+
+        <footer className="mesSmPager">
+          <span className="mesSmPagerTotal">전체 {filteredTxRows.length}건</span>
+          <nav className="mesSmPagerNav" aria-label="페이지">
+            <button type="button" className="mesSmPagerBtn" disabled={page <= 1} onClick={() => setPage(1)} aria-label="첫 페이지">
+              «
+            </button>
+            <button
+              type="button"
+              className="mesSmPagerBtn"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              aria-label="이전 페이지"
+            >
+              ‹
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+              .map((n, idx, arr) => {
+                const prev = arr[idx - 1]
+                const showEllipsis = prev != null && n - prev > 1
+                return (
+                  <span key={n} style={{ display: 'contents' }}>
+                    {showEllipsis ? (
+                      <span className="mesSmPagerBtn" style={{ border: 'none', background: 'transparent' }}>
+                        …
+                      </span>
+                    ) : null}
+                    <button
+                      type="button"
+                      className={`mesSmPagerBtn${n === page ? ' mesSmPagerBtn--active' : ''}`}
+                      onClick={() => setPage(n)}
+                    >
+                      {n}
+                    </button>
+                  </span>
+                )
+              })}
+            <button
+              type="button"
+              className="mesSmPagerBtn"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              aria-label="다음 페이지"
+            >
+              ›
+            </button>
+            <button
+              type="button"
+              className="mesSmPagerBtn"
+              disabled={page >= totalPages}
+              onClick={() => setPage(totalPages)}
+              aria-label="마지막 페이지"
+            >
+              »
+            </button>
+          </nav>
+          <div className="mesSmPageSize">
+            <select
+              value={pageSize}
+              onChange={(ev) => {
+                setPageSize(Number(ev.target.value))
+                setPage(1)
+              }}
+              aria-label="페이지당 표시 건수"
+            >
+              <option value={10}>10개씩 보기</option>
+              <option value={20}>20개씩 보기</option>
+              <option value={50}>50개씩 보기</option>
+            </select>
+          </div>
+        </footer>
       </section>
     </div>
   )
 }
-

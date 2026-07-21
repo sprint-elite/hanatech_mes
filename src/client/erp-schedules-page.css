@@ -7,25 +7,31 @@
   --sch-orange-soft: rgba(240, 160, 48, 0.15);
   --sch-red: #e85d5d;
   --sch-gray-soft: rgba(100, 116, 139, 0.15);
-  --sch-muted: #6b7280;
-  --sch-border: #e5e7eb;
+  --sch-accent: #c9a227;
+  --sch-muted: #5f6775;
+  --sch-border: rgba(0, 0, 0, 0.08);
+  --sch-border-strong: rgba(0, 0, 0, 0.12);
   --sch-card: #ffffff;
-  --sch-bg: #f3f4f6;
-  --sch-text: #111827;
+  --sch-surface2: #f3f4f8;
+  --sch-bg: #ffffff;
+  --sch-text: #141820;
   color: var(--sch-text);
 }
 
 [data-theme='dark'] .mesSchPage {
+  --sch-accent: #e8c24a;
   --sch-muted: #9aa3b2;
-  --sch-border: rgba(255, 255, 255, 0.12);
-  --sch-card: #161a24;
-  --sch-bg: #0f1218;
+  --sch-border: rgba(255, 255, 255, 0.08);
+  --sch-border-strong: rgba(255, 255, 255, 0.14);
+  --sch-card: #12151e;
+  --sch-surface2: #181c28;
+  --sch-bg: #0c0e14;
   --sch-text: #eef1f6;
 }
 
-.mesSchPage .mesSchTopBar { margin-bottom: 12px; }
-.mesSchPage .mesSchTopTitle { margin: 0; font-size: 28px; font-weight: 800; }
-.mesSchPage .mesSchTopSub { margin: 4px 0 0; font-size: 13px; color: var(--sch-muted); }
+.mesSchPage .mesSchTopBar { margin-bottom: 18px; }
+.mesSchPage .mesSchTopTitle { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.mesSchPage .mesSchTopSub { margin: 6px 0 0; font-size: 13px; color: var(--sch-muted); line-height: 1.5; }
 
 .mesSchPage .mesSchLoginNotice {
   padding: 32px;
@@ -45,7 +51,7 @@
   padding: 12px 14px;
   border: 1px solid var(--sch-border);
   border-radius: 12px;
-  background: var(--sch-card);
+  background: var(--sch-surface2);
 }
 
 .mesSchPage .mesSchToolbarLeft,

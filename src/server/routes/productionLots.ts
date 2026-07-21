@@ -4,6 +4,15 @@ import { LotStatus, Prisma } from '@prisma/client'
 import { prisma } from '../db/prisma'
 import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
+import { renderCode128PngWithMeta, CODE128_PRINT, CODE128_SCREEN, CODE128_THUMB } from '../lib/barcode/image'
+import { syncProductionLotBarcode } from '../lib/barcode/productionLot'
+
+function normalizeScannedLotToken(raw: string): string {
+  const v = raw.trim()
+  if (!v) return ''
+  const first = v.split(/[\s,\t|]+/)[0] ?? ''
+  return first.trim()
+}
 
 const lotStatus = z.enum(['CREATED', 'IN_PROGRESS', 'DONE', 'OUTSOURCING'])
 
@@ -29,6 +38,7 @@ const updateBody = z.object({
 const listSelect = {
   id: true,
   lotNo: true,
+  barcode: true,
   woId: true,
   productId: true,
   workCenterId: true,
@@ -125,6 +135,154 @@ productionLotsRouter.get('/lots', async (req, res) => {
   }
 })
 
+productionLotsRouter.get('/lots/:id/barcode-image', async (req, res) => {
+  const id = parsePositiveIntParam(req.params.id)
+  if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
+  const view = typeof req.query.view === 'string' ? req.query.view : ''
+  const legacyLarge = req.query.large === '1' || req.query.large === 'true'
+  const spec =
+    view === 'print'
+      ? CODE128_PRINT
+      : view === 'screen' || legacyLarge
+        ? CODE128_SCREEN
+        : CODE128_THUMB
+  try {
+    const lot = await prisma.productionLot.findUnique({
+      where: { id },
+      select: { barcode: true, lotNo: true },
+    })
+    if (!lot) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
+    const text = lot.barcode ?? lot.lotNo
+    const img = await renderCode128PngWithMeta({ text, ...spec })
+    res.setHeader('Content-Type', 'image/png')
+    res.setHeader('Cache-Control', 'private, max-age=3600')
+    res.setHeader('X-Barcode-Width-Mm', String(img.widthMm))
+    res.setHeader('X-Barcode-Height-Mm', String(img.heightMm))
+    res.setHeader('X-Barcode-Width-Px', String(img.widthPx))
+    res.setHeader('X-Barcode-Height-Px', String(img.heightPx))
+    return res.send(img.buffer)
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
+productionLotsRouter.get('/lots/lookup', async (req, res) => {
+  const rawQ = req.query.value
+  const raw = Array.isArray(rawQ) ? rawQ[0] : rawQ
+  const value = normalizeScannedLotToken(typeof raw === 'string' ? raw : '')
+  if (!value) return res.status(400).json({ ok: false, error: 'VALUE_REQUIRED' })
+
+  try {
+    const lot = await prisma.productionLot.findFirst({
+      where: { OR: [{ lotNo: value }, { barcode: value }] },
+      select: {
+        ...listSelect,
+        results: {
+          take: 20,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            processSequence: true,
+            inputQty: true,
+            goodQty: true,
+            defectQty: true,
+            startTime: true,
+            endTime: true,
+            createdAt: true,
+            process: { select: { processCode: true, processName: true } },
+            worker: { select: { workerCode: true, workerName: true } },
+            workCenter: { select: { centerCode: true, centerName: true } },
+          },
+        },
+        defects: {
+          take: 50,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            qty: true,
+            remark: true,
+            detectedAt: true,
+            createdAt: true,
+            process: { select: { processCode: true, processName: true } },
+            defectType: { select: { defectCode: true, defectName: true } },
+            worker: { select: { workerCode: true, workerName: true } },
+          },
+        },
+        materialUsages: {
+          take: 50,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            usedQty: true,
+            createdAt: true,
+            materialLot: { select: { id: true, lotNo: true } },
+            materialProduct: { select: { id: true, productCode: true, productName: true } },
+          },
+        },
+        histories: {
+          take: 50,
+          orderBy: { createdAt: 'desc' },
+          select: { id: true, eventType: true, eventDesc: true, createdAt: true },
+        },
+        inventory: {
+          take: 20,
+          orderBy: { id: 'desc' },
+          select: {
+            id: true,
+            qty: true,
+            reservedQty: true,
+            status: true,
+            updatedAt: true,
+            location: { select: { locationCode: true, locationName: true } },
+          },
+        },
+        inventoryTx: {
+          take: 30,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            transactionType: true,
+            qty: true,
+            remark: true,
+            createdAt: true,
+            fromLocation: { select: { locationCode: true, locationName: true } },
+            toLocation: { select: { locationCode: true, locationName: true } },
+            location: { select: { locationCode: true, locationName: true } },
+          },
+        },
+        shipmentDetails: {
+          take: 20,
+          orderBy: { id: 'desc' },
+          select: {
+            id: true,
+            qty: true,
+            shipment: { select: { shipmentNo: true, shipmentDate: true, status: true, customerName: true } },
+          },
+        },
+        outsourcing: {
+          take: 20,
+          orderBy: { id: 'desc' },
+          select: {
+            id: true,
+            outsourcingNo: true,
+            vendorName: true,
+            requestQty: true,
+            outDate: true,
+            expectedInDate: true,
+            status: true,
+            process: { select: { processCode: true, processName: true } },
+          },
+        },
+      },
+    })
+
+    if (!lot) return res.status(404).json({ ok: false, error: 'NOT_FOUND', message: '생산 LOT를 찾을 수 없습니다.' })
+    return res.json({ ok: true, lot })
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
 productionLotsRouter.get('/lots/:id', async (req, res) => {
   const id = parsePositiveIntParam(req.params.id)
   if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
@@ -168,16 +326,23 @@ productionLotsRouter.post('/lots', async (req, res) => {
       }
     }
 
-    const item = await prisma.productionLot.create({
-      data: {
-        lotNo: b.lotNo,
-        productId: b.productId,
-        lotQty: b.lotQty,
-        woId: b.woId ?? undefined,
-        workCenterId: b.workCenterId ?? undefined,
-        status: (b.status as LotStatus) ?? LotStatus.CREATED,
-      },
-      select: listSelect,
+    const item = await prisma.$transaction(async (tx) => {
+      const lot = await tx.productionLot.create({
+        data: {
+          lotNo: b.lotNo,
+          productId: b.productId,
+          lotQty: b.lotQty,
+          woId: b.woId ?? undefined,
+          workCenterId: b.workCenterId ?? undefined,
+          status: (b.status as LotStatus) ?? LotStatus.CREATED,
+        },
+        select: { id: true, lotNo: true },
+      })
+      await syncProductionLotBarcode(tx, lot.id, lot.lotNo)
+      return tx.productionLot.findUniqueOrThrow({
+        where: { id: lot.id },
+        select: listSelect,
+      })
     })
     return res.status(201).json({ ok: true, item })
   } catch (e) {
@@ -240,10 +405,19 @@ productionLotsRouter.patch('/lots/:id', async (req, res) => {
     if (remainingAfterPatch <= 0) {
       data.status = LotStatus.DONE
     }
-    const item = await prisma.productionLot.update({
-      where: { id },
-      data,
-      select: listSelect,
+    const item = await prisma.$transaction(async (tx) => {
+      const updated = await tx.productionLot.update({
+        where: { id },
+        data,
+        select: { id: true, lotNo: true },
+      })
+      if (b.lotNo !== undefined) {
+        await syncProductionLotBarcode(tx, updated.id, updated.lotNo)
+      }
+      return tx.productionLot.findUniqueOrThrow({
+        where: { id },
+        select: listSelect,
+      })
     })
     return res.json({ ok: true, item })
   } catch (e) {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiJson } from '../lib/api'
+import '../work-orders-page.css'
 
 type AssignedWorker = { worker: { id: number; workerCode: string; workerName: string } }
 
@@ -26,7 +27,11 @@ type PlanRef = { id: number; planNo: string; product?: { productCode: string; pr
 type WcRef = { id: number; centerCode: string; centerName: string }
 type WorkerRef = { id: number; workerCode: string; workerName: string; status: string }
 
+type Filters = { q: string; status: string; workCenterId: string }
+
 const statuses = ['READY', 'IN_PROGRESS', 'DONE', 'HOLD'] as const
+
+const emptyFilters = (): Filters => ({ q: '', status: '', workCenterId: '' })
 
 const statusLabel = (s: string) => {
   if (s === 'READY') return '대기'
@@ -36,8 +41,139 @@ const statusLabel = (s: string) => {
   return s
 }
 
+function statusBadgeClass(s: string): string {
+  if (s === 'READY') return 'mesWoStatusBadge mesWoStatusBadge--ready'
+  if (s === 'IN_PROGRESS') return 'mesWoStatusBadge mesWoStatusBadge--progress'
+  if (s === 'DONE') return 'mesWoStatusBadge mesWoStatusBadge--done'
+  if (s === 'HOLD') return 'mesWoStatusBadge mesWoStatusBadge--hold'
+  return 'mesWoStatusBadge'
+}
+
+function matchesFilters(row: Row, filters: Filters): boolean {
+  const q = filters.q.trim().toLowerCase()
+  if (q) {
+    const hay = [
+      row.woNo,
+      row.product?.productCode ?? '',
+      row.product?.productName ?? '',
+      row.plan?.planNo ?? '',
+      String(row.productId),
+    ]
+      .join(' ')
+      .toLowerCase()
+    if (!hay.includes(q)) return false
+  }
+  if (filters.status && row.status !== filters.status) return false
+  if (filters.workCenterId && String(row.workCenterId ?? '') !== filters.workCenterId) return false
+  return true
+}
+
 function toggleId(ids: number[], id: number): number[] {
   return ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]
+}
+
+function IconSearch() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  )
+}
+
+function IconPlus() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  )
+}
+
+function IconRefresh() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+      <path d="M21 3v6h-6" />
+    </svg>
+  )
+}
+
+function IconFilter() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M4 6h16M7 12h10M10 18h4" />
+    </svg>
+  )
+}
+
+function IconReset() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 12a9 9 0 1 0 9-9" />
+      <path d="M3 3v6h6" />
+    </svg>
+  )
+}
+
+function IconTrash() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
+    </svg>
+  )
+}
+
+function IconEdit() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  )
+}
+
+function IconClipboard() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+      <rect x="9" y="3" width="6" height="4" rx="1" />
+      <path d="M9 12h6M9 16h6" />
+    </svg>
+  )
+}
+
+function IconClock() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  )
+}
+
+function IconPlay() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m10 8 6 4-6 4V8Z" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+function IconCheck() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  )
+}
+
+function IconPause() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M10 9v6M14 9v6" />
+    </svg>
+  )
 }
 
 export function WorkOrdersPage() {
@@ -48,6 +184,10 @@ export function WorkOrdersPage() {
   const [workers, setWorkers] = useState<WorkerRef[]>([])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState<string | null>(null)
+  const [filters, setFilters] = useState<Filters>(emptyFilters)
+  const [draftFilters, setDraftFilters] = useState<Filters>(emptyFilters)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
   const [woNo, setWoNo] = useState('')
   const [planId, setPlanId] = useState('')
   const [productId, setProductId] = useState('')
@@ -61,32 +201,6 @@ export function WorkOrdersPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [filterStatus, setFilterStatus] = useState<string>('')
-  const [filterSearch, setFilterSearch] = useState('')
-
-  const statusCounts = useMemo(() => {
-    const c = { READY: 0, IN_PROGRESS: 0, DONE: 0, HOLD: 0 as number }
-    for (const r of items) {
-      if (r.status === 'READY') c.READY += 1
-      else if (r.status === 'IN_PROGRESS') c.IN_PROGRESS += 1
-      else if (r.status === 'DONE') c.DONE += 1
-      else if (r.status === 'HOLD') c.HOLD += 1
-    }
-    return c
-  }, [items])
-
-  const filteredItems = useMemo(() => {
-    const q = filterSearch.trim().toLowerCase()
-    return items.filter((r) => {
-      if (filterStatus !== '' && r.status !== filterStatus) return false
-      if (!q) return true
-      const wo = r.woNo.toLowerCase()
-      const pn = r.product?.productName?.toLowerCase() ?? ''
-      const pc = r.product?.productCode?.toLowerCase() ?? ''
-      const plan = r.plan?.planNo?.toLowerCase() ?? ''
-      return wo.includes(q) || pn.includes(q) || pc.includes(q) || plan.includes(q)
-    })
-  }, [items, filterStatus, filterSearch])
 
   const loadRefs = useCallback(async () => {
     try {
@@ -126,6 +240,50 @@ export function WorkOrdersPage() {
   useEffect(() => {
     void load()
   }, [load])
+
+  const filteredItems = useMemo(
+    () => items.filter((row) => matchesFilters(row, filters)),
+    [items, filters],
+  )
+
+  const stats = useMemo(() => {
+    let ready = 0
+    let inProgress = 0
+    let done = 0
+    let hold = 0
+    let totalQty = 0
+    for (const row of filteredItems) {
+      if (row.status === 'READY') ready += 1
+      else if (row.status === 'IN_PROGRESS') inProgress += 1
+      else if (row.status === 'DONE') done += 1
+      else if (row.status === 'HOLD') hold += 1
+      totalQty += row.orderQty
+    }
+    return { total: filteredItems.length, ready, inProgress, done, hold, totalQty }
+  }, [filteredItems])
+
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize))
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages)
+  }, [page, totalPages])
+
+  const pageItems = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredItems.slice(start, start + pageSize)
+  }, [filteredItems, page, pageSize])
+
+  const applyFilters = () => {
+    setFilters({ ...draftFilters })
+    setPage(1)
+  }
+
+  const resetFilters = () => {
+    const empty = emptyFilters()
+    setDraftFilters(empty)
+    setFilters(empty)
+    setPage(1)
+  }
 
   const resetForm = () => {
     setWoNo('')
@@ -248,59 +406,193 @@ export function WorkOrdersPage() {
   const modalTitle = editingId == null ? '작업 지시 등록' : `작업 지시 수정 (ID ${editingId})`
 
   return (
-    <div className="mesPage">
-      <header className="mesPageHead">
-        <h1 className="mesPageTitle">작업 지시</h1>
-        <p className="mesPageDesc">
-          생산 계획·품목·수량·작업장·<strong>배정 작업자(복수)</strong>를 등록합니다. 상단 숫자는 현재 불러온 목록 기준입니다.
-        </p>
+    <div className="mesPage mesPageWide mesWoPage">
+      <header className="mesWoHead">
+        <div className="mesWoHeadMain">
+          <h1 className="mesWoTitle">작업 지시</h1>
+          <p className="mesWoDesc">
+            생산 계획·품목·수량·작업장·배정 작업자(복수)를 등록합니다. 상단 숫자는 필터 적용 후 목록 기준입니다.
+          </p>
+        </div>
+        <div className="mesWoHeadActions">
+          <span className="mesWoCountBadge">{loading ? '…' : `${filteredItems.length}건`}</span>
+          <button type="button" className="mesWoBtn mesWoBtn--secondary" onClick={() => void load()}>
+            <IconRefresh />
+            새로고침
+          </button>
+          <button type="button" className="mesWoBtn mesWoBtn--primary" onClick={openNew}>
+            <IconPlus />
+            새 지시
+          </button>
+        </div>
       </header>
 
-      <div className="mesWoStats">
-        <div className="mesWoStatCard">
-          <div className="mesWoStatLabel">대기</div>
-          <div className="mesWoStatVal">{statusCounts.READY}</div>
+      {err ? (
+        <div className="mesNotice mesNoticeError mesWoNotice" role="alert">
+          <div className="mesNoticeBody">
+            <span className="mesNoticeTitle">오류</span>
+            <span className="mesNoticeText">{err}</span>
+          </div>
+          <button type="button" className="mesNoticeDismiss" onClick={() => setErr(null)} aria-label="닫기">
+            ×
+          </button>
         </div>
-        <div className="mesWoStatCard">
-          <div className="mesWoStatLabel">진행</div>
-          <div className="mesWoStatVal">{statusCounts.IN_PROGRESS}</div>
-        </div>
-        <div className="mesWoStatCard">
-          <div className="mesWoStatLabel">완료</div>
-          <div className="mesWoStatVal">{statusCounts.DONE}</div>
-        </div>
-        <div className="mesWoStatCard">
-          <div className="mesWoStatLabel">보류</div>
-          <div className="mesWoStatVal">{statusCounts.HOLD}</div>
-        </div>
-      </div>
+      ) : null}
 
-      <div className="mesToolbar mesToolbarWrap">
-        <label className="mesLabel mesLabelInline">
-          상태
-          <select className="mesInput mesInputShort" value={filterStatus} onChange={(ev) => setFilterStatus(ev.target.value)}>
-            <option value="">전체</option>
+      <div className="mesWoFilterCard">
+        <div className="mesWoField mesWoField--search">
+          <span className="mesWoFieldLabel">검색</span>
+          <div className="mesWoInputWrap">
+            <span className="mesWoInputIcon">
+              <IconSearch />
+            </span>
+            <input
+              className="mesWoInput mesWoInput--search"
+              placeholder="지시번호 / 품목 / 계획번호 검색"
+              value={draftFilters.q}
+              onChange={(ev) => setDraftFilters((f) => ({ ...f, q: ev.target.value }))}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter') applyFilters()
+              }}
+            />
+          </div>
+        </div>
+        <div className="mesWoField mesWoField--select">
+          <span className="mesWoFieldLabel">상태</span>
+          <select
+            className="mesWoSelect"
+            value={draftFilters.status}
+            onChange={(ev) => setDraftFilters((f) => ({ ...f, status: ev.target.value }))}
+            aria-label="상태 필터"
+          >
+            <option value="">상태(전체)</option>
             {statuses.map((s) => (
               <option key={s} value={s}>
                 {statusLabel(s)}
               </option>
             ))}
           </select>
-        </label>
-        <label className="mesLabel mesLabelInline" style={{ flex: 1, minWidth: 200 }}>
-          검색 (지시번호·품목·계획번호)
-          <input
-            className="mesInput"
-            value={filterSearch}
-            placeholder="입력 시 목록만 필터"
-            onChange={(ev) => setFilterSearch(ev.target.value)}
-          />
-        </label>
-        <button type="button" className="mesBtnPrimary" onClick={openNew}>
-          새 지시
-        </button>
+        </div>
+        <div className="mesWoField mesWoField--select">
+          <span className="mesWoFieldLabel">작업장</span>
+          <select
+            className="mesWoSelect"
+            value={draftFilters.workCenterId}
+            onChange={(ev) => setDraftFilters((f) => ({ ...f, workCenterId: ev.target.value }))}
+            aria-label="작업장 필터"
+          >
+            <option value="">작업장(전체)</option>
+            {workCenters.map((w) => (
+              <option key={w.id} value={String(w.id)}>
+                {w.centerCode} · {w.centerName}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mesWoFilterActions">
+          <button type="button" className="mesWoBtn mesWoBtn--secondary" onClick={resetFilters}>
+            <IconReset />
+            필터 초기화
+          </button>
+          <button type="button" className="mesWoBtn mesWoBtn--primary" onClick={applyFilters}>
+            <IconFilter />
+            필터 적용
+          </button>
+        </div>
       </div>
-      {err ? <div className="error mesBanner">{err}</div> : null}
+
+      <div className="mesWoStatsStrip" aria-label="작업 지시 요약">
+        <div className="mesWoStatItem">
+          <div className="mesWoStatIcon mesWoStatIcon--blue">
+            <IconClipboard />
+          </div>
+          <div className="mesWoStatMeta">
+            <p className="mesWoStatLabel">전체 지시</p>
+            <p className="mesWoStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesWoStatValueNum">{stats.total}</span>
+                  <span className="mesWoStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesWoStatItem">
+          <div className="mesWoStatIcon mesWoStatIcon--blue">
+            <IconClock />
+          </div>
+          <div className="mesWoStatMeta">
+            <p className="mesWoStatLabel">대기</p>
+            <p className="mesWoStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesWoStatValueNum">{stats.ready}</span>
+                  <span className="mesWoStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesWoStatItem">
+          <div className="mesWoStatIcon mesWoStatIcon--purple">
+            <IconPlay />
+          </div>
+          <div className="mesWoStatMeta">
+            <p className="mesWoStatLabel">진행</p>
+            <p className="mesWoStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesWoStatValueNum">{stats.inProgress}</span>
+                  <span className="mesWoStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesWoStatItem">
+          <div className="mesWoStatIcon mesWoStatIcon--green">
+            <IconCheck />
+          </div>
+          <div className="mesWoStatMeta">
+            <p className="mesWoStatLabel">완료</p>
+            <p className="mesWoStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesWoStatValueNum">{stats.done}</span>
+                  <span className="mesWoStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesWoStatItem">
+          <div className="mesWoStatIcon mesWoStatIcon--orange">
+            <IconPause />
+          </div>
+          <div className="mesWoStatMeta">
+            <p className="mesWoStatLabel">보류</p>
+            <p className="mesWoStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesWoStatValueNum">{stats.hold}</span>
+                  <span className="mesWoStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
 
       {panelOpen ? (
         <div className="mesModalRoot" role="presentation">
@@ -436,66 +728,144 @@ export function WorkOrdersPage() {
         </div>
       ) : null}
 
-      <div className="mesTableWrap mesTableScroll" style={{ marginTop: 16 }}>
-        <table className="mesTable">
-          <thead>
-            <tr>
-              <th>지시번호</th>
-              <th>품목</th>
-              <th>계획</th>
-              <th>작업자</th>
-              <th>지시/완료</th>
-              <th>작업장</th>
-              <th>상태</th>
-              <th className="mesThActions">작업</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+      <div className="mesWoTableCard">
+        <div className="mesWoTableViewport">
+          <table className="mesWoTable">
+            <thead>
               <tr>
-                <td colSpan={8} className="muted">
-                  로딩 중…
-                </td>
+                <th>지시번호</th>
+                <th>품목</th>
+                <th>계획</th>
+                <th>작업자</th>
+                <th>지시/완료</th>
+                <th>작업장</th>
+                <th>상태</th>
+                <th className="mesWoThActions">작업</th>
               </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="muted">
-                  데이터 없음
-                </td>
-              </tr>
-            ) : filteredItems.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="muted">
-                  필터 조건에 맞는 지시가 없습니다.
-                </td>
-              </tr>
-            ) : (
-              filteredItems.map((r) => (
-                <tr key={r.id}>
-                  <td className="mono">{r.woNo}</td>
-                  <td>{r.product ? `${r.product.productCode} ${r.product.productName}` : r.productId}</td>
-                  <td>{r.plan?.planNo ?? '—'}</td>
-                  <td className="mesTdEllipsis" title={workerNamesShort(r)}>
-                    {workerNamesShort(r)}
-                  </td>
-                  <td>
-                    {r.orderQty} / {r.completedQty}
-                  </td>
-                  <td>{r.workCenter ? r.workCenter.centerCode : '—'}</td>
-                  <td>{statusLabel(r.status)}</td>
-                  <td className="mesTdActions">
-                    <button type="button" className="mesBtnSm" onClick={() => openEdit(r)}>
-                      수정
-                    </button>
-                    <button type="button" className="mesBtnSm mesBtnDanger" onClick={() => void remove(r.id)}>
-                      삭제
-                    </button>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="mesWoEmpty">
+                    로딩 중…
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : filteredItems.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="mesWoEmpty">
+                    {items.length === 0 ? (
+                      <>
+                        데이터가 없습니다. <strong>새 지시</strong>로 추가하세요.
+                      </>
+                    ) : (
+                      '필터 조건에 맞는 지시가 없습니다.'
+                    )}
+                  </td>
+                </tr>
+              ) : (
+                pageItems.map((r) => (
+                  <tr key={r.id}>
+                    <td className="mono">{r.woNo}</td>
+                    <td>{r.product ? `${r.product.productCode} ${r.product.productName}` : r.productId}</td>
+                    <td>{r.plan?.planNo ?? '—'}</td>
+                    <td className="mesTdEllipsis" title={workerNamesShort(r)}>
+                      {workerNamesShort(r)}
+                    </td>
+                    <td>
+                      {r.orderQty.toLocaleString('ko-KR')} / {r.completedQty.toLocaleString('ko-KR')}
+                    </td>
+                    <td>{r.workCenter ? r.workCenter.centerCode : '—'}</td>
+                    <td>
+                      <span className={statusBadgeClass(r.status)}>{statusLabel(r.status)}</span>
+                    </td>
+                    <td className="mesWoTdActions">
+                      <button type="button" className="mesWoBtn mesWoBtn--edit" onClick={() => openEdit(r)}>
+                        <IconEdit />
+                        수정
+                      </button>
+                      <button type="button" className="mesWoBtn mesWoBtn--danger" onClick={() => void remove(r.id)}>
+                        <IconTrash />
+                        삭제
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <footer className="mesWoPager">
+          <span className="mesWoPagerTotal">전체 {filteredItems.length}건</span>
+          <nav className="mesWoPagerNav" aria-label="페이지">
+            <button type="button" className="mesWoPagerBtn" disabled={page <= 1} onClick={() => setPage(1)} aria-label="첫 페이지">
+              «
+            </button>
+            <button
+              type="button"
+              className="mesWoPagerBtn"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              aria-label="이전 페이지"
+            >
+              ‹
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+              .map((n, idx, arr) => {
+                const prev = arr[idx - 1]
+                const showEllipsis = prev != null && n - prev > 1
+                return (
+                  <span key={n} style={{ display: 'contents' }}>
+                    {showEllipsis ? (
+                      <span className="mesWoPagerBtn" style={{ border: 'none', background: 'transparent' }}>
+                        …
+                      </span>
+                    ) : null}
+                    <button
+                      type="button"
+                      className={`mesWoPagerBtn${n === page ? ' mesWoPagerBtn--active' : ''}`}
+                      onClick={() => setPage(n)}
+                    >
+                      {n}
+                    </button>
+                  </span>
+                )
+              })}
+            <button
+              type="button"
+              className="mesWoPagerBtn"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              aria-label="다음 페이지"
+            >
+              ›
+            </button>
+            <button
+              type="button"
+              className="mesWoPagerBtn"
+              disabled={page >= totalPages}
+              onClick={() => setPage(totalPages)}
+              aria-label="마지막 페이지"
+            >
+              »
+            </button>
+          </nav>
+          <div className="mesWoPageSize">
+            <select
+              value={pageSize}
+              onChange={(ev) => {
+                setPageSize(Number(ev.target.value))
+                setPage(1)
+              }}
+              aria-label="페이지당 표시 건수"
+            >
+              <option value={10}>10개씩 보기</option>
+              <option value={20}>20개씩 보기</option>
+              <option value={50}>50개씩 보기</option>
+            </select>
+          </div>
+        </footer>
       </div>
     </div>
   )

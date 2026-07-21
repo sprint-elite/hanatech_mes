@@ -107,11 +107,14 @@ export function EmployeeProfilesPage() {
         baseSalary: form.baseSalary ? Number(form.baseSalary) : 0,
         hourlyWage: form.hourlyWage ? Number(form.hourlyWage) : null,
         ordinaryWage: form.ordinaryWage ? Number(form.ordinaryWage) : null,
+        pensionBaseSalary: form.pensionBaseSalary ? Number(form.pensionBaseSalary) : null,
         paymentDay: form.paymentDay ? Number(form.paymentDay) : null,
         bankName: form.bankName.trim() || null,
         bankAccount: form.bankAccount.trim() || null,
         accountHolder: form.accountHolder.trim() || null,
         dependants: form.dependants ? Number(form.dependants) : 1,
+        children8to20: form.children8to20 ? Number(form.children8to20) : 0,
+        withholdingRatePct: form.withholdingRatePct ? Number(form.withholdingRatePct) as 80 | 100 | 120 : 100,
         status: form.status,
         remark: form.remark.trim() || null,
       }
@@ -217,7 +220,9 @@ export function EmployeeProfilesPage() {
                   <th>통상임금</th>
                   <th>시급</th>
                   <th>지급일</th>
-                  <th>부양</th>
+                  <th>가족</th>
+                  <th>자녀</th>
+                  <th>원천%</th>
                   <th>상태</th>
                   {canManage ? <th aria-label="작업" /> : null}
                 </tr>
@@ -235,6 +240,8 @@ export function EmployeeProfilesPage() {
                     <td className="mesPayNum">{row.hourlyWage != null ? fmtWon(row.hourlyWage) : '—'}</td>
                     <td className="mesPayNum">{row.paymentDay != null ? `${row.paymentDay}일` : '—'}</td>
                     <td className="mesPayNum">{row.dependants}</td>
+                    <td className="mesPayNum">{row.children8to20}</td>
+                    <td className="mesPayNum">{row.withholdingRatePct}%</td>
                     <td>
                       <span className={`mesPayStatus mesPayStatus--${row.status.toLowerCase()}`}>
                         {EMPLOYEE_STATUS_LABEL[row.status]}
@@ -307,6 +314,18 @@ export function EmployeeProfilesPage() {
                   <input type="number" min={0} className="mesPayInput" value={form.ordinaryWage} onChange={(e) => setForm((f) => ({ ...f, ordinaryWage: e.target.value }))} />
                 </label>
                 <label className="mesPayFormRow">
+                  <span>국민연금 기준소득월액</span>
+                  <input
+                    type="number"
+                    min={0}
+                    className="mesPayInput"
+                    value={form.pensionBaseSalary}
+                    onChange={(e) => setForm((f) => ({ ...f, pensionBaseSalary: e.target.value }))}
+                    placeholder="4대보험 신고액 (미입력 시 과세급여)"
+                    title="국민연금공단에 신고된 기준소득월액. 건강·고용보험과 다를 수 있습니다."
+                  />
+                </label>
+                <label className="mesPayFormRow">
                   <span>시급</span>
                   <input type="number" min={0} className="mesPayInput" value={form.hourlyWage} onChange={(e) => setForm((f) => ({ ...f, hourlyWage: e.target.value }))} />
                 </label>
@@ -315,8 +334,20 @@ export function EmployeeProfilesPage() {
                   <input type="number" min={1} max={31} className="mesPayInput" value={form.paymentDay} onChange={(e) => setForm((f) => ({ ...f, paymentDay: e.target.value }))} />
                 </label>
                 <label className="mesPayFormRow">
-                  <span>부양가족수</span>
-                  <input type="number" min={1} max={20} className="mesPayInput" value={form.dependants} onChange={(e) => setForm((f) => ({ ...f, dependants: e.target.value }))} />
+                  <span>공제대상가족 수</span>
+                  <input type="number" min={1} max={11} className="mesPayInput" value={form.dependants} onChange={(e) => setForm((f) => ({ ...f, dependants: e.target.value }))} title="본인·배우자 포함, 간이세액표 열(1~11)" />
+                </label>
+                <label className="mesPayFormRow">
+                  <span>8~20세 자녀 수</span>
+                  <input type="number" min={0} max={20} className="mesPayInput" value={form.children8to20} onChange={(e) => setForm((f) => ({ ...f, children8to20: e.target.value }))} />
+                </label>
+                <label className="mesPayFormRow">
+                  <span>원천징수 비율</span>
+                  <select className="mesPayInput" value={form.withholdingRatePct} onChange={(e) => setForm((f) => ({ ...f, withholdingRatePct: e.target.value }))}>
+                    <option value="80">80%</option>
+                    <option value="100">100%</option>
+                    <option value="120">120%</option>
+                  </select>
                 </label>
                 <label className="mesPayFormRow">
                   <span>은행</span>

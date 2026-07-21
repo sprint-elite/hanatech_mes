@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState, type SVGProps } from 'react'
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { apiJson } from '../lib/api'
-import { getStoredUser, setStoredUser, type MesAuthUser } from '../lib/auth'
+import { getStoredUser, isGuestRole, setStoredUser, type MesAuthUser } from '../lib/auth'
 import { getStoredTheme, setTheme, type MesTheme } from '../lib/theme'
 
 type NavItem = { to: string; label: string; end?: boolean }
+type SideMode = 'desktop' | 'overlay'
 
 const navGroups: { label: string; items: NavItem[] }[] = [
   {
@@ -40,6 +41,7 @@ const navGroups: { label: string; items: NavItem[] }[] = [
     label: '생산·LOT',
     items: [
       { to: '/lots', label: '생산 LOT' },
+      { to: '/lot-scan', label: 'LOT 스캔 조회' },
       { to: '/material-lots', label: '자재 LOT' },
       { to: '/lot-history', label: 'LOT 이력' },
       { to: '/lot-material-usage', label: '자재 투입' },
@@ -61,7 +63,6 @@ const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: 'ERP',
     items: [
-      { to: '/erp/work-logs', label: '업무일지' },
       { to: '/erp/expense-reports', label: '지출결의서' },
       { to: '/erp/annual-leave', label: '연차관리' },
       { to: '/erp/schedules', label: '일정관리' },
@@ -217,10 +218,33 @@ export function Layout() {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [theme, setThemeState] = useState<MesTheme>(() => getStoredTheme())
   const [user, setUser] = useState<MesAuthUser | null>(() => getStoredUser())
+  const [sideMode, setSideMode] = useState<SideMode>('desktop')
+  const [sideOpen, setSideOpen] = useState<boolean>(true)
 
   useEffect(() => {
     setUser(getStoredUser())
   }, [location.pathname])
+
+  if (isGuestRole(user?.roleName)) {
+    return <Navigate to="/worker-input" replace />
+  }
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1020px)')
+    const apply = () => {
+      const overlay = mq.matches
+      setSideMode(overlay ? 'overlay' : 'desktop')
+      setSideOpen(!overlay)
+    }
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
+
+  useEffect(() => {
+    // 오버레이 모드에서는 이동 시 자동으로 닫아준다
+    if (sideMode === 'overlay') setSideOpen(false)
+  }, [location.pathname, sideMode])
 
   const handleLogout = useCallback(async () => {
     const current = getStoredUser()
@@ -262,8 +286,25 @@ export function Layout() {
   }
 
   return (
-    <div className="mesShell">
-      <aside className="mesSide">
+    <div className={`mesShell${sideMode === 'overlay' ? ' mesShellOverlay' : ''}${sideOpen ? ' mesSideOpen' : ' mesSideClosed'}`}>
+      {sideMode === 'overlay' && sideOpen ? (
+        <button type="button" className="mesSideOverlay" aria-label="사이드바 닫기" onClick={() => setSideOpen(false)} />
+      ) : null}
+      <button
+        type="button"
+        className="mesSideToggle"
+        aria-label={sideOpen ? '사이드바 닫기' : '사이드바 열기'}
+        aria-expanded={sideOpen}
+        onClick={() => setSideOpen((v) => !v)}
+      >
+        <span className="mesSideToggleChevron" aria-hidden>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d={sideOpen ? 'm15 18-6-6 6-6' : 'm9 18 6-6-6-6'} />
+          </svg>
+        </span>
+      </button>
+
+      <aside className="mesSide" aria-hidden={sideMode === 'overlay' ? !sideOpen : undefined}>
         <div className="mesSideTop">
           <button
             type="button"

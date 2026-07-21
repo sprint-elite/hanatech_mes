@@ -7,6 +7,7 @@ import { parsePositiveIntParam } from '../lib/params'
 import { canManagePayStubs, getRequestUser, type RequestUser } from '../lib/requestUser'
 import { calculatePayrollForUser } from '../lib/payrollCalc'
 import { buildPayStubDetail, buildPayrollLedger } from '../lib/payrollDetail'
+import { saveStubFromCalc } from '../lib/payrollStubSave'
 
 const yearMonthStr = z.string().regex(/^\d{4}-\d{2}$/)
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -463,77 +464,6 @@ payStubsRouter.get('/pay-stubs/my', async (req, res) => {
   }
 })
 
-async function saveStubFromCalc(
-  runId: number,
-  userId: number,
-  calc: Awaited<ReturnType<typeof calculatePayrollForUser>>,
-  existingId?: number,
-) {
-  const earnings = calc.earnings.filter((l) => l.amount > 0 || l.label)
-  const deductions = calc.deductions.filter((l) => l.amount > 0 || l.label)
-  const totals = calcTotals(earnings, deductions)
-  const lineData = [
-    ...earnings.map((l, i) => ({
-      lineType: 'EARNING' as const,
-      label: l.label,
-      amount: l.amount,
-      sortOrder: i,
-    })),
-    ...deductions.map((l, i) => ({
-      lineType: 'DEDUCTION' as const,
-      label: l.label,
-      amount: l.amount,
-      sortOrder: i,
-    })),
-  ]
-
-  if (existingId) {
-    return prisma.$transaction(async (tx) => {
-      await tx.payStubLine.deleteMany({ where: { payStubId: existingId } })
-      if (lineData.length > 0) {
-        await tx.payStubLine.createMany({
-          data: lineData.map((l) => ({ ...l, payStubId: existingId })),
-        })
-      }
-      return tx.payStub.update({
-        where: { id: existingId },
-        data: {
-          dept: calc.dept || null,
-          position: calc.position || null,
-          workDays: calc.workDays,
-          totalEarning: totals.totalEarning,
-          totalDeduction: totals.totalDeduction,
-          netPay: totals.netPay,
-        },
-        include: {
-          user: { select: userSelect },
-          lines: { orderBy: [{ lineType: 'asc' }, { sortOrder: 'asc' }] },
-          run: true,
-        },
-      })
-    })
-  }
-
-  return prisma.payStub.create({
-    data: {
-      runId,
-      userId,
-      dept: calc.dept || null,
-      position: calc.position || null,
-      workDays: calc.workDays,
-      totalEarning: totals.totalEarning,
-      totalDeduction: totals.totalDeduction,
-      netPay: totals.netPay,
-      lines: { create: lineData },
-    },
-    include: {
-      user: { select: userSelect },
-      lines: { orderBy: [{ lineType: 'asc' }, { sortOrder: 'asc' }] },
-      run: true,
-    },
-  })
-}
-
 payStubsRouter.post('/pay-stubs/calculate-preview', async (req, res) => {
   try {
     const me = await requireUser(req, res)
@@ -578,24 +508,10 @@ payStubsRouter.post('/pay-stubs/runs/:runId/auto-calculate', async (req, res) =>
       return
     }
 
-    const workRecords = await prisma.payWorkRecord.findMany({
-      where: { yearMonth: run.yearMonth },
-      select: { userId: true },
-    })
-    const workUserIds = new Set(workRecords.map((w) => w.userId))
-
     const profiles = await prisma.payEmployeeProfile.findMany({
       where: { status: 'ACTIVE' },
       select: { userId: true },
     })
-
-    const missingWork = profiles.filter((p) => !workUserIds.has(p.userId))
-    if (missingWork.length > 0) {
-      await prisma.payWorkRecord.createMany({
-        data: missingWork.map((p) => ({ userId: p.userId, yearMonth: run.yearMonth })),
-        skipDuplicates: true,
-      })
-    }
 
     const profileUserIds = profiles.map((p) => p.userId)
 
@@ -705,14 +621,18 @@ payStubsRouter.get('/pay-stubs/:id/detail', async (req, res) => {
     }
     await assertCanViewStub(row, me.id, me.roleName)
 
-    const earnings = row.lines.filter((l) => l.lineType === 'EARNING').map((l) => ({ label: l.label, amount: dec(l.amount) }))
-    const deductions = row.lines.filter((l) => l.lineType === 'DEDUCTION').map((l) => ({ label: l.label, amount: dec(l.amount) }))
+    const savedEarnings = row.lines.filter((l) => l.lineType === 'EARNING').map((l) => ({ label: l.label, amount: dec(l.amount) }))
+    const savedDeductions = row.lines.filter((l) => l.lineType === 'DEDUCTION').map((l) => ({ label: l.label, amount: dec(l.amount) }))
+    // 작성중 명세는 직원정보·근무입력 변경을 바로 반영 (저장된 구 라인 금액 사용 안 함)
+    const savedLines = row.run.status === 'PUBLISHED'
+      ? { earnings: savedEarnings, deductions: savedDeductions }
+      : undefined
     const detail = await buildPayStubDetail(
       row.userId,
       row.run.yearMonth,
       row.run.payDate ? ymd(row.run.payDate) : null,
       row.user.userName,
-      { earnings, deductions },
+      savedLines,
     )
     res.json({ ok: true, detail, stub: serializeStub(row) })
   } catch (e) {

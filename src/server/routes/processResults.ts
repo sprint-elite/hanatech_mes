@@ -30,7 +30,7 @@ export const processResultsRouter = Router()
 processResultsRouter.get('/process-results', async (_req, res) => {
   try {
     const items = await prisma.processResult.findMany({
-      take: 300,
+      take: 1000,
       orderBy: { id: 'desc' },
       select: {
         id: true,
@@ -43,7 +43,13 @@ processResultsRouter.get('/process-results', async (_req, res) => {
         startTime: true,
         endTime: true,
         createdAt: true,
-        lot: { select: { lotNo: true } },
+        lot: {
+          select: {
+            lotNo: true,
+            productId: true,
+            product: { select: { id: true, productCode: true, productName: true } },
+          },
+        },
         process: { select: { processCode: true, processName: true } },
         worker: { select: { workerCode: true, workerName: true } },
         workCenter: { select: { centerCode: true, centerName: true } },

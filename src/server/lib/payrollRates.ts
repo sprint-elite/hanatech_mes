@@ -39,21 +39,34 @@ export function getInsuranceRates(yearMonth: string): InsuranceRates {
   return RATES_2025_H2
 }
 
+/** 십원 미만 절사 (원 단위 절사 — 1의 자리 0) */
+export function truncateTenWon(amount: number): number {
+  return Math.floor(Math.max(0, amount) / 10) * 10
+}
+
 export function pensionBase(taxableIncome: number, rates: InsuranceRates): number {
-  return Math.min(Math.max(taxableIncome, rates.pensionBaseMin), rates.pensionBaseMax)
+  const truncated = Math.floor(Math.max(0, taxableIncome) / 1000) * 1000
+  return Math.min(Math.max(truncated, rates.pensionBaseMin), rates.pensionBaseMax)
 }
 
-/** 건강·장기요양: 원 단위 절사 */
+/** 건강보험: 원 단위(십원 미만) 절사 */
 export function calcHealthPremium(taxableIncome: number, rates: InsuranceRates): number {
-  return Math.floor(taxableIncome * rates.healthRate)
+  return truncateTenWon(taxableIncome * rates.healthRate)
 }
 
+/** 장기요양: 건강보험료 × 요율 후 원 단위(십원 미만) 절사 */
 export function calcLongTermCarePremium(healthPremium: number, rates: InsuranceRates): number {
-  return Math.floor(healthPremium * rates.longTermCareRatioOfHealth)
+  return truncateTenWon(healthPremium * rates.longTermCareRatioOfHealth)
 }
 
-export function calcPensionPremium(taxableIncome: number, rates: InsuranceRates): number {
-  return Math.max(0, Math.round(pensionBase(taxableIncome, rates) * rates.pensionRate))
+export function resolvePensionIncome(taxableIncome: number, pensionBaseSalary: number | null | undefined): number {
+  if (pensionBaseSalary != null && pensionBaseSalary > 0) return pensionBaseSalary
+  return taxableIncome
+}
+
+/** 국민연금: 기준소득월액(천원 미만 절사·상하한) × 요율 후 십원 미만 절사 */
+export function calcPensionPremium(incomeForPension: number, rates: InsuranceRates): number {
+  return truncateTenWon(pensionBase(incomeForPension, rates) * rates.pensionRate)
 }
 
 export function calcEmploymentPremium(taxableIncome: number, rates: InsuranceRates): number {

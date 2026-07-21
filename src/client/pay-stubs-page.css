@@ -1,25 +1,31 @@
 .mesPsPage {
   --ps-green: #3dba72;
   --ps-blue: #3b82f6;
-  --ps-muted: #6b7280;
-  --ps-border: #e5e7eb;
+  --ps-accent: #c9a227;
+  --ps-muted: #5f6775;
+  --ps-border: rgba(0, 0, 0, 0.08);
+  --ps-border-strong: rgba(0, 0, 0, 0.12);
   --ps-card: #ffffff;
-  --ps-bg: #f3f4f6;
-  --ps-text: #111827;
+  --ps-surface2: #f3f4f8;
+  --ps-bg: #ffffff;
+  --ps-text: #141820;
   color: var(--ps-text);
 }
 
 [data-theme='dark'] .mesPsPage {
+  --ps-accent: #e8c24a;
   --ps-muted: #9aa3b2;
-  --ps-border: rgba(255, 255, 255, 0.12);
-  --ps-card: #161a24;
-  --ps-bg: #0f1218;
+  --ps-border: rgba(255, 255, 255, 0.08);
+  --ps-border-strong: rgba(255, 255, 255, 0.14);
+  --ps-card: #12151e;
+  --ps-surface2: #181c28;
+  --ps-bg: #0c0e14;
   --ps-text: #eef1f6;
 }
 
-.mesPsPage .mesPsTopBar { margin-bottom: 12px; }
-.mesPsPage .mesPsTopTitle { margin: 0; font-size: 28px; font-weight: 800; }
-.mesPsPage .mesPsTopSub { margin: 4px 0 0; font-size: 13px; color: var(--ps-muted); }
+.mesPsPage .mesPsTopBar { margin-bottom: 18px; }
+.mesPsPage .mesPsTopTitle { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.mesPsPage .mesPsTopSub { margin: 6px 0 0; font-size: 13px; color: var(--ps-muted); line-height: 1.5; }
 
 .mesPsPage .mesPsLoginNotice {
   padding: 32px;
@@ -50,7 +56,7 @@
   padding: 12px 14px;
   border: 1px solid var(--ps-border);
   border-radius: 12px;
-  background: var(--ps-card);
+  background: var(--ps-surface2);
 }
 
 .mesPsPage .mesPsToolbarLeft {

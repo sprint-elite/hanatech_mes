@@ -5,19 +5,25 @@
   --al-orange-soft: rgba(240, 160, 48, 0.15);
   --al-red: #e85d5d;
   --al-red-soft: rgba(232, 93, 93, 0.12);
-  --al-muted: #6b7280;
-  --al-border: #e5e7eb;
+  --al-accent: #c9a227;
+  --al-muted: #5f6775;
+  --al-border: rgba(0, 0, 0, 0.08);
+  --al-border-strong: rgba(0, 0, 0, 0.12);
   --al-card: #ffffff;
-  --al-bg: #f3f4f6;
-  --al-text: #111827;
+  --al-surface2: #f3f4f8;
+  --al-bg: #ffffff;
+  --al-text: #141820;
   color: var(--al-text);
 }
 
 [data-theme='dark'] .mesAlPage {
+  --al-accent: #e8c24a;
   --al-muted: #9aa3b2;
-  --al-border: rgba(255, 255, 255, 0.12);
-  --al-card: #161a24;
-  --al-bg: #0f1218;
+  --al-border: rgba(255, 255, 255, 0.08);
+  --al-border-strong: rgba(255, 255, 255, 0.14);
+  --al-card: #12151e;
+  --al-surface2: #181c28;
+  --al-bg: #0c0e14;
   --al-text: #eef1f6;
 }
 
@@ -30,8 +36,8 @@
   margin-bottom: 14px;
 }
 
-.mesAlPage .mesAlTopTitle { margin: 0; font-size: 28px; font-weight: 800; }
-.mesAlPage .mesAlTopSub { margin: 4px 0 0; font-size: 13px; color: var(--al-muted); }
+.mesAlPage .mesAlTopTitle { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.mesAlPage .mesAlTopSub { margin: 6px 0 0; font-size: 13px; color: var(--al-muted); line-height: 1.5; }
 .mesAlPage .mesAlTopClock { text-align: right; }
 .mesAlPage .mesAlTopDate { font-size: 13px; color: var(--al-muted); }
 .mesAlPage .mesAlTopTime {
@@ -308,7 +314,7 @@
   gap: 8px;
   padding: 12px 16px;
   border-bottom: 1px solid var(--al-border);
-  background: var(--al-bg);
+  background: var(--al-surface2);
 }
 
 .mesAlPage .mesAlInput {

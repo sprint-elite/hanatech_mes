@@ -21,7 +21,7 @@
 }
 
 [data-theme='light'] .mesWorkCentersPage {
-  --wc-bg: #f4f5f8;
+  --wc-bg: #ffffff;
   --wc-surface: #ffffff;
   --wc-surface2: #f3f4f8;
   --wc-border: rgba(0, 0, 0, 0.08);

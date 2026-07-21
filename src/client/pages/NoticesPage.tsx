@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { apiJson } from '../lib/api'
+import '../list-page.css'
 
 type Row = {
   id: number
@@ -88,13 +89,21 @@ export function NoticesPage() {
   }
 
   return (
-    <div className="mesPage">
-      <header className="mesPageHead">
-        <h1 className="mesPageTitle">공지</h1>
-        <p className="mesPageDesc">현장/사무 공지 게시를 관리합니다.</p>
+    <div className="mesPage mesPageWide mesListPage">
+      <header className="mesListHead">
+        <div className="mesListHeadMain">
+          <h1 className="mesListTitle">공지</h1>
+          <p className="mesListDesc">현장/사무 공지 게시를 관리합니다.</p>
+        </div>
+        <div className="mesListHeadActions">
+          <span className="mesListCountBadge">{items.length}건</span>
+          <button type="button" className="mesListBtn mesListBtn--secondary" onClick={() => void load()}>
+            새로고침
+          </button>
+        </div>
       </header>
-      {err ? <div className="error mesBanner">{err}</div> : null}
-      <section className="mesCard mesFormPanel">
+      {err ? <div className="error mesBanner mesListNotice">{err}</div> : null}
+      <section className="mesListFormCard">
         <div className="mesCardTitle">등록</div>
         <div className="mesFieldRow">
           <label className="mesLabel">
@@ -146,49 +155,51 @@ export function NoticesPage() {
           </button>
         </div>
       </section>
-      <div className="mesTableWrap mesTableScroll" style={{ marginTop: 16 }}>
-        <table className="mesTable">
-          <thead>
-            <tr>
-              <th>제목</th>
-              <th>유형</th>
-              <th>기간</th>
-              <th>팝업</th>
-              <th className="mesThActions">작업</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+      <div className="mesListTableCard">
+        <div className="mesTableWrap mesListTableViewport">
+          <table className="mesTable">
+            <thead>
               <tr>
-                <td colSpan={5} className="muted">
-                  로딩 중…
-                </td>
+                <th>제목</th>
+                <th>유형</th>
+                <th>기간</th>
+                <th>팝업</th>
+                <th className="mesThActions">작업</th>
               </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="muted">
-                  데이터 없음
-                </td>
-              </tr>
-            ) : (
-              items.map((r) => (
-                <tr key={r.id}>
-                  <td>{r.title}</td>
-                  <td>{r.noticeType}</td>
-                  <td style={{ fontSize: 12 }}>
-                    {String(r.startDate).slice(0, 10)} ~ {String(r.endDate).slice(0, 10)}
-                  </td>
-                  <td>{r.isPopup}</td>
-                  <td className="mesTdActions">
-                    <button type="button" className="mesBtnSm mesBtnDanger" onClick={() => void remove(r.id)}>
-                      삭제
-                    </button>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="muted">
+                    로딩 중…
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : items.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="muted">
+                    데이터 없음
+                  </td>
+                </tr>
+              ) : (
+                items.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.title}</td>
+                    <td>{r.noticeType}</td>
+                    <td style={{ fontSize: 12 }}>
+                      {String(r.startDate).slice(0, 10)} ~ {String(r.endDate).slice(0, 10)}
+                    </td>
+                    <td>{r.isPopup}</td>
+                    <td className="mesTdActions">
+                      <button type="button" className="mesBtnSm mesBtnDanger" onClick={() => void remove(r.id)}>
+                        삭제
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )

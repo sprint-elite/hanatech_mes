@@ -213,6 +213,50 @@ extendedMastersRouter.post('/users', async (req, res) => {
   }
 })
 
+const userUpdateBody = userBody
+  .omit({ password: true })
+  .partial()
+  .extend({
+    password: z.string().min(4).max(128).optional(),
+    workerId: z.number().int().positive().nullable().optional(),
+  })
+
+extendedMastersRouter.patch('/users/:id', async (req, res) => {
+  const id = parsePositiveIntParam(req.params.id)
+  if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
+  const p = userUpdateBody.safeParse(req.body)
+  if (!p.success) return res.status(400).json({ ok: false, error: 'VALIDATION_ERROR', details: p.error.flatten() })
+  const b = p.data
+  if (Object.keys(b).length === 0) return res.status(400).json({ ok: false, error: 'EMPTY_BODY' })
+  try {
+    const item = await prisma.user.update({
+      where: { id },
+      data: {
+        ...(b.loginId !== undefined ? { loginId: b.loginId } : {}),
+        ...(b.userName !== undefined ? { userName: b.userName } : {}),
+        ...(b.password !== undefined ? { passwordHash: `[dev-plain]${b.password}` } : {}),
+        ...(b.roleId !== undefined ? { roleId: b.roleId } : {}),
+        ...(b.workerId !== undefined ? { workerId: b.workerId } : {}),
+        ...(b.email !== undefined ? { email: b.email } : {}),
+        ...(b.phone !== undefined ? { phone: b.phone } : {}),
+        ...(b.status !== undefined ? { status: b.status } : {}),
+      },
+      select: {
+        id: true,
+        loginId: true,
+        userName: true,
+        roleId: true,
+        workerId: true,
+        status: true,
+        createdAt: true,
+      },
+    })
+    return res.json({ ok: true, item })
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
 extendedMastersRouter.delete('/users/:id', async (req, res) => {
   const id = parsePositiveIntParam(req.params.id)
   if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })

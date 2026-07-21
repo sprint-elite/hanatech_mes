@@ -22,7 +22,7 @@
 }
 
 [data-theme='light'] .mesCustomersPage {
-  --cp-bg: #f4f5f8;
+  --cp-bg: #ffffff;
   --cp-surface: #ffffff;
   --cp-surface2: #f3f4f8;
   --cp-border: rgba(0, 0, 0, 0.08);
@@ -234,6 +234,11 @@
   flex-shrink: 0;
 }
 
+[data-theme='light'] .mesCustomersPage .mesCustStatIcon {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
 .mesCustomersPage .mesCustStatIcon svg {
   width: 22px;
   height: 22px;
@@ -317,13 +322,15 @@
 .mesCustomersPage .mesCustThActions,
 .mesCustomersPage .mesCustTdActions {
   text-align: right;
-  width: 120px;
+  width: 168px;
+  min-width: 168px;
 }
 
 .mesCustomersPage .mesCustRowActions {
   display: flex;
   gap: 6px;
   justify-content: flex-end;
+  flex-wrap: nowrap;
 }
 
 .mesCustomersPage .mesCustActionBtn {
@@ -338,6 +345,10 @@
   border: 1px solid var(--cp-border-strong);
   background: var(--cp-surface2);
   color: var(--cp-text);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 64px;
+  justify-content: center;
 }
 
 .mesCustomersPage .mesCustActionBtn--danger {

@@ -61,7 +61,6 @@ export type PayStubFormDraft = {
   userId: number | null
   dept: string
   position: string
-  workDays: string
   remark: string
   earnings: PayStubLine[]
   deductions: PayStubLine[]
@@ -112,7 +111,6 @@ export function emptyForm(): PayStubFormDraft {
     userId: null,
     dept: '',
     position: '',
-    workDays: '',
     remark: '',
     earnings: DEFAULT_EARNINGS.map((l) => ({ ...l })),
     deductions: DEFAULT_DEDUCTIONS.map((l) => ({ ...l })),
@@ -124,7 +122,6 @@ export function formFromRow(row: PayStubRow): PayStubFormDraft {
     userId: row.userId,
     dept: row.dept === '—' ? '' : row.dept,
     position: row.position === '—' ? '' : row.position,
-    workDays: row.workDays != null ? String(row.workDays) : '',
     remark: row.remark ?? '',
     earnings: row.earnings.length
       ? row.earnings.map((l) => ({ ...l, lineType: 'EARNING' as const }))

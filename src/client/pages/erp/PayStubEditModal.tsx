@@ -176,18 +176,6 @@ export function PayStubEditModal({
                 onChange={(e) => onChange({ position: e.target.value })}
               />
             </label>
-            <label className="mesPsFormRow">
-              <span>근무일수</span>
-              <input
-                type="number"
-                className="mesPsFieldInput"
-                min={0}
-                max={31}
-                step={0.5}
-                value={form.workDays}
-                onChange={(e) => onChange({ workDays: e.target.value })}
-              />
-            </label>
           </div>
 
           <LineEditor

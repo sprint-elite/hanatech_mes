@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ApiError, apiJson } from '../lib/api'
+import '../list-page.css'
 
 type Product = { id: number; productCode: string; productName: string }
 
@@ -181,29 +182,37 @@ export function ProcessResultPage() {
   }
 
   return (
-    <div className="mesPage mesPageWide">
-      <header className="mesPageHeadRow">
-        <div>
-          <h1 className="mesPageTitle">공정 실적 등록</h1>
-          <p className="mesPageDesc">LOT·공정·투입·양품·불량 수량을 등록합니다. 등록 후 아래 목록·생산 LOT에 반영됩니다.</p>
+    <div className="mesPage mesPageWide mesListPage">
+      <header className="mesListHead">
+        <div className="mesListHeadMain">
+          <h1 className="mesListTitle">공정 실적 등록</h1>
+          <p className="mesListDesc">LOT·공정·투입·양품·불량 수량을 등록합니다. 등록 후 아래 목록·생산 LOT에 반영됩니다.</p>
         </div>
-        <button type="button" className="mesBtnSecondary" onClick={() => void loadRecent()} disabled={loadingRecent}>
-          실적 목록 새로고침
-        </button>
+        <div className="mesListHeadActions">
+          <span className="mesListCountBadge">{recent.length}건</span>
+          <button
+            type="button"
+            className="mesListBtn mesListBtn--secondary"
+            onClick={() => void loadRecent()}
+            disabled={loadingRecent}
+          >
+            실적 목록 새로고침
+          </button>
+        </div>
       </header>
 
       {loadErr ? (
-        <div className="error mesBanner" role="alert">
+        <div className="error mesBanner mesListNotice" role="alert">
           초기 데이터 오류: {loadErr}
         </div>
       ) : null}
       {submitErr ? (
-        <div className="error mesBanner" role="alert">
+        <div className="error mesBanner mesListNotice" role="alert">
           등록 실패: {submitErr}
         </div>
       ) : null}
 
-      <section className="mesCard" style={{ marginTop: 12 }}>
+      <div className="mesListFormCard">
         <div className="mesCardTitle">실적 입력</div>
         {loadingRefs ? (
           <p className="muted">품목·LOT 목록 불러오는 중…</p>
@@ -285,21 +294,23 @@ export function ProcessResultPage() {
             <p className="muted small" style={{ marginTop: 8 }}>
               양품+불량 ≤ 투입, 수량은 <strong>정수</strong>여야 합니다. 해당 품목에 MBOM 공정이 없으면 공정 목록이 비어 있습니다.
             </p>
-            <div className="mesToolbar mesToolbarWrap" style={{ marginTop: 12 }}>
-              <button type="button" className="mesBtnPrimary" disabled={submitting} onClick={() => void submit()}>
+            <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <button type="button" className="mesListBtn mesListBtn--primary" disabled={submitting} onClick={() => void submit()}>
                 {submitting ? '등록 중…' : '실적 저장'}
               </button>
-              <button type="button" className="mesBtnSecondary" disabled={submitting} onClick={resetForm}>
+              <button type="button" className="mesListBtn mesListBtn--secondary" disabled={submitting} onClick={resetForm}>
                 입력 초기화
               </button>
             </div>
           </>
         )}
-      </section>
+      </div>
 
-      <section className="mesCard" style={{ marginTop: 16 }}>
-        <div className="mesCardTitle">최근 등록 실적</div>
-        <div className="mesTableWrap mesTableScroll">
+      <div className="mesListTableCard">
+        <div className="mesCardTitle" style={{ padding: '12px 16px 0' }}>
+          최근 등록 실적
+        </div>
+        <div className="mesTableWrap mesListTableViewport">
           <table className="mesTable">
             <thead>
               <tr>
@@ -346,7 +357,7 @@ export function ProcessResultPage() {
             </tbody>
           </table>
         </div>
-      </section>
+      </div>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { apiJson } from '../lib/api'
+import '../list-page.css'
 
 type Row = { id: number; roleName: string; description: string | null }
 type FormState = { roleName: string; description: string }
@@ -67,18 +68,31 @@ export function RolesPage() {
   }
 
   return (
-    <div className="mesPage">
-      <header className="mesPageHead">
-        <h1 className="mesPageTitle">역할</h1>
-        <p className="mesPageDesc">사용자 권한 그룹(역할)을 정의합니다.</p>
+    <div className="mesPage mesPageWide mesListPage">
+      <header className="mesListHead">
+        <div className="mesListHeadMain">
+          <h1 className="mesListTitle">역할</h1>
+          <p className="mesListDesc">사용자 권한 그룹(역할)을 정의합니다.</p>
+        </div>
+        <div className="mesListHeadActions">
+          <span className="mesListCountBadge">{items.length}건</span>
+          <button type="button" className="mesListBtn mesListBtn--secondary" onClick={() => void load()}>
+            새로고침
+          </button>
+          <button
+            type="button"
+            className="mesListBtn mesListBtn--primary"
+            onClick={() => {
+              setEditingId(null)
+              setForm(empty())
+            }}
+          >
+            새 역할
+          </button>
+        </div>
       </header>
-      <div className="mesToolbar">
-        <button type="button" className="mesBtnPrimary" onClick={() => { setEditingId(null); setForm(empty()) }}>
-          새 역할
-        </button>
-      </div>
-      {err ? <div className="error mesBanner">{err}</div> : null}
-      <section className="mesCard mesFormPanel">
+      {err ? <div className="error mesBanner mesListNotice">{err}</div> : null}
+      <section className="mesListFormCard">
         <div className="mesCardTitle">{editingId == null ? '등록' : `수정 (ID ${editingId})`}</div>
         <div className="mesFieldRow">
           <label className="mesLabel">
@@ -96,55 +110,57 @@ export function RolesPage() {
           </button>
         </div>
       </section>
-      <div className="mesTableWrap mesTableScroll" style={{ marginTop: 16 }}>
-        <table className="mesTable">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>역할명</th>
-              <th>설명</th>
-              <th className="mesThActions">작업</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+      <div className="mesListTableCard">
+        <div className="mesTableWrap mesListTableViewport">
+          <table className="mesTable">
+            <thead>
               <tr>
-                <td colSpan={4} className="muted">
-                  로딩 중…
-                </td>
+                <th>ID</th>
+                <th>역할명</th>
+                <th>설명</th>
+                <th className="mesThActions">작업</th>
               </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="muted">
-                  데이터 없음
-                </td>
-              </tr>
-            ) : (
-              items.map((r) => (
-                <tr key={r.id}>
-                  <td className="mono">{r.id}</td>
-                  <td>{r.roleName}</td>
-                  <td>{r.description ?? '—'}</td>
-                  <td className="mesTdActions">
-                    <button
-                      type="button"
-                      className="mesBtnSm"
-                      onClick={() => {
-                        setEditingId(r.id)
-                        setForm({ roleName: r.roleName, description: r.description ?? '' })
-                      }}
-                    >
-                      수정
-                    </button>
-                    <button type="button" className="mesBtnSm mesBtnDanger" onClick={() => void remove(r.id)}>
-                      삭제
-                    </button>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className="muted">
+                    로딩 중…
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : items.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="muted">
+                    데이터 없음
+                  </td>
+                </tr>
+              ) : (
+                items.map((r) => (
+                  <tr key={r.id}>
+                    <td className="mono">{r.id}</td>
+                    <td>{r.roleName}</td>
+                    <td>{r.description ?? '—'}</td>
+                    <td className="mesTdActions">
+                      <button
+                        type="button"
+                        className="mesBtnSm"
+                        onClick={() => {
+                          setEditingId(r.id)
+                          setForm({ roleName: r.roleName, description: r.description ?? '' })
+                        }}
+                      >
+                        수정
+                      </button>
+                      <button type="button" className="mesBtnSm mesBtnDanger" onClick={() => void remove(r.id)}>
+                        삭제
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )

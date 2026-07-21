@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { apiJson } from '../lib/api'
+import '../inventory-page.css'
 
 type Product = { id: number; productCode: string; productName: string }
 
 type LotOpt = { id: number; lotNo: string; productId: number }
 
 type InvStatus = 'AVAILABLE' | 'HOLD' | 'DEFECT'
+
+type StatusFilter = 'ALL' | InvStatus | 'MIXED'
 
 type Row = {
   id: number
@@ -28,6 +31,8 @@ type FormState = {
   reservedQty: string
   status: InvStatus
 }
+
+type Filters = { q: string; status: StatusFilter }
 
 type InventoryTxRow = {
   id: number
@@ -63,6 +68,24 @@ const CHART_DAYS_OPTS = [7, 14, 30] as const
 type ChartDays = (typeof CHART_DAYS_OPTS)[number]
 
 const LINE_COLORS = ['#d4a524', '#3d9a5f', '#5b9bd5', '#c45c5c', '#9b7ed9'] as const
+
+const emptyFilters = (): Filters => ({ q: '', status: 'ALL' })
+
+const statusLabel = (s: string) => {
+  if (s === 'AVAILABLE') return '가용'
+  if (s === 'HOLD') return '보류'
+  if (s === 'DEFECT') return '불량'
+  if (s === 'MIXED') return '혼합'
+  return s
+}
+
+function statusBadgeClass(s: string): string {
+  if (s === 'AVAILABLE') return 'mesInvStatusBadge mesInvStatusBadge--available'
+  if (s === 'HOLD') return 'mesInvStatusBadge mesInvStatusBadge--hold'
+  if (s === 'DEFECT') return 'mesInvStatusBadge mesInvStatusBadge--defect'
+  if (s === 'MIXED') return 'mesInvStatusBadge mesInvStatusBadge--mixed'
+  return 'mesInvStatusBadge'
+}
 
 const toYmd = (d: Date) => {
   const y = d.getFullYear()
@@ -216,6 +239,86 @@ function InventoryLineChart({ series, dayLabels }: { series: ChartSeries[]; dayL
   )
 }
 
+function IconSearch() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  )
+}
+
+function IconPlus() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  )
+}
+
+function IconRefresh() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+      <path d="M21 3v6h-6" />
+    </svg>
+  )
+}
+
+function IconFilter() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M4 6h16M7 12h10M10 18h4" />
+    </svg>
+  )
+}
+
+function IconReset() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 12a9 9 0 1 0 9-9" />
+      <path d="M3 3v6h6" />
+    </svg>
+  )
+}
+
+function IconBox() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M21 8 12 3 3 8l9 5 9-5Z" />
+      <path d="M3 8v8l9 5 9-5V8" />
+      <path d="M12 13v8" />
+    </svg>
+  )
+}
+
+function IconStack() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 2 2 7l10 5 10-5-10-5Z" />
+      <path d="m2 12 10 5 10-5" />
+      <path d="m2 17 10 5 10-5" />
+    </svg>
+  )
+}
+
+function IconLock() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <rect x="5" y="11" width="14" height="10" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </svg>
+  )
+}
+
+function IconCheck() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  )
+}
+
 const empty = (): FormState => ({
   productId: '',
   lotId: '',
@@ -234,8 +337,10 @@ export function InventoryPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'ALL' | InvStatus | 'MIXED'>('ALL')
+  const [filters, setFilters] = useState<Filters>(emptyFilters)
+  const [draftFilters, setDraftFilters] = useState<Filters>(emptyFilters)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
   const [txRows, setTxRows] = useState<InventoryTxRow[]>([])
   const [chartDays, setChartDays] = useState<ChartDays>(14)
   const [chartProductId, setChartProductId] = useState('')
@@ -384,7 +489,10 @@ export function InventoryPage() {
 
   const modalTitle = editingId == null ? '신규 등록' : '수정'
   const groupedItems = useMemo(() => {
-    const m = new Map<number, { product: Row['product']; qty: number; reservedQty: number; statuses: Set<InvStatus>; updatedAt: string }>()
+    const m = new Map<
+      number,
+      { product: Row['product']; qty: number; reservedQty: number; statuses: Set<InvStatus>; updatedAt: string }
+    >()
     for (const row of items) {
       const prev = m.get(row.productId)
       if (!prev) {
@@ -414,16 +522,56 @@ export function InventoryPage() {
   }, [items])
 
   const filteredItems = useMemo(() => {
-    const keyword = search.trim().toLowerCase()
+    const keyword = filters.q.trim().toLowerCase()
     return groupedItems.filter((row) => {
-      if (statusFilter !== 'ALL' && row.statusText !== statusFilter) return false
+      if (filters.status !== 'ALL' && row.statusText !== filters.status) return false
       if (keyword === '') return true
       return (
         row.product.productCode.toLowerCase().includes(keyword) ||
         row.product.productName.toLowerCase().includes(keyword)
       )
     })
-  }, [groupedItems, search, statusFilter])
+  }, [groupedItems, filters])
+
+  const stats = useMemo(() => {
+    let qtySum = 0
+    let reservedSum = 0
+    let availableSum = 0
+    for (const row of filteredItems) {
+      qtySum += row.qty
+      reservedSum += row.reservedQty
+      availableSum += row.availableQty
+    }
+    return {
+      total: filteredItems.length,
+      qtySum,
+      reservedSum,
+      availableSum,
+    }
+  }, [filteredItems])
+
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize))
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages)
+  }, [page, totalPages])
+
+  const pageItems = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredItems.slice(start, start + pageSize)
+  }, [filteredItems, page, pageSize])
+
+  const applyFilters = () => {
+    setFilters({ ...draftFilters })
+    setPage(1)
+  }
+
+  const resetFilters = () => {
+    const emptyF = emptyFilters()
+    setDraftFilters(emptyF)
+    setFilters(emptyF)
+    setPage(1)
+  }
 
   const chartDayList = useMemo(() => buildDayList(chartDays), [chartDays])
 
@@ -446,56 +594,155 @@ export function InventoryPage() {
   }, [chartTargets, txRows, chartDayList])
 
   return (
-    <div className="mesPage">
-      <header className="mesPageHead">
-        <h1 className="mesPageTitle">재고</h1>
-        <p className="mesPageDesc">LOT 단위 재고를 등록·수정합니다. (수동 입고/조정용)</p>
+    <div className="mesPage mesPageWide mesInvPage">
+      <header className="mesInvHead">
+        <div className="mesInvHeadMain">
+          <h1 className="mesInvTitle">재고</h1>
+          <p className="mesInvDesc">LOT 단위 재고를 등록·수정합니다. (수동 입고/조정용)</p>
+        </div>
+        <div className="mesInvHeadActions">
+          <span className="mesInvCountBadge">{loading ? '…' : `${filteredItems.length.toLocaleString()}건`}</span>
+          <button type="button" className="mesInvBtn mesInvBtn--secondary" onClick={() => void loadRows()}>
+            <IconRefresh />
+            새로고침
+          </button>
+          <button type="button" className="mesInvBtn mesInvBtn--primary" onClick={openNew}>
+            <IconPlus />
+            새 재고
+          </button>
+        </div>
       </header>
 
-      <div className="mesToolbar">
-        <button type="button" className="mesBtnPrimary" onClick={openNew}>
-          새 재고
-        </button>
-        <button type="button" className="mesBtnSecondary" onClick={() => void loadRows()}>
-          새로고침
-        </button>
-      </div>
-      {err ? <div className="error mesBanner">{err}</div> : null}
+      {err ? (
+        <div className="mesNotice mesNoticeError mesInvNotice" role="alert">
+          <div className="mesNoticeBody">
+            <span className="mesNoticeTitle">오류</span>
+            <span className="mesNoticeText">{err}</span>
+          </div>
+          <button type="button" className="mesNoticeDismiss" onClick={() => setErr(null)} aria-label="닫기">
+            ×
+          </button>
+        </div>
+      ) : null}
 
-      <div className="mesToolbar" style={{ marginBottom: 8 }}>
-        <label className="mesLabel mesLabelInline">
-          검색
-          <input
-            className="mesInput mesInputShort"
-            placeholder="품목코드/품목명"
-            value={search}
-            onChange={(ev) => setSearch(ev.target.value)}
-          />
-        </label>
-        <label className="mesLabel mesLabelInline">
-          상태
-          <select className="mesInput" value={statusFilter} onChange={(ev) => setStatusFilter(ev.target.value as 'ALL' | InvStatus | 'MIXED')}>
+      <div className="mesInvFilterCard">
+        <div className="mesInvField mesInvField--search">
+          <span className="mesInvFieldLabel">검색</span>
+          <div className="mesInvInputWrap">
+            <span className="mesInvInputIcon">
+              <IconSearch />
+            </span>
+            <input
+              className="mesInvInput mesInvInput--search"
+              placeholder="품목코드/품목명"
+              value={draftFilters.q}
+              onChange={(ev) => setDraftFilters((f) => ({ ...f, q: ev.target.value }))}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter') applyFilters()
+              }}
+            />
+          </div>
+        </div>
+        <div className="mesInvField mesInvField--select">
+          <span className="mesInvFieldLabel">상태</span>
+          <select
+            className="mesInvSelect"
+            value={draftFilters.status}
+            onChange={(ev) => setDraftFilters((f) => ({ ...f, status: ev.target.value as StatusFilter }))}
+            aria-label="상태 필터"
+          >
             <option value="ALL">전체</option>
-            <option value="AVAILABLE">AVAILABLE</option>
-            <option value="HOLD">HOLD</option>
-            <option value="DEFECT">DEFECT</option>
-            <option value="MIXED">MIXED</option>
+            <option value="AVAILABLE">가용</option>
+            <option value="HOLD">보류</option>
+            <option value="DEFECT">불량</option>
+            <option value="MIXED">혼합</option>
           </select>
-        </label>
-        <button
-          type="button"
-          className="mesBtnSecondary"
-          onClick={() => {
-            setSearch('')
-            setStatusFilter('ALL')
-          }}
-        >
-          필터 초기화
-        </button>
-        <span className="muted small">표시 {filteredItems.length}건</span>
+        </div>
+        <div className="mesInvFilterActions">
+          <button type="button" className="mesInvBtn mesInvBtn--secondary" onClick={resetFilters}>
+            <IconReset />
+            필터 초기화
+          </button>
+          <button type="button" className="mesInvBtn mesInvBtn--primary" onClick={applyFilters}>
+            <IconFilter />
+            필터 적용
+          </button>
+        </div>
       </div>
 
-      <section className="mesInvTrendCard">
+      <div className="mesInvStatsStrip" aria-label="재고 요약">
+        <div className="mesInvStatItem">
+          <div className="mesInvStatIcon mesInvStatIcon--blue">
+            <IconBox />
+          </div>
+          <div className="mesInvStatMeta">
+            <p className="mesInvStatLabel">전체 품목</p>
+            <p className="mesInvStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesInvStatValueNum">{stats.total.toLocaleString()}</span>
+                  <span className="mesInvStatValueUnit">건</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesInvStatItem">
+          <div className="mesInvStatIcon mesInvStatIcon--gold">
+            <IconStack />
+          </div>
+          <div className="mesInvStatMeta">
+            <p className="mesInvStatLabel">총 재고합계</p>
+            <p className="mesInvStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesInvStatValueNum">{stats.qtySum.toLocaleString()}</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesInvStatItem">
+          <div className="mesInvStatIcon mesInvStatIcon--orange">
+            <IconLock />
+          </div>
+          <div className="mesInvStatMeta">
+            <p className="mesInvStatLabel">예약</p>
+            <p className="mesInvStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesInvStatValueNum">{stats.reservedSum.toLocaleString()}</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="mesInvStatItem">
+          <div className="mesInvStatIcon mesInvStatIcon--green">
+            <IconCheck />
+          </div>
+          <div className="mesInvStatMeta">
+            <p className="mesInvStatLabel">가용</p>
+            <p className="mesInvStatValue">
+              {loading ? (
+                '…'
+              ) : (
+                <>
+                  <span className="mesInvStatValueNum">{stats.availableSum.toLocaleString()}</span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mesInvFormCard">
         <div className="mesDashTrendHead">
           <h2 className="mesDashTrendTitle mesDashTrendTitle--tight">재고 추이</h2>
           <div className="mesDashTrendLegend">
@@ -507,7 +754,7 @@ export function InventoryPage() {
             ))}
           </div>
         </div>
-        <div className="mesToolbar mesInvTrendFilters">
+        <div className="mesInvTrendFilters" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
           <label className="mesLabel mesLabelInline">
             기간
             <select
@@ -549,50 +796,126 @@ export function InventoryPage() {
         <p className="muted small mesInvTrendHint">
           일말 재고합계(품목 단위). 입고·출고·조정 이력을 역산해 표시하며, 기간 이전 이력이 없으면 당일 잔량 기준으로 맞춥니다.
         </p>
-      </section>
+      </div>
 
-      <div className="mesTableWrap mesTableScroll" style={{ marginTop: 16 }}>
-        <table className="mesTable">
-          <thead>
-            <tr>
-              <th>품목</th>
-              <th>재고합계</th>
-              <th>예약</th>
-              <th>가용</th>
-              <th>상태</th>
-              <th>최종갱신</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+      <div className="mesInvTableCard">
+        <div className="mesInvTableViewport">
+          <table className="mesInvTable">
+            <thead>
               <tr>
-                <td colSpan={6} className="muted">
-                  로딩 중…
-                </td>
+                <th>품목</th>
+                <th>재고합계</th>
+                <th>예약</th>
+                <th>가용</th>
+                <th>상태</th>
+                <th>최종갱신</th>
               </tr>
-            ) : filteredItems.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="muted">
-                  데이터 없음
-                </td>
-              </tr>
-            ) : (
-              filteredItems.map((row) => (
-                <tr key={row.productId}>
-                  <td>
-                    <span className="mono">{row.product.productCode}</span>
-                    <div className="muted small">{row.product.productName}</div>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="mesInvEmpty">
+                    로딩 중…
                   </td>
-                  <td>{row.qty}</td>
-                  <td>{row.reservedQty}</td>
-                  <td>{row.availableQty}</td>
-                  <td>{row.statusText}</td>
-                  <td className="small muted">{new Date(row.updatedAt).toLocaleString('ko-KR')}</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : filteredItems.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="mesInvEmpty">
+                    데이터 없음
+                  </td>
+                </tr>
+              ) : (
+                pageItems.map((row) => (
+                  <tr key={row.productId}>
+                    <td>
+                      <span className="mono">{row.product.productCode}</span>
+                      <div className="muted small">{row.product.productName}</div>
+                    </td>
+                    <td>{row.qty.toLocaleString()}</td>
+                    <td>{row.reservedQty.toLocaleString()}</td>
+                    <td>{row.availableQty.toLocaleString()}</td>
+                    <td>
+                      <span className={statusBadgeClass(row.statusText)}>{statusLabel(row.statusText)}</span>
+                    </td>
+                    <td className="small muted">{new Date(row.updatedAt).toLocaleString('ko-KR')}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <footer className="mesInvPager">
+          <span className="mesInvPagerTotal">전체 {filteredItems.length.toLocaleString()}건</span>
+          <nav className="mesInvPagerNav" aria-label="페이지">
+            <button type="button" className="mesInvPagerBtn" disabled={page <= 1} onClick={() => setPage(1)} aria-label="첫 페이지">
+              «
+            </button>
+            <button
+              type="button"
+              className="mesInvPagerBtn"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              aria-label="이전 페이지"
+            >
+              ‹
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+              .map((n, idx, arr) => {
+                const prev = arr[idx - 1]
+                const showEllipsis = prev != null && n - prev > 1
+                return (
+                  <span key={n} style={{ display: 'contents' }}>
+                    {showEllipsis ? (
+                      <span className="mesInvPagerBtn" style={{ border: 'none', background: 'transparent' }}>
+                        …
+                      </span>
+                    ) : null}
+                    <button
+                      type="button"
+                      className={`mesInvPagerBtn${n === page ? ' mesInvPagerBtn--active' : ''}`}
+                      onClick={() => setPage(n)}
+                    >
+                      {n}
+                    </button>
+                  </span>
+                )
+              })}
+            <button
+              type="button"
+              className="mesInvPagerBtn"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              aria-label="다음 페이지"
+            >
+              ›
+            </button>
+            <button
+              type="button"
+              className="mesInvPagerBtn"
+              disabled={page >= totalPages}
+              onClick={() => setPage(totalPages)}
+              aria-label="마지막 페이지"
+            >
+              »
+            </button>
+          </nav>
+          <div className="mesInvPageSize">
+            <select
+              value={pageSize}
+              onChange={(ev) => {
+                setPageSize(Number(ev.target.value))
+                setPage(1)
+              }}
+              aria-label="페이지당 표시 건수"
+            >
+              <option value={10}>10개씩 보기</option>
+              <option value={20}>20개씩 보기</option>
+              <option value={50}>50개씩 보기</option>
+            </select>
+          </div>
+        </footer>
       </div>
 
       {panelOpen ? (
@@ -663,7 +986,7 @@ export function InventoryPage() {
                   >
                     {statuses.map((s) => (
                       <option key={s} value={s}>
-                        {s}
+                        {statusLabel(s)}
                       </option>
                     ))}
                   </select>

@@ -1,0 +1,784 @@
+/* 공정 실적 이력 페이지 (mesProcHistPage) */
+
+.mesProcHistPage {
+  --ph-bg: #0c0e14;
+  --ph-surface: #12151e;
+  --ph-surface2: #181c28;
+  --ph-border: rgba(255, 255, 255, 0.08);
+  --ph-border-strong: rgba(255, 255, 255, 0.14);
+  --ph-text: #eef1f6;
+  --ph-muted: #9aa3b2;
+  --ph-accent: #e8c24a;
+  --ph-accent-text: #1a1406;
+  --ph-ok: #3dba72;
+  --ph-danger: #e85d5d;
+  --ph-info: #5ba4e8;
+  --ph-wip: #a78bfa;
+  --ph-raw: #4ecf8a;
+  --ph-fg: #5ba4e8;
+  --ph-radius: 12px;
+  --ph-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesProcHistPage {
+  --ph-bg: #ffffff;
+  --ph-surface: #ffffff;
+  --ph-surface2: #f3f4f8;
+  --ph-border: rgba(0, 0, 0, 0.08);
+  --ph-border-strong: rgba(0, 0, 0, 0.12);
+  --ph-text: #141820;
+  --ph-muted: #5f6775;
+  --ph-accent: #c9a227;
+  --ph-accent-text: #1a1406;
+}
+
+.mesProcHistPage .mesProcHistHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesProcHistPage .mesProcHistHeadMain {
+  min-width: 0;
+}
+
+.mesProcHistPage .mesProcHistTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ph-text);
+}
+
+.mesProcHistPage .mesProcHistDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--ph-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesProcHistPage .mesProcHistHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mesProcHistPage .mesProcHistCountBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--ph-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--ph-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesProcHistPage .mesProcHistBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--ph-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.mesProcHistPage .mesProcHistBtn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.mesProcHistPage .mesProcHistBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--ph-accent) 100%);
+  color: var(--ph-accent-text);
+  border-color: #a8841c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesProcHistPage .mesProcHistBtn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.mesProcHistPage .mesProcHistBtn--secondary {
+  background: var(--ph-surface2);
+  color: var(--ph-text);
+  border-color: var(--ph-border-strong);
+}
+
+.mesProcHistPage .mesProcHistBtn--secondary:hover {
+  border-color: var(--ph-accent);
+  color: var(--ph-accent);
+}
+
+.mesProcHistPage .mesProcHistBtn--danger {
+  background: transparent;
+  color: var(--ph-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesProcHistPage .mesProcHistBtn--danger:hover {
+  background: rgba(232, 93, 93, 0.1);
+}
+
+.mesProcHistPage .mesProcHistFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--ph-radius);
+  background: var(--ph-surface);
+  border: 1px solid var(--ph-border);
+}
+
+.mesProcHistPage .mesProcHistField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesProcHistPage .mesProcHistField--search {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.mesProcHistPage .mesProcHistField--select {
+  flex: 0 1 140px;
+  min-width: 120px;
+}
+
+.mesProcHistPage .mesProcHistField--period {
+  flex: 0 1 280px;
+  min-width: 240px;
+}
+
+.mesProcHistPage .mesProcHistPeriodRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesProcHistPage .mesProcHistPeriodSep {
+  color: var(--ph-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.mesProcHistPage .mesProcHistBtn--edit {
+  background: var(--ph-surface2);
+  color: var(--ph-text);
+  border-color: var(--ph-border-strong);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesProcHistPage .mesProcHistBtn--edit:hover {
+  border-color: var(--ph-accent);
+  color: var(--ph-accent);
+}
+
+.mesProcHistPage .mesProcHistFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ph-muted);
+}
+
+.mesProcHistPage .mesProcHistInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mesProcHistPage .mesProcHistInputIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--ph-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesProcHistPage .mesProcHistInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesProcHistPage .mesProcHistInput,
+.mesProcHistPage .mesProcHistSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--ph-radius-sm);
+  border: 1px solid var(--ph-border-strong);
+  background: var(--ph-surface2);
+  color: var(--ph-text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mesProcHistPage .mesProcHistInput--search {
+  padding-left: 34px;
+}
+
+.mesProcHistPage .mesProcHistFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesProcHistPage .mesProcHistStatsStrip {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 16px;
+  border-radius: var(--ph-radius);
+  background: var(--ph-surface);
+  border: 1px solid var(--ph-border);
+  overflow-x: auto;
+}
+
+.mesProcHistPage .mesProcHistStatItem {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  min-width: 150px;
+  position: relative;
+}
+
+.mesProcHistPage .mesProcHistStatItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--ph-border-strong);
+}
+
+.mesProcHistPage .mesProcHistStatIcon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='light'] .mesProcHistPage .mesProcHistStatIcon {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--ph-border);
+}
+
+.mesProcHistPage .mesProcHistStatIcon--gold {
+  color: var(--ph-accent);
+}
+
+.mesProcHistPage .mesProcHistStatIcon--blue {
+  color: var(--ph-info);
+}
+
+.mesProcHistPage .mesProcHistStatIcon--purple {
+  color: var(--ph-wip);
+}
+
+.mesProcHistPage .mesProcHistStatIcon--green {
+  color: #5cd68a;
+}
+
+.mesProcHistPage .mesProcHistStatIcon--orange {
+  color: #f0a030;
+}
+
+.mesProcHistPage .mesProcHistStatIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesProcHistPage .mesProcHistStatMeta {
+  min-width: 0;
+}
+
+.mesProcHistPage .mesProcHistStatLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ph-muted);
+  line-height: 1.3;
+}
+
+.mesProcHistPage .mesProcHistStatValue {
+  margin: 4px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  line-height: 1.1;
+}
+
+.mesProcHistPage .mesProcHistStatValueNum {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ph-text);
+  letter-spacing: -0.03em;
+}
+
+.mesProcHistPage .mesProcHistStatValueUnit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ph-muted);
+}
+
+.mesProcHistPage .mesProcHistTableCard {
+  border-radius: var(--ph-radius);
+  background: var(--ph-surface);
+  border: 1px solid var(--ph-border);
+  overflow: hidden;
+}
+
+.mesProcHistPage .mesProcHistTableViewport {
+  overflow-x: auto;
+}
+
+.mesProcHistPage .mesProcHistTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesProcHistPage .mesProcHistTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ph-muted);
+  background: var(--ph-surface2);
+  border-bottom: 1px solid var(--ph-border);
+  white-space: nowrap;
+}
+
+.mesProcHistPage .mesProcHistTable td {
+  padding: 12px 14px;
+  color: var(--ph-text);
+  border-bottom: 1px solid var(--ph-border);
+  vertical-align: middle;
+}
+
+.mesProcHistPage .mesProcHistTable tbody tr {
+  transition: background 0.1s;
+}
+
+.mesProcHistPage .mesProcHistTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesProcHistPage .mesProcHistTable tbody tr.mesProcHistRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesProcHistPage .mesProcHistTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesProcHistPage .mesProcHistTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesProcHistPage .mesProcHistThActions,
+.mesProcHistPage .mesProcHistTdActions {
+  text-align: center;
+  width: 160px;
+  white-space: nowrap;
+}
+
+.mesProcHistPage .mesProcHistTdActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mesProcHistPage .mesProcHistStatusBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesProcHistPage .mesProcHistStatusBadge--ready {
+  color: var(--ph-info);
+  border: 1px solid rgba(91, 164, 232, 0.45);
+  background: rgba(91, 164, 232, 0.08);
+}
+
+.mesProcHistPage .mesProcHistStatusBadge--progress {
+  color: var(--ph-wip);
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.08);
+}
+
+.mesProcHistPage .mesProcHistStatusBadge--done {
+  color: var(--ph-ok);
+  border: 1px solid rgba(61, 186, 114, 0.45);
+  background: rgba(61, 186, 114, 0.08);
+}
+
+.mesProcHistPage .mesProcHistStatusBadge--hold {
+  color: var(--ph-danger);
+  border: 1px solid rgba(232, 93, 93, 0.45);
+  background: rgba(232, 93, 93, 0.08);
+}
+
+.mesProcHistPage .mesProcHistPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--ph-border);
+  background: var(--ph-surface2);
+  font-size: 13px;
+  color: var(--ph-muted);
+}
+
+.mesProcHistPage .mesProcHistPagerTotal {
+  font-weight: 600;
+}
+
+.mesProcHistPage .mesProcHistPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesProcHistPage .mesProcHistPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--ph-radius-sm);
+  border: 1px solid var(--ph-border-strong);
+  background: var(--ph-surface);
+  color: var(--ph-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesProcHistPage .mesProcHistPagerBtn:hover:not(:disabled) {
+  border-color: var(--ph-accent);
+  color: var(--ph-accent);
+}
+
+.mesProcHistPage .mesProcHistPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesProcHistPage .mesProcHistPagerBtn--active {
+  background: var(--ph-accent);
+  color: var(--ph-accent-text);
+  border-color: #a8841c;
+}
+
+.mesProcHistPage .mesProcHistPageSize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesProcHistPage .mesProcHistPageSize select {
+  padding: 6px 10px;
+  border-radius: var(--ph-radius-sm);
+  border: 1px solid var(--ph-border-strong);
+  background: var(--ph-surface);
+  color: var(--ph-text);
+  font-size: 12px;
+}
+
+.mesProcHistPage .mesProcHistEmpty {
+  text-align: center;
+  padding: 32px 16px !important;
+  color: var(--ph-muted);
+}
+
+.mesProcHistPage .mesNotice {
+  margin-bottom: 14px;
+}
+
+/* —— 품목 등록/수정 모달 —— */
+.mesProcHistModalRoot .mesModalBackdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.mesProcHistModalDialog {
+  width: min(1180px, 96vw) !important;
+  max-width: 1180px !important;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid var(--ph-border-strong, rgba(255, 255, 255, 0.12));
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesProcHistModalDialog {
+  background: #ffffff;
+}
+
+.mesProcHistModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ph-border, rgba(255, 255, 255, 0.08));
+  flex-shrink: 0;
+}
+
+.mesProcHistModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesProcHistModalHeadIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: var(--ph-accent, #e8c24a);
+}
+
+.mesProcHistModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesProcHistModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ph-text, #eef1f6);
+  letter-spacing: -0.02em;
+}
+
+.mesProcHistModalSub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--ph-muted, #9aa3b2);
+}
+
+.mesProcHistModalHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.mesProcHistModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.mesProcHistModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesProcHistModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mesProcHistModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, var(--ph-accent, #e8c24a) 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesProcHistModalBtn--save:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.mesProcHistModalBtn--cancel {
+  background: transparent;
+  color: var(--ph-text, #eef1f6);
+  border-color: var(--ph-border-strong, rgba(255, 255, 255, 0.2));
+}
+
+.mesProcHistModalBtn--cancel:hover:not(:disabled) {
+  border-color: var(--ph-accent, #e8c24a);
+}
+
+.mesProcHistModalBtn--close {
+  background: transparent;
+  color: var(--ph-muted, #9aa3b2);
+  border-color: transparent;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mesProcHistModalBtn--close:hover {
+  color: var(--ph-text, #eef1f6);
+}
+
+.mesProcHistModalBody {
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.mesProcHistModalGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .mesProcHistModalGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesProcHistModalSection {
+  border-radius: 12px;
+  border: 1px solid var(--ph-border, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+[data-theme='light'] .mesProcHistModalSection {
+  background: var(--ph-surface2, #f3f4f8);
+}
+
+.mesProcHistModalSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ph-text, #eef1f6);
+}
+
+.mesProcHistModalSectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 194, 74, 0.1);
+  color: var(--ph-accent, #e8c24a);
+  flex-shrink: 0;
+}
+
+.mesProcHistModalSectionIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesProcHistModalSectionBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.mesProcHistModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesProcHistModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesProcHistModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ph-text, #eef1f6);
+  line-height: 1.35;
+}
+
+.mesProcHistModalFieldKey {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ph-muted, #9aa3b2);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mesProcHistModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--ph-border-strong, rgba(255, 255, 255, 0.14));
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--ph-text, #eef1f6);
+  font-size: 13px;
+}
+
+[data-theme='light'] .mesProcHistModalInput {
+  background: #ffffff;
+}
+
+.mesProcHistModalInput::placeholder {
+  color: var(--ph-muted, #9aa3b2);
+  opacity: 0.85;
+}
+
+.mesProcHistModalInput:focus {
+  outline: none;
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 2px rgba(232, 194, 74, 0.12);
+}
+
+.mesProcHistModalFootMeta {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--ph-muted, #9aa3b2);
+}

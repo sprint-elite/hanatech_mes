@@ -13,7 +13,9 @@ import { workersRouter } from './routes/workers'
 import { customersRouter } from './routes/customers'
 import { authRouter } from './routes/auth'
 import { annualLeaveRouter } from './routes/annualLeave'
+import { expenseReportsRouter } from './routes/expenseReports'
 import { erpSchedulesRouter } from './routes/erpSchedules'
+import { erpWorkLogsRouter } from './routes/erpWorkLogs'
 import { payStubsRouter } from './routes/payStubs'
 import { payrollItemsRouter } from './routes/payrollItems'
 import { payrollEmployeesRouter } from './routes/payrollEmployees'
@@ -34,7 +36,9 @@ app.use('/api', productsRouter)
 app.use('/api', customersRouter)
 app.use('/api', authRouter)
 app.use('/api', annualLeaveRouter)
+app.use('/api', expenseReportsRouter)
 app.use('/api', erpSchedulesRouter)
+app.use('/api', erpWorkLogsRouter)
 app.use('/api', payStubsRouter)
 app.use('/api', payrollItemsRouter)
 app.use('/api', payrollEmployeesRouter)

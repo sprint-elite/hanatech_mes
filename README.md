@@ -8,7 +8,7 @@
 | **대상 공정** | 화장품 용기 조립/가공 (다단계 공정, LOT 단위 추적) |
 | **사용자** | 생산관리(사무실), 라인 작업자(현장), 라인장(전광판) |
 | **형태** | 모노레포 — React SPA + Express REST API + MySQL |
-| **현재 버전** | **V1.2.0** |
+| **현재 버전** | **V1.3.0** |
 
 ---
 
@@ -79,8 +79,8 @@
 
 | 메뉴 | 경로 | 상태 |
 |------|------|------|
-| 업무일지 | `/erp/work-logs` | UI 셸 (준비 중) |
-| 지출결의서 | `/erp/expense-reports` | UI 셸 (준비 중) |
+| 업무일지 | `/erp/work-logs` | **완료** — 일자별 업무 기록·상태·칸반 |
+| 지출결의서 | `/erp/expense-reports` | **완료** — 신청·2단계 승인·영수증·A4 조회·인쇄 |
 | **연차관리** | `/erp/annual-leave` | **완료** — 캘린더·목록·2단계 승인·A4 연차신청서 |
 | **일정관리** | `/erp/schedules` | **완료** — 캘린더·칸반·주말/공휴일 표시 |
 
@@ -96,7 +96,7 @@
 | **수당항목** | `/payroll/allowance-items` | 수당 마스터 (고정/시간/일, 배율, 비과세) |
 | **공제항목** | `/payroll/deduction-items` | 공제 마스터 (산출 공식·설명) |
 | **직원정보** | `/payroll/employee-profiles` | 기본급·통상임금·부양가족·급여대상 |
-| **근무입력** | `/payroll/work-records` | 월별 근무일수·연장·야간·휴일·연차 |
+| **근무입력** | `/payroll/work-records` | 일자·사원·수당항목별 근무기록 (시간/일) |
 | **급여명세서** | `/payroll/pay-stubs` | 월 배치·자동 계산·발행·명세 조회 |
 
 - **자동 계산**: 직원정보 + 근무입력 + 수당/공제 항목 기준으로 명세 생성 (`전체 자동 계산`, 건별 `재계산`)
@@ -411,7 +411,7 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 
 ## 개발 현황
 
-- **V1.2.0** 기준: MES 핵심 + ERP(연차·일정) + **급여(마스터·근무·자동계산·명세표·Excel)** 1차 완료. 업무일지·지출결의서는 UI 셸만 존재합니다.
+- **V1.3.0** 기준: MES 핵심 + ERP(연차·일정·**업무일지·지출결의서**) + 급여(마스터·근무·자동계산·명세표·**2026 간이세액표**·Excel) + **목록 UI 통일·생산 LOT 바코드** 반영.
 - 인증은 로그인 화면 + `X-Sys-User` 헤더 방식이며, JWT/세션 쿠키는 추후 보완 가능합니다.
 - 스키마 반영: `npm run prisma:push` (또는 `prisma migrate deploy`). Prisma Client 변경 후 **`npm run prisma:generate`** 및 API 재시작 필요.
 - 비전 로그(`VisionRawLog`) 등 설비 연동 필드는 수집·조회 위주로 구현되어 있습니다.
@@ -419,6 +419,43 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 ---
 
 ## 버전 이력
+
+### V1.3.0 (2026-07-21)
+
+**목록 UI 통일 (mesList 셸)**
+
+- 생산계획·작업지시·생산/자재 LOT·LOT이력·자재투입·공정이력·재고·입출고·출하·외주·바코드·역할·사용자·공지 등 목록 페이지를 품목 페이지와 동일한 헤더·필터·통계·페이징 셸로 정리
+- 공유 스타일: `src/client/list-page.css`, 페이지별 `*-page.css`
+- 출하 목록 컬럼 간격 깨짐 수정 (`td` flex 제거, `table-layout: fixed` + `colgroup`)
+- ERP·급여 화면은 헤더/토큰 톤만 수렴 (대시보드·통합운영·현장입력은 제외)
+
+**생산 LOT 바코드**
+
+- `ProductionLot.barcode` 필드 및 CODE128 이미지 API (`/api/lots/:id/barcode-image?view=thumb|screen|print`)
+- 생산 LOT 목록 썸네일·미리보기 모달, **인쇄하기** (203dpi Zebra 라벨)
+- LOT 스캔 조회 화면 (`/lot-scan`)
+- 기존 LOT 바코드 백필 스크립트: `scripts/backfill-production-lot-barcodes.ts`
+
+**사용자 관리**
+
+- 작업자 연결: ID 직접 입력 → **작업자명 셀렉트**
+- 등록된 사용자 **수정** (`PATCH /api/users/:id`), 비밀번호는 변경 시에만 입력
+
+**ERP · 업무일지 · 지출결의서**
+
+- DB: `ErpWorkLog`, `ExpenseReport`, `ExpenseReportLine`
+- 업무일지: 일자·제목·내용·상태 CRUD, 칸반
+- 지출결의서: 다건 내역·영수증 첨부, 실장/대표 2단계 승인, A4 조회·인쇄
+
+**급여 보완**
+
+- 근무입력을 **일자·사원·수당항목별 행** (`PayWorkRecordLine`)으로 확장
+- 직원정보: 국민연금 기준소득월액, 8~20세 자녀 수, 원천징수율(80/100/120%)
+- **2026.03 간이세액표** 반영 (`payrollWithholding.ts`, `scripts/import-withholding-table.ts`)
+
+**대시보드**
+
+- 작업지시 칸반 영역 **작업지시 관리·필터** 버튼 제거
 
 ### V1.2.0 (2026-06-29)
 

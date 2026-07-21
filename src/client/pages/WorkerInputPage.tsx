@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ApiError, apiJson } from '../lib/api'
+import { getStoredUser, isGuestRole, setStoredUser } from '../lib/auth'
 import './worker-input.css'
 
 type LotRow = {
@@ -95,6 +97,9 @@ function QtyStepper({
 }
 
 export function WorkerInputPage() {
+  const navigate = useNavigate()
+  const authUser = getStoredUser()
+  const guestUser = isGuestRole(authUser?.roleName) ? authUser : null
   const [step, setStep] = useState(0)
   const [lots, setLots] = useState<LotRow[]>([])
   const [autoProcessId, setAutoProcessId] = useState<number | null>(null)
@@ -219,6 +224,20 @@ export function WorkerInputPage() {
     setSuccess(false)
   }
 
+  const logoutGuest = async () => {
+    if (!guestUser) return
+    try {
+      await apiJson('/api/auth/logout', {
+        method: 'POST',
+        body: JSON.stringify({ loginId: guestUser.loginId }),
+      })
+    } catch {
+      /* ignore */
+    }
+    setStoredUser(null)
+    navigate('/login', { replace: true })
+  }
+
   const fillRemaining = () => {
     if (!selectedLot || remainingQty <= 0) return
     setInputQty(remainingQty)
@@ -341,6 +360,14 @@ export function WorkerInputPage() {
         <header className="wi__header">
           <p className="wi__brand">HANA-TECH MES</p>
           <h1 className="wi__title">현장 실적 입력</h1>
+          {guestUser ? (
+            <div className="wi__authBar">
+              <span className="wi__authName">{guestUser.userName}</span>
+              <button type="button" className="wi__btn wi__btn--ghost wi__btn--sm" onClick={() => void logoutGuest()}>
+                로그아웃
+              </button>
+            </div>
+          ) : null}
         </header>
         <main className="wi__main">
           <div className="wi__success">
@@ -366,6 +393,14 @@ export function WorkerInputPage() {
       <header className="wi__header">
         <p className="wi__brand">HANA-TECH MES</p>
         <h1 className="wi__title">현장 실적 입력</h1>
+        {guestUser ? (
+          <div className="wi__authBar">
+            <span className="wi__authName">{guestUser.userName}</span>
+            <button type="button" className="wi__btn wi__btn--ghost wi__btn--sm" onClick={() => void logoutGuest()}>
+              로그아웃
+            </button>
+          </div>
+        ) : null}
         <div className="wi__steps" aria-hidden>
           {STEPS.map((_, i) => (
             <div key={i} className={`wi__step${i <= step ? ' wi__step--active' : ''}${i < step ? ' wi__step--done' : ''}`} />

@@ -27,21 +27,10 @@ function fmtYmdSlash(iso: string | null | undefined) {
   return `${y}/${m}/${d}`
 }
 
-type Work = {
-  workDays: { toString(): string }
-  overtimeHours: { toString(): string }
-  nightHours: { toString(): string }
-  holidayHours: { toString(): string }
-  annualLeaveDays: { toString(): string }
-}
 
-function workRecordForItem(name: string, work: Work | null): number | null {
-  if (!work) return null
-  if (includesAny(name, ['연장'])) return n(work.overtimeHours)
-  if (includesAny(name, ['야간'])) return n(work.nightHours)
-  if (includesAny(name, ['휴일'])) return n(work.holidayHours)
-  if (includesAny(name, ['연차'])) return n(work.annualLeaveDays)
-  return null
+function workRecordForItem(itemId: number, workQuantities: Record<number, number>): number | null {
+  const qty = workQuantities[itemId] ?? 0
+  return qty > 0 ? qty : null
 }
 
 function unitAmountForItem(
@@ -104,7 +93,7 @@ export async function buildPayStubDetail(
   userName?: string,
   savedLines?: { earnings: { label: string; amount: number }[]; deductions: { label: string; amount: number }[] },
 ): Promise<PayStubDetail> {
-  const { profile, work, allowances, deductions } = await loadPayrollCalcInput(userId, yearMonth)
+  const { profile, workQuantities, allowances, deductions } = await loadPayrollCalcInput(userId, yearMonth)
   if (!profile) throw Object.assign(new Error('급여 직원정보가 없습니다.'), { status: 400 })
 
   const calc = await calculatePayrollForUser(userId, yearMonth)
@@ -132,7 +121,7 @@ export async function buildPayStubDetail(
       label: item.itemName,
       paymentType: item.paymentType,
       paymentTypeLabel: PAYMENT_TYPE_LABEL[item.paymentType] ?? item.paymentType,
-      workRecord: workRecordForItem(item.itemName, work),
+      workRecord: workRecordForItem(item.id, workQuantities),
       unitAmount: unitAmountForItem(item.itemName, item.paymentType, profile, hourlyRate, mult),
       multiplier:
         item.paymentType === 'VARIABLE_TIME'
@@ -172,7 +161,7 @@ export async function buildPayStubDetail(
     hourlyRateFormula: `(기본급 + 비과세 수당 등) / 209시간 → 통상시급 ${Math.round(hourlyRate).toLocaleString('ko-KR')}원`,
     overtimeNote: '초과수당 대상: 1.평일연장 2.평일야간 3.휴일근무 4.휴일야간 / 통상시급 × 근무시간 × 배율',
     dependants: profile.dependants,
-    workDays: work ? n(work.workDays) : calc.workDays,
+    workDays: null,
     earnings,
     deductions: deductionsOut,
     totalEarning,

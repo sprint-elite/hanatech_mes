@@ -1,0 +1,822 @@
+/* 바코드 페이지 (mesBcPage) */
+
+.mesBcPage {
+  --bc-bg: #0c0e14;
+  --bc-surface: #12151e;
+  --bc-surface2: #181c28;
+  --bc-border: rgba(255, 255, 255, 0.08);
+  --bc-border-strong: rgba(255, 255, 255, 0.14);
+  --bc-text: #eef1f6;
+  --bc-muted: #9aa3b2;
+  --bc-accent: #e8c24a;
+  --bc-accent-text: #1a1406;
+  --bc-ok: #3dba72;
+  --bc-danger: #e85d5d;
+  --bc-info: #5ba4e8;
+  --bc-wip: #a78bfa;
+  --bc-raw: #4ecf8a;
+  --bc-fg: #5ba4e8;
+  --bc-radius: 12px;
+  --bc-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesBcPage {
+  --bc-bg: #ffffff;
+  --bc-surface: #ffffff;
+  --bc-surface2: #f3f4f8;
+  --bc-border: rgba(0, 0, 0, 0.08);
+  --bc-border-strong: rgba(0, 0, 0, 0.12);
+  --bc-text: #141820;
+  --bc-muted: #5f6775;
+  --bc-accent: #c9a227;
+  --bc-accent-text: #1a1406;
+}
+
+.mesBcPage .mesBcHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesBcPage .mesBcHeadMain {
+  min-width: 0;
+}
+
+.mesBcPage .mesBcTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--bc-text);
+}
+
+.mesBcPage .mesBcDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--bc-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesBcPage .mesBcHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mesBcPage .mesBcCountBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--bc-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--bc-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesBcPage .mesBcBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--bc-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.mesBcPage .mesBcBtn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.mesBcPage .mesBcBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--bc-accent) 100%);
+  color: var(--bc-accent-text);
+  border-color: #a8841c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesBcPage .mesBcBtn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.mesBcPage .mesBcBtn--secondary {
+  background: var(--bc-surface2);
+  color: var(--bc-text);
+  border-color: var(--bc-border-strong);
+}
+
+.mesBcPage .mesBcBtn--secondary:hover {
+  border-color: var(--bc-accent);
+  color: var(--bc-accent);
+}
+
+.mesBcPage .mesBcBtn--danger {
+  background: transparent;
+  color: var(--bc-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesBcPage .mesBcBtn--danger:hover {
+  background: rgba(232, 93, 93, 0.1);
+}
+
+.mesBcPage .mesBcFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--bc-radius);
+  background: var(--bc-surface);
+  border: 1px solid var(--bc-border);
+}
+
+.mesBcPage .mesBcField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesBcPage .mesBcField--search {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.mesBcPage .mesBcField--select {
+  flex: 0 1 140px;
+  min-width: 120px;
+}
+
+.mesBcPage .mesBcField--period {
+  flex: 0 1 280px;
+  min-width: 240px;
+}
+
+.mesBcPage .mesBcPeriodRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesBcPage .mesBcPeriodSep {
+  color: var(--bc-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.mesBcPage .mesBcBtn--edit {
+  background: var(--bc-surface2);
+  color: var(--bc-text);
+  border-color: var(--bc-border-strong);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesBcPage .mesBcBtn--edit:hover {
+  border-color: var(--bc-accent);
+  color: var(--bc-accent);
+}
+
+.mesBcPage .mesBcFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bc-muted);
+}
+
+.mesBcPage .mesBcInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mesBcPage .mesBcInputIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--bc-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesBcPage .mesBcInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesBcPage .mesBcInput,
+.mesBcPage .mesBcSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--bc-radius-sm);
+  border: 1px solid var(--bc-border-strong);
+  background: var(--bc-surface2);
+  color: var(--bc-text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mesBcPage .mesBcInput--search {
+  padding-left: 34px;
+}
+
+.mesBcPage .mesBcFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesBcPage .mesBcStatsStrip {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 16px;
+  border-radius: var(--bc-radius);
+  background: var(--bc-surface);
+  border: 1px solid var(--bc-border);
+  overflow-x: auto;
+}
+
+.mesBcPage .mesBcStatItem {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  min-width: 150px;
+  position: relative;
+}
+
+.mesBcPage .mesBcStatItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--bc-border-strong);
+}
+
+.mesBcPage .mesBcStatIcon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='light'] .mesBcPage .mesBcStatIcon {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--bc-border);
+}
+
+.mesBcPage .mesBcStatIcon--gold {
+  color: var(--bc-accent);
+}
+
+.mesBcPage .mesBcStatIcon--blue {
+  color: var(--bc-info);
+}
+
+.mesBcPage .mesBcStatIcon--purple {
+  color: var(--bc-wip);
+}
+
+.mesBcPage .mesBcStatIcon--green {
+  color: #5cd68a;
+}
+
+.mesBcPage .mesBcStatIcon--orange {
+  color: #f0a030;
+}
+
+.mesBcPage .mesBcStatIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesBcPage .mesBcStatMeta {
+  min-width: 0;
+}
+
+.mesBcPage .mesBcStatLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--bc-muted);
+  line-height: 1.3;
+}
+
+.mesBcPage .mesBcStatValue {
+  margin: 4px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  line-height: 1.1;
+}
+
+.mesBcPage .mesBcStatValueNum {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--bc-text);
+  letter-spacing: -0.03em;
+}
+
+.mesBcPage .mesBcStatValueUnit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--bc-muted);
+}
+
+.mesBcPage .mesBcTableCard {
+  border-radius: var(--bc-radius);
+  background: var(--bc-surface);
+  border: 1px solid var(--bc-border);
+  overflow: hidden;
+}
+
+.mesBcPage .mesBcTableViewport {
+  overflow-x: auto;
+}
+
+.mesBcPage .mesBcTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesBcPage .mesBcTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bc-muted);
+  background: var(--bc-surface2);
+  border-bottom: 1px solid var(--bc-border);
+  white-space: nowrap;
+}
+
+.mesBcPage .mesBcTable td {
+  padding: 12px 14px;
+  color: var(--bc-text);
+  border-bottom: 1px solid var(--bc-border);
+  vertical-align: middle;
+}
+
+.mesBcPage .mesBcTable tbody tr {
+  transition: background 0.1s;
+  cursor: pointer;
+}
+
+.mesBcPage .mesBcTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesBcPage .mesBcTable tbody tr.mesBcRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesBcPage .mesBcTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesBcPage .mesBcTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesBcPage .mesBcThActions,
+.mesBcPage .mesBcTdActions {
+  text-align: center;
+  width: 56px;
+  white-space: nowrap;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.mesBcPage .mesBcTdActions .mesBcBtn--danger {
+  display: inline-flex;
+  padding: 6px 8px;
+}
+
+.mesBcPage .mesBcColBarcode {
+  width: 28%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesBcPage .mesBcColType {
+  width: 12%;
+  white-space: nowrap;
+}
+
+.mesBcPage .mesBcColRef {
+  width: 26%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesBcPage .mesBcColPrimary {
+  width: 10%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mesBcPage .mesBcColStatus {
+  width: 12%;
+  white-space: nowrap;
+}
+
+.mesBcPage .mesBcColActions {
+  width: 56px;
+}
+
+.mesBcPage .mesBcStatusBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesBcPage .mesBcStatusBadge--active {
+  color: var(--bc-ok);
+  border: 1px solid rgba(61, 186, 114, 0.45);
+  background: rgba(61, 186, 114, 0.08);
+}
+
+.mesBcPage .mesBcStatusBadge--disabled {
+  color: var(--bc-muted);
+  border: 1px solid var(--bc-border-strong);
+  background: var(--bc-surface2);
+}
+
+.mesBcPage .mesBcPrimaryBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--bc-accent);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.1);
+}
+
+.mesBcPage .mesBcPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--bc-border);
+  background: var(--bc-surface2);
+  font-size: 13px;
+  color: var(--bc-muted);
+}
+
+.mesBcPage .mesBcPagerTotal {
+  font-weight: 600;
+}
+
+.mesBcPage .mesBcPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesBcPage .mesBcPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--bc-radius-sm);
+  border: 1px solid var(--bc-border-strong);
+  background: var(--bc-surface);
+  color: var(--bc-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesBcPage .mesBcPagerBtn:hover:not(:disabled) {
+  border-color: var(--bc-accent);
+  color: var(--bc-accent);
+}
+
+.mesBcPage .mesBcPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesBcPage .mesBcPagerBtn--active {
+  background: var(--bc-accent);
+  color: var(--bc-accent-text);
+  border-color: #a8841c;
+}
+
+.mesBcPage .mesBcPageSize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesBcPage .mesBcPageSize select {
+  padding: 6px 10px;
+  border-radius: var(--bc-radius-sm);
+  border: 1px solid var(--bc-border-strong);
+  background: var(--bc-surface);
+  color: var(--bc-text);
+  font-size: 12px;
+}
+
+.mesBcPage .mesBcEmpty {
+  text-align: center;
+  padding: 32px 16px !important;
+  color: var(--bc-muted);
+}
+
+.mesBcPage .mesNotice {
+  margin-bottom: 14px;
+}
+
+/* —— 품목 등록/수정 모달 —— */
+.mesBcModalRoot .mesModalBackdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.mesBcModalDialog {
+  width: min(1180px, 96vw) !important;
+  max-width: 1180px !important;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid var(--bc-border-strong, rgba(255, 255, 255, 0.12));
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesBcModalDialog {
+  background: #ffffff;
+}
+
+.mesBcModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--bc-border, rgba(255, 255, 255, 0.08));
+  flex-shrink: 0;
+}
+
+.mesBcModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesBcModalHeadIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: var(--bc-accent, #e8c24a);
+}
+
+.mesBcModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesBcModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--bc-text, #eef1f6);
+  letter-spacing: -0.02em;
+}
+
+.mesBcModalSub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--bc-muted, #9aa3b2);
+}
+
+.mesBcModalHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.mesBcModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.mesBcModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesBcModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mesBcModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, var(--bc-accent, #e8c24a) 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesBcModalBtn--save:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.mesBcModalBtn--cancel {
+  background: transparent;
+  color: var(--bc-text, #eef1f6);
+  border-color: var(--bc-border-strong, rgba(255, 255, 255, 0.2));
+}
+
+.mesBcModalBtn--cancel:hover:not(:disabled) {
+  border-color: var(--bc-accent, #e8c24a);
+}
+
+.mesBcModalBtn--close {
+  background: transparent;
+  color: var(--bc-muted, #9aa3b2);
+  border-color: transparent;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mesBcModalBtn--close:hover {
+  color: var(--bc-text, #eef1f6);
+}
+
+.mesBcModalBody {
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.mesBcModalGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .mesBcModalGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesBcModalSection {
+  border-radius: 12px;
+  border: 1px solid var(--bc-border, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+[data-theme='light'] .mesBcModalSection {
+  background: var(--bc-surface2, #f3f4f8);
+}
+
+.mesBcModalSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--bc-text, #eef1f6);
+}
+
+.mesBcModalSectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 194, 74, 0.1);
+  color: var(--bc-accent, #e8c24a);
+  flex-shrink: 0;
+}
+
+.mesBcModalSectionIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesBcModalSectionBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.mesBcModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesBcModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesBcModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bc-text, #eef1f6);
+  line-height: 1.35;
+}
+
+.mesBcModalFieldKey {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--bc-muted, #9aa3b2);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mesBcModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--bc-border-strong, rgba(255, 255, 255, 0.14));
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--bc-text, #eef1f6);
+  font-size: 13px;
+}
+
+[data-theme='light'] .mesBcModalInput {
+  background: #ffffff;
+}
+
+.mesBcModalInput::placeholder {
+  color: var(--bc-muted, #9aa3b2);
+  opacity: 0.85;
+}
+
+.mesBcModalInput:focus {
+  outline: none;
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 2px rgba(232, 194, 74, 0.12);
+}
+
+.mesBcModalFootMeta {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--bc-muted, #9aa3b2);
+}

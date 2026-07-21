@@ -30,3 +30,13 @@ export function setStoredUser(user: MesAuthUser | null) {
 export function getSysUserHeader(): string | undefined {
   return getStoredUser()?.loginId
 }
+
+export function isGuestRole(roleName: string | null | undefined): boolean {
+  return (roleName ?? '').trim().toLowerCase() === 'guest'
+}
+
+/** 역할별 로그인 후 기본 진입 경로 */
+export function homePathForUser(user: Pick<MesAuthUser, 'roleName'> | null | undefined): string {
+  if (user && isGuestRole(user.roleName)) return '/worker-input'
+  return '/'
+}

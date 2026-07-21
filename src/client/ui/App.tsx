@@ -1,5 +1,7 @@
+import { type ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from './Layout'
+import { getStoredUser, isGuestRole } from '../lib/auth'
 import { AuditLogsPage } from '../pages/AuditLogsPage'
 import { BarcodesPage } from '../pages/BarcodesPage'
 import { CustomersPage } from '../pages/CustomersPage'
@@ -44,15 +46,38 @@ import { AnnualLeavePage } from '../pages/erp/AnnualLeavePage'
 import { ExpenseReportsPage } from '../pages/erp/ExpenseReportsPage'
 import { WorkLogsPage } from '../pages/erp/WorkLogsPage'
 import { LoginPage } from '../pages/LoginPage'
+import { LotScanLookupPage } from '../pages/LotScanLookupPage'
+
+/** guest 역할은 현장 입력(/worker-input)만 접근 가능 */
+function BlockGuestAccess({ children }: { children: ReactNode }) {
+  const user = getStoredUser()
+  if (isGuestRole(user?.roleName)) {
+    return <Navigate to="/worker-input" replace />
+  }
+  return <>{children}</>
+}
 
 export function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="login" element={<LoginPage />} />
-        <Route path="floor-board" element={<FloorBoardPage />} />
+        <Route
+          path="floor-board"
+          element={
+            <BlockGuestAccess>
+              <FloorBoardPage />
+            </BlockGuestAccess>
+          }
+        />
         <Route path="worker-input" element={<WorkerInputPage />} />
-        <Route element={<Layout />}>
+        <Route
+          element={
+            <BlockGuestAccess>
+              <Layout />
+            </BlockGuestAccess>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="customers" element={<CustomersPage />} />
@@ -67,6 +92,7 @@ export function App() {
           <Route path="production-plans" element={<ProductionPlansPage />} />
           <Route path="work-orders" element={<WorkOrdersPage />} />
           <Route path="lots" element={<LotsPage />} />
+          <Route path="lot-scan" element={<LotScanLookupPage />} />
           <Route path="material-lots" element={<MaterialLotsPage />} />
           <Route path="process-routing" element={<ProcessRoutingPage />} />
           <Route path="lot-history" element={<LotHistoryPage />} />

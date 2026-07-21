@@ -37,6 +37,27 @@
   padding: 12px 16px calc(12px + env(safe-area-inset-top, 0px));
 }
 
+.wi__authBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.wi__authName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wi-muted);
+}
+
+.wi__btn--sm {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 12px;
+  width: auto;
+}
+
 .wi__brand {
   font-size: 11px;
   letter-spacing: 0.12em;
@@ -596,7 +617,7 @@
 }
 
 [data-theme='light'] .wi {
-  --wi-bg: #f2f3f6;
+  --wi-bg: #ffffff;
   --wi-surface: #ffffff;
   --wi-surface2: #f8f9fb;
   --wi-border: #c9ced8;

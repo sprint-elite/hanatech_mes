@@ -1,0 +1,784 @@
+/* 작업 지시 리스트 페이지 (mesWoPage) */
+
+.mesWoPage {
+  --wo-bg: #0c0e14;
+  --wo-surface: #12151e;
+  --wo-surface2: #181c28;
+  --wo-border: rgba(255, 255, 255, 0.08);
+  --wo-border-strong: rgba(255, 255, 255, 0.14);
+  --wo-text: #eef1f6;
+  --wo-muted: #9aa3b2;
+  --wo-accent: #e8c24a;
+  --wo-accent-text: #1a1406;
+  --wo-ok: #3dba72;
+  --wo-danger: #e85d5d;
+  --wo-info: #5ba4e8;
+  --wo-wip: #a78bfa;
+  --wo-raw: #4ecf8a;
+  --wo-fg: #5ba4e8;
+  --wo-radius: 12px;
+  --wo-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesWoPage {
+  --wo-bg: #ffffff;
+  --wo-surface: #ffffff;
+  --wo-surface2: #f3f4f8;
+  --wo-border: rgba(0, 0, 0, 0.08);
+  --wo-border-strong: rgba(0, 0, 0, 0.12);
+  --wo-text: #141820;
+  --wo-muted: #5f6775;
+  --wo-accent: #c9a227;
+  --wo-accent-text: #1a1406;
+}
+
+.mesWoPage .mesWoHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesWoPage .mesWoHeadMain {
+  min-width: 0;
+}
+
+.mesWoPage .mesWoTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--wo-text);
+}
+
+.mesWoPage .mesWoDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--wo-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesWoPage .mesWoHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mesWoPage .mesWoCountBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--wo-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--wo-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesWoPage .mesWoBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--wo-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.mesWoPage .mesWoBtn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.mesWoPage .mesWoBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--wo-accent) 100%);
+  color: var(--wo-accent-text);
+  border-color: #a8841c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesWoPage .mesWoBtn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.mesWoPage .mesWoBtn--secondary {
+  background: var(--wo-surface2);
+  color: var(--wo-text);
+  border-color: var(--wo-border-strong);
+}
+
+.mesWoPage .mesWoBtn--secondary:hover {
+  border-color: var(--wo-accent);
+  color: var(--wo-accent);
+}
+
+.mesWoPage .mesWoBtn--danger {
+  background: transparent;
+  color: var(--wo-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesWoPage .mesWoBtn--danger:hover {
+  background: rgba(232, 93, 93, 0.1);
+}
+
+.mesWoPage .mesWoFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--wo-radius);
+  background: var(--wo-surface);
+  border: 1px solid var(--wo-border);
+}
+
+.mesWoPage .mesWoField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesWoPage .mesWoField--search {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.mesWoPage .mesWoField--select {
+  flex: 0 1 140px;
+  min-width: 120px;
+}
+
+.mesWoPage .mesWoField--period {
+  flex: 0 1 280px;
+  min-width: 240px;
+}
+
+.mesWoPage .mesWoPeriodRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesWoPage .mesWoPeriodSep {
+  color: var(--wo-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.mesWoPage .mesWoBtn--edit {
+  background: var(--wo-surface2);
+  color: var(--wo-text);
+  border-color: var(--wo-border-strong);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesWoPage .mesWoBtn--edit:hover {
+  border-color: var(--wo-accent);
+  color: var(--wo-accent);
+}
+
+.mesWoPage .mesWoFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wo-muted);
+}
+
+.mesWoPage .mesWoInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mesWoPage .mesWoInputIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--wo-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesWoPage .mesWoInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWoPage .mesWoInput,
+.mesWoPage .mesWoSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--wo-radius-sm);
+  border: 1px solid var(--wo-border-strong);
+  background: var(--wo-surface2);
+  color: var(--wo-text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mesWoPage .mesWoInput--search {
+  padding-left: 34px;
+}
+
+.mesWoPage .mesWoFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesWoPage .mesWoStatsStrip {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 16px;
+  border-radius: var(--wo-radius);
+  background: var(--wo-surface);
+  border: 1px solid var(--wo-border);
+  overflow-x: auto;
+}
+
+.mesWoPage .mesWoStatItem {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  min-width: 150px;
+  position: relative;
+}
+
+.mesWoPage .mesWoStatItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--wo-border-strong);
+}
+
+.mesWoPage .mesWoStatIcon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='light'] .mesWoPage .mesWoStatIcon {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--wo-border);
+}
+
+.mesWoPage .mesWoStatIcon--gold {
+  color: var(--wo-accent);
+}
+
+.mesWoPage .mesWoStatIcon--blue {
+  color: var(--wo-info);
+}
+
+.mesWoPage .mesWoStatIcon--purple {
+  color: var(--wo-wip);
+}
+
+.mesWoPage .mesWoStatIcon--green {
+  color: #5cd68a;
+}
+
+.mesWoPage .mesWoStatIcon--orange {
+  color: #f0a030;
+}
+
+.mesWoPage .mesWoStatIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesWoPage .mesWoStatMeta {
+  min-width: 0;
+}
+
+.mesWoPage .mesWoStatLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--wo-muted);
+  line-height: 1.3;
+}
+
+.mesWoPage .mesWoStatValue {
+  margin: 4px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  line-height: 1.1;
+}
+
+.mesWoPage .mesWoStatValueNum {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--wo-text);
+  letter-spacing: -0.03em;
+}
+
+.mesWoPage .mesWoStatValueUnit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--wo-muted);
+}
+
+.mesWoPage .mesWoTableCard {
+  border-radius: var(--wo-radius);
+  background: var(--wo-surface);
+  border: 1px solid var(--wo-border);
+  overflow: hidden;
+}
+
+.mesWoPage .mesWoTableViewport {
+  overflow-x: auto;
+}
+
+.mesWoPage .mesWoTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesWoPage .mesWoTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wo-muted);
+  background: var(--wo-surface2);
+  border-bottom: 1px solid var(--wo-border);
+  white-space: nowrap;
+}
+
+.mesWoPage .mesWoTable td {
+  padding: 12px 14px;
+  color: var(--wo-text);
+  border-bottom: 1px solid var(--wo-border);
+  vertical-align: middle;
+}
+
+.mesWoPage .mesWoTable tbody tr {
+  transition: background 0.1s;
+}
+
+.mesWoPage .mesWoTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesWoPage .mesWoTable tbody tr.mesWoRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesWoPage .mesWoTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesWoPage .mesWoTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesWoPage .mesWoThActions,
+.mesWoPage .mesWoTdActions {
+  text-align: center;
+  width: 160px;
+  white-space: nowrap;
+}
+
+.mesWoPage .mesWoTdActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mesWoPage .mesWoStatusBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesWoPage .mesWoStatusBadge--ready {
+  color: var(--wo-info);
+  border: 1px solid rgba(91, 164, 232, 0.45);
+  background: rgba(91, 164, 232, 0.08);
+}
+
+.mesWoPage .mesWoStatusBadge--progress {
+  color: var(--wo-wip);
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.08);
+}
+
+.mesWoPage .mesWoStatusBadge--done {
+  color: var(--wo-ok);
+  border: 1px solid rgba(61, 186, 114, 0.45);
+  background: rgba(61, 186, 114, 0.08);
+}
+
+.mesWoPage .mesWoStatusBadge--hold {
+  color: var(--wo-danger);
+  border: 1px solid rgba(232, 93, 93, 0.45);
+  background: rgba(232, 93, 93, 0.08);
+}
+
+.mesWoPage .mesWoPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--wo-border);
+  background: var(--wo-surface2);
+  font-size: 13px;
+  color: var(--wo-muted);
+}
+
+.mesWoPage .mesWoPagerTotal {
+  font-weight: 600;
+}
+
+.mesWoPage .mesWoPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesWoPage .mesWoPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--wo-radius-sm);
+  border: 1px solid var(--wo-border-strong);
+  background: var(--wo-surface);
+  color: var(--wo-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesWoPage .mesWoPagerBtn:hover:not(:disabled) {
+  border-color: var(--wo-accent);
+  color: var(--wo-accent);
+}
+
+.mesWoPage .mesWoPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesWoPage .mesWoPagerBtn--active {
+  background: var(--wo-accent);
+  color: var(--wo-accent-text);
+  border-color: #a8841c;
+}
+
+.mesWoPage .mesWoPageSize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesWoPage .mesWoPageSize select {
+  padding: 6px 10px;
+  border-radius: var(--wo-radius-sm);
+  border: 1px solid var(--wo-border-strong);
+  background: var(--wo-surface);
+  color: var(--wo-text);
+  font-size: 12px;
+}
+
+.mesWoPage .mesWoEmpty {
+  text-align: center;
+  padding: 32px 16px !important;
+  color: var(--wo-muted);
+}
+
+.mesWoPage .mesNotice {
+  margin-bottom: 14px;
+}
+
+/* —— 품목 등록/수정 모달 —— */
+.mesWoModalRoot .mesModalBackdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.mesWoModalDialog {
+  width: min(1180px, 96vw) !important;
+  max-width: 1180px !important;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid var(--wo-border-strong, rgba(255, 255, 255, 0.12));
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesWoModalDialog {
+  background: #ffffff;
+}
+
+.mesWoModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--wo-border, rgba(255, 255, 255, 0.08));
+  flex-shrink: 0;
+}
+
+.mesWoModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesWoModalHeadIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: var(--wo-accent, #e8c24a);
+}
+
+.mesWoModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesWoModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--wo-text, #eef1f6);
+  letter-spacing: -0.02em;
+}
+
+.mesWoModalSub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--wo-muted, #9aa3b2);
+}
+
+.mesWoModalHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.mesWoModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.mesWoModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWoModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mesWoModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, var(--wo-accent, #e8c24a) 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesWoModalBtn--save:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.mesWoModalBtn--cancel {
+  background: transparent;
+  color: var(--wo-text, #eef1f6);
+  border-color: var(--wo-border-strong, rgba(255, 255, 255, 0.2));
+}
+
+.mesWoModalBtn--cancel:hover:not(:disabled) {
+  border-color: var(--wo-accent, #e8c24a);
+}
+
+.mesWoModalBtn--close {
+  background: transparent;
+  color: var(--wo-muted, #9aa3b2);
+  border-color: transparent;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mesWoModalBtn--close:hover {
+  color: var(--wo-text, #eef1f6);
+}
+
+.mesWoModalBody {
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.mesWoModalGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .mesWoModalGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesWoModalSection {
+  border-radius: 12px;
+  border: 1px solid var(--wo-border, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+[data-theme='light'] .mesWoModalSection {
+  background: var(--wo-surface2, #f3f4f8);
+}
+
+.mesWoModalSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--wo-text, #eef1f6);
+}
+
+.mesWoModalSectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 194, 74, 0.1);
+  color: var(--wo-accent, #e8c24a);
+  flex-shrink: 0;
+}
+
+.mesWoModalSectionIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesWoModalSectionBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.mesWoModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesWoModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesWoModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wo-text, #eef1f6);
+  line-height: 1.35;
+}
+
+.mesWoModalFieldKey {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--wo-muted, #9aa3b2);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mesWoModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--wo-border-strong, rgba(255, 255, 255, 0.14));
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--wo-text, #eef1f6);
+  font-size: 13px;
+}
+
+[data-theme='light'] .mesWoModalInput {
+  background: #ffffff;
+}
+
+.mesWoModalInput::placeholder {
+  color: var(--wo-muted, #9aa3b2);
+  opacity: 0.85;
+}
+
+.mesWoModalInput:focus {
+  outline: none;
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 2px rgba(232, 194, 74, 0.12);
+}
+
+.mesWoModalFootMeta {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--wo-muted, #9aa3b2);
+}

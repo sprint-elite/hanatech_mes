@@ -197,7 +197,6 @@ export function PayStubsPage() {
         userId: form.userId,
         dept: form.dept.trim() || null,
         position: form.position.trim() || null,
-        workDays: form.workDays ? Number(form.workDays) : null,
         remark: form.remark.trim() || null,
         earnings: earnings.map((l) => ({ label: l.label.trim(), amount: Number(l.amount) || 0 })),
         deductions: deductions.map((l) => ({ label: l.label.trim(), amount: Number(l.amount) || 0 })),
@@ -268,7 +267,6 @@ export function PayStubsPage() {
         ok: boolean
         earnings: { label: string; amount: number }[]
         deductions: { label: string; amount: number }[]
-        workDays: number | null
         dept: string
         position: string
         warnings: string[]
@@ -280,7 +278,6 @@ export function PayStubsPage() {
         ...f,
         dept: res.dept || f.dept,
         position: res.position || f.position,
-        workDays: res.workDays != null ? String(res.workDays) : f.workDays,
         earnings: res.earnings.map((l) => ({ lineType: 'EARNING' as const, label: l.label, amount: l.amount })),
         deductions: res.deductions.map((l) => ({ lineType: 'DEDUCTION' as const, label: l.label, amount: l.amount })),
       }))
@@ -301,7 +298,7 @@ export function PayStubsPage() {
     try {
       const res = await apiJson<{ ok: boolean } & PayrollLedger>(`/api/pay-stubs/runs/${selectedRunId}/ledger`)
       const { exportPayrollLedgerExcel } = await import('../../lib/payrollExcel')
-      exportPayrollLedgerExcel(res)
+      await exportPayrollLedgerExcel(res)
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
     } finally {

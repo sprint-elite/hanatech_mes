@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 
 import { apiJson } from '../lib/api'
-import { getStoredUser, setStoredUser, type MesAuthUser } from '../lib/auth'
+import { getStoredUser, homePathForUser, setStoredUser, type MesAuthUser } from '../lib/auth'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -13,7 +13,7 @@ export function LoginPage() {
   const [busy, setBusy] = useState(false)
 
   if (existing) {
-    return <Navigate to="/" replace />
+    return <Navigate to={homePathForUser(existing)} replace />
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -26,7 +26,7 @@ export function LoginPage() {
         body: JSON.stringify({ loginId, password }),
       })
       setStoredUser(data.user)
-      navigate('/', { replace: true })
+      navigate(homePathForUser(data.user), { replace: true })
     } catch (e) {
       setErr(e instanceof Error ? e.message : '로그인 실패')
     } finally {

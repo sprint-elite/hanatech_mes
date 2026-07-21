@@ -1,25 +1,31 @@
 .mesPayPage {
   --pay-green: #3dba72;
   --pay-blue: #3b82f6;
-  --pay-muted: #6b7280;
-  --pay-border: #e5e7eb;
+  --pay-accent: #c9a227;
+  --pay-muted: #5f6775;
+  --pay-border: rgba(0, 0, 0, 0.08);
+  --pay-border-strong: rgba(0, 0, 0, 0.12);
   --pay-card: #ffffff;
-  --pay-bg: #f3f4f6;
-  --pay-text: #111827;
+  --pay-surface2: #f3f4f8;
+  --pay-bg: #ffffff;
+  --pay-text: #141820;
   color: var(--pay-text);
 }
 
 [data-theme='dark'] .mesPayPage {
+  --pay-accent: #e8c24a;
   --pay-muted: #9aa3b2;
-  --pay-border: rgba(255, 255, 255, 0.12);
-  --pay-card: #161a24;
-  --pay-bg: #0f1218;
+  --pay-border: rgba(255, 255, 255, 0.08);
+  --pay-border-strong: rgba(255, 255, 255, 0.14);
+  --pay-card: #12151e;
+  --pay-surface2: #181c28;
+  --pay-bg: #0c0e14;
   --pay-text: #eef1f6;
 }
 
-.mesPayPage .mesPayTopBar { margin-bottom: 12px; }
-.mesPayPage .mesPayTopTitle { margin: 0; font-size: 28px; font-weight: 800; }
-.mesPayPage .mesPayTopSub { margin: 4px 0 0; font-size: 13px; color: var(--pay-muted); }
+.mesPayPage .mesPayTopBar { margin-bottom: 18px; }
+.mesPayPage .mesPayTopTitle { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.mesPayPage .mesPayTopSub { margin: 6px 0 0; font-size: 13px; color: var(--pay-muted); line-height: 1.5; }
 
 .mesPayPage .mesPayLoginNotice {
   padding: 32px;
@@ -50,7 +56,7 @@
   padding: 12px 14px;
   border: 1px solid var(--pay-border);
   border-radius: 12px;
-  background: var(--pay-card);
+  background: var(--pay-surface2);
 }
 
 .mesPayPage .mesPayToolbarLeft {
@@ -279,3 +285,189 @@
 }
 
 .mesPayStatus--inactive { background: #f3f4f6; color: #6b7280; }
+
+/* —— 근무입력 eCount 스타일 그리드 —— */
+.mesPayWorkPage .mesPayWorkDateBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--pay-border);
+  border-radius: 10px;
+  background: var(--pay-card);
+}
+
+.mesPayWorkDatePick {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mesPayWorkDateLabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--pay-text);
+}
+
+.mesPayWorkDateInput {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  color: var(--pay-text);
+}
+
+[data-theme='dark'] .mesPayWorkDateInput {
+  background: #1a1f2b;
+  border-color: var(--pay-border);
+}
+
+.mesPayWorkDateActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mesPayBtn--sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesPayWorkGridCard {
+  border: 1px solid var(--pay-border);
+  border-radius: 10px;
+  background: var(--pay-card);
+  overflow: hidden;
+}
+
+.mesPayWorkGridWrap {
+  overflow-x: auto;
+}
+
+.mesPayWorkGrid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesPayWorkGrid thead th {
+  padding: 8px 10px;
+  border-bottom: 1px solid #cbd5e1;
+  background: linear-gradient(180deg, #eef4fb 0%, #e3edf8 100%);
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  color: #1e3a5f;
+}
+
+[data-theme='dark'] .mesPayWorkGrid thead th {
+  background: #1a2438;
+  border-color: var(--pay-border);
+  color: #c9d4e8;
+}
+
+.mesPayWorkGrid tbody td,
+.mesPayWorkGrid tfoot td {
+  padding: 4px 6px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+[data-theme='dark'] .mesPayWorkGrid tbody td,
+[data-theme='dark'] .mesPayWorkGrid tfoot td {
+  border-color: var(--pay-border);
+}
+
+.mesPayWorkGrid tbody tr:hover {
+  background: rgba(59, 130, 246, 0.04);
+}
+
+.mesPayWorkRow--selected {
+  background: rgba(59, 130, 246, 0.08) !important;
+}
+
+.mesPayWorkColCheck {
+  width: 36px;
+  text-align: center;
+}
+
+.mesPayWorkColNo {
+  width: 40px;
+  text-align: center;
+  color: var(--pay-muted);
+  font-weight: 600;
+}
+
+.mesPayWorkColUnit {
+  width: 64px;
+  text-align: center;
+  color: var(--pay-muted);
+}
+
+.mesPayWorkColQty {
+  width: 120px;
+  text-align: right;
+}
+
+.mesPayWorkCellInput,
+.mesPayWorkCellSelect {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #fff;
+  color: var(--pay-text);
+}
+
+.mesPayWorkCellInput--num {
+  text-align: right;
+}
+
+[data-theme='dark'] .mesPayWorkCellInput,
+[data-theme='dark'] .mesPayWorkCellSelect {
+  background: #12151e;
+  border-color: var(--pay-border);
+}
+
+.mesPayWorkEmptyCell {
+  padding: 24px !important;
+  text-align: center;
+  color: var(--pay-muted);
+}
+
+.mesPayWorkFootLabel {
+  text-align: right !important;
+  font-weight: 700;
+  padding-right: 12px !important;
+  background: #f3f4f6;
+}
+
+.mesPayWorkFootTotal {
+  font-weight: 800;
+  font-size: 14px;
+  background: #f3f4f6;
+}
+
+[data-theme='dark'] .mesPayWorkFootLabel,
+[data-theme='dark'] .mesPayWorkFootTotal {
+  background: #1a1f2b;
+}
+
+.mesPayWorkFootBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.mesPayWorkLoadHint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--pay-muted);
+}

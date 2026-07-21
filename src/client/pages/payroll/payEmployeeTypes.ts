@@ -13,36 +13,95 @@ export type EmployeeProfileRow = {
   baseSalary: number
   hourlyWage: number | null
   ordinaryWage: number | null
+  pensionBaseSalary: number | null
   paymentDay: number | null
   bankName: string | null
   bankAccount: string | null
   accountHolder: string | null
   dependants: number
+  children8to20: number
+  withholdingRatePct: number
   status: PayEmployeeStatus
   remark: string | null
   createdAt: string
   updatedAt: string
 }
 
-export type WorkRecordRow = {
+export type WorkRecordLineRow = {
   id: number
+  workDate: string
   userId: number
   loginId: string
   userName: string
   dept: string
   position: string
+  allowanceItemId: number
+  itemCode: string
+  itemName: string
+  paymentType: string
+  unitLabel: string
+  multiplier: number | null
+  quantity: number
   yearMonth: string
-  workDays: number
-  paidLeaveDays: number
-  unpaidLeaveDays: number
-  regularHours: number
-  overtimeHours: number
-  nightHours: number
-  holidayHours: number
-  annualLeaveDays: number
-  remark: string | null
-  createdAt: string
-  updatedAt: string
+  sortOrder: number
+}
+
+export type WorkRecordEmployeeOption = {
+  id: number
+  loginId: string
+  userName: string
+  dept: string
+  position: string
+}
+
+export type WorkRecordAllowanceOption = {
+  id: number
+  itemCode: string
+  itemName: string
+  paymentType: string
+  unitLabel: string
+  multiplier: number | null
+}
+
+export type WorkRecordDraft = {
+  key: string
+  id?: number
+  workDate: string
+  userId: number | null
+  allowanceItemId: number | null
+  quantity: string
+  unitLabel: string
+  selected: boolean
+}
+
+export function todayYmd() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+export function emptyWorkDraft(workDate: string): WorkRecordDraft {
+  return {
+    key: `new-${Date.now()}-${Math.random()}`,
+    workDate,
+    userId: null,
+    allowanceItemId: null,
+    quantity: '',
+    unitLabel: '',
+    selected: false,
+  }
+}
+
+export function draftFromRow(row: WorkRecordLineRow): WorkRecordDraft {
+  return {
+    key: `row-${row.id}`,
+    id: row.id,
+    workDate: row.workDate,
+    userId: row.userId,
+    allowanceItemId: row.allowanceItemId,
+    quantity: row.quantity ? String(row.quantity) : '',
+    unitLabel: row.unitLabel,
+    selected: false,
+  }
 }
 
 export type UserOption = {
@@ -69,26 +128,18 @@ export type EmployeeProfileForm = {
   baseSalary: string
   hourlyWage: string
   ordinaryWage: string
+  pensionBaseSalary: string
   paymentDay: string
   bankName: string
   bankAccount: string
   accountHolder: string
   dependants: string
+  children8to20: string
+  withholdingRatePct: string
   status: PayEmployeeStatus
   remark: string
 }
 
-export type WorkRecordForm = {
-  workDays: string
-  paidLeaveDays: string
-  unpaidLeaveDays: string
-  regularHours: string
-  overtimeHours: string
-  nightHours: string
-  holidayHours: string
-  annualLeaveDays: string
-  remark: string
-}
 
 export function fmtWon(n: number) {
   return `${n.toLocaleString('ko-KR')}원`
@@ -114,11 +165,14 @@ export function emptyEmployeeForm(): EmployeeProfileForm {
     baseSalary: '',
     hourlyWage: '',
     ordinaryWage: '',
+    pensionBaseSalary: '',
     paymentDay: '25',
     bankName: '',
     bankAccount: '',
     accountHolder: '',
     dependants: '1',
+    children8to20: '0',
+    withholdingRatePct: '100',
     status: 'ACTIVE',
     remark: '',
   }
@@ -134,40 +188,15 @@ export function employeeFormFromRow(row: EmployeeProfileRow): EmployeeProfileFor
     baseSalary: String(row.baseSalary),
     hourlyWage: row.hourlyWage != null ? String(row.hourlyWage) : '',
     ordinaryWage: row.ordinaryWage != null ? String(row.ordinaryWage) : '',
+    pensionBaseSalary: row.pensionBaseSalary != null ? String(row.pensionBaseSalary) : '',
     paymentDay: row.paymentDay != null ? String(row.paymentDay) : '',
     bankName: row.bankName ?? '',
     bankAccount: row.bankAccount ?? '',
     accountHolder: row.accountHolder ?? '',
     dependants: String(row.dependants),
+    children8to20: String(row.children8to20),
+    withholdingRatePct: String(row.withholdingRatePct),
     status: row.status,
     remark: row.remark ?? '',
-  }
-}
-
-export function workFormFromRow(row: WorkRecordRow): WorkRecordForm {
-  return {
-    workDays: String(row.workDays),
-    paidLeaveDays: String(row.paidLeaveDays),
-    unpaidLeaveDays: String(row.unpaidLeaveDays),
-    regularHours: String(row.regularHours),
-    overtimeHours: String(row.overtimeHours),
-    nightHours: String(row.nightHours),
-    holidayHours: String(row.holidayHours),
-    annualLeaveDays: String(row.annualLeaveDays),
-    remark: row.remark ?? '',
-  }
-}
-
-export function emptyWorkForm(): WorkRecordForm {
-  return {
-    workDays: '',
-    paidLeaveDays: '',
-    unpaidLeaveDays: '',
-    regularHours: '',
-    overtimeHours: '',
-    nightHours: '',
-    holidayHours: '',
-    annualLeaveDays: '',
-    remark: '',
   }
 }

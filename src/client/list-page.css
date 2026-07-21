@@ -1,0 +1,414 @@
+/* Shared list shell — matches 기준정보 (products) tonality */
+
+.mesListPage {
+  --list-surface: #12151e;
+  --list-surface2: #181c28;
+  --list-border: rgba(255, 255, 255, 0.08);
+  --list-border-strong: rgba(255, 255, 255, 0.14);
+  --list-text: #eef1f6;
+  --list-muted: #9aa3b2;
+  --list-accent: #e8c24a;
+  --list-accent-text: #1a1406;
+  --list-ok: #3dba72;
+  --list-danger: #e85d5d;
+  --list-info: #5ba4e8;
+  --list-radius: 12px;
+  --list-radius-sm: 8px;
+  max-width: 100%;
+  color: var(--list-text);
+}
+
+[data-theme='light'] .mesListPage {
+  --list-surface: #ffffff;
+  --list-surface2: #f3f4f8;
+  --list-border: rgba(0, 0, 0, 0.08);
+  --list-border-strong: rgba(0, 0, 0, 0.12);
+  --list-text: #141820;
+  --list-muted: #5f6775;
+  --list-accent: #c9a227;
+  --list-accent-text: #1a1406;
+}
+
+.mesListPage .mesListHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesListPage .mesListHeadMain {
+  min-width: 0;
+}
+
+.mesListPage .mesListTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--list-text);
+}
+
+.mesListPage .mesListDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--list-muted);
+  line-height: 1.5;
+  max-width: 720px;
+}
+
+.mesListPage .mesListHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mesListPage .mesListCountBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--list-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--list-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesListPage .mesListBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--list-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s;
+  white-space: nowrap;
+  background: var(--list-surface2);
+  color: var(--list-text);
+}
+
+.mesListPage .mesListBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--list-accent) 100%);
+  color: var(--list-accent-text);
+  border-color: #a8841c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesListPage .mesListBtn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.mesListPage .mesListBtn--secondary {
+  background: var(--list-surface2);
+  color: var(--list-text);
+  border-color: var(--list-border-strong);
+}
+
+.mesListPage .mesListBtn--secondary:hover {
+  border-color: var(--list-accent);
+  color: var(--list-accent);
+}
+
+.mesListPage .mesListBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.mesListPage .mesListFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius);
+  background: var(--list-surface);
+  border: 1px solid var(--list-border);
+}
+
+.mesListPage .mesListField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesListPage .mesListField--search {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.mesListPage .mesListField--select {
+  flex: 0 1 140px;
+  min-width: 120px;
+}
+
+.mesListPage .mesListFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--list-muted);
+}
+
+.mesListPage .mesListInput,
+.mesListPage .mesListSelect,
+.mesListPage .mesListFilterCard .mesInput,
+.mesListPage .mesListFilterCard select.mesInput,
+.mesListPage .mesListFilterCard input.mesInput {
+  width: 100%;
+  min-height: 38px;
+  padding: 9px 12px;
+  border-radius: var(--list-radius-sm);
+  border: 1px solid var(--list-border-strong);
+  background: var(--list-surface2);
+  color: var(--list-text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mesListPage .mesListFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mesListPage .mesListStatsStrip {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius);
+  background: var(--list-surface);
+  border: 1px solid var(--list-border);
+  overflow-x: auto;
+}
+
+.mesListPage .mesListStatItem {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px;
+  min-width: 120px;
+  position: relative;
+}
+
+.mesListPage .mesListStatItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--list-border-strong);
+}
+
+.mesListPage .mesListStatLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--list-muted);
+}
+
+.mesListPage .mesListStatValue {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--list-text);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.mesListPage .mesListTableCard {
+  border-radius: var(--list-radius);
+  background: var(--list-surface);
+  border: 1px solid var(--list-border);
+  overflow: hidden;
+  margin-top: 0;
+}
+
+.mesListPage .mesListTableCard .mesTableWrap,
+.mesListPage .mesListTableViewport {
+  overflow-x: auto;
+  margin: 0;
+  border: none;
+  background: transparent;
+}
+
+.mesListPage .mesListTableCard .mesTable,
+.mesListPage .mesListTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesListPage .mesListTableCard .mesTable th,
+.mesListPage .mesListTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--list-muted);
+  background: var(--list-surface2);
+  border-bottom: 1px solid var(--list-border);
+  white-space: nowrap;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.mesListPage .mesListTableCard .mesTable td,
+.mesListPage .mesListTable td {
+  padding: 12px 14px;
+  color: var(--list-text);
+  border-bottom: 1px solid var(--list-border);
+  vertical-align: middle;
+}
+
+.mesListPage .mesListTableCard .mesTable tbody tr:hover,
+.mesListPage .mesListTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesListPage .mesListTableCard .mesTable tbody tr:last-child td,
+.mesListPage .mesListTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesListPage .mesListTableCard .mesTable tbody tr:nth-child(even),
+.mesListPage .mesListTable tbody tr:nth-child(even) {
+  background: transparent;
+}
+
+.mesListPage .mesListPager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-top: 1px solid var(--list-border);
+  background: var(--list-surface2);
+  font-size: 13px;
+  color: var(--list-muted);
+}
+
+.mesListPage .mesListFormCard {
+  border-radius: var(--list-radius);
+  background: var(--list-surface);
+  border: 1px solid var(--list-border);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.mesListPage .mesListNotice {
+  margin-bottom: 14px;
+}
+
+/* Toolbar remnants inside list pages */
+.mesListPage .mesToolbar,
+.mesListPage .mesToolbarWrap,
+.mesListPage .mesToolbarSplit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius);
+  background: var(--list-surface);
+  border: 1px solid var(--list-border);
+}
+
+.mesListPage .mesPageHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesListPage .mesPageTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--list-text);
+}
+
+.mesListPage .mesPageDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--list-muted);
+  line-height: 1.5;
+  max-width: 720px;
+}
+
+.mesListPage .mesBtnPrimary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--list-accent) 100%);
+  color: var(--list-accent-text);
+  border-color: #a8841c;
+  border-radius: var(--list-radius-sm);
+  font-weight: 700;
+}
+
+.mesListPage .mesBtnSecondary,
+.mesListPage .mesBtnSm {
+  border-radius: var(--list-radius-sm);
+}
+
+.mesListPage .mesCard {
+  border-radius: var(--list-radius);
+  background: var(--list-surface);
+  border: 1px solid var(--list-border);
+}
+
+.mesListPage .mesWoStats {
+  display: flex;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius);
+  background: var(--list-surface);
+  border: 1px solid var(--list-border);
+  overflow-x: auto;
+}
+
+.mesListPage .mesWoStatCard {
+  flex: 1 1 0;
+  min-width: 120px;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  position: relative;
+}
+
+.mesListPage .mesWoStatCard:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--list-border-strong);
+}
+
+.mesListPage .mesWoStatLabel {
+  font-size: 13px;
+  color: var(--list-muted);
+  font-weight: 500;
+}
+
+.mesListPage .mesWoStatVal {
+  margin-top: 6px;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--list-text);
+  letter-spacing: -0.03em;
+}

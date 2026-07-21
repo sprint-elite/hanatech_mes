@@ -20,7 +20,7 @@
 }
 
 [data-theme='light'] .mesMmMaterialsPage {
-  --mm-bg: #f4f5f8;
+  --mm-bg: #ffffff;
   --mm-surface: #ffffff;
   --mm-surface2: #f3f4f8;
   --mm-border: rgba(0, 0, 0, 0.08);

@@ -1,0 +1,859 @@
+/* 출하 페이지 (mesShipPage) */
+
+.mesShipPage {
+  --ship-bg: #0c0e14;
+  --ship-surface: #12151e;
+  --ship-surface2: #181c28;
+  --ship-border: rgba(255, 255, 255, 0.08);
+  --ship-border-strong: rgba(255, 255, 255, 0.14);
+  --ship-text: #eef1f6;
+  --ship-muted: #9aa3b2;
+  --ship-accent: #e8c24a;
+  --ship-accent-text: #1a1406;
+  --ship-ok: #3dba72;
+  --ship-danger: #e85d5d;
+  --ship-info: #5ba4e8;
+  --ship-wip: #a78bfa;
+  --ship-raw: #4ecf8a;
+  --ship-fg: #5ba4e8;
+  --ship-radius: 12px;
+  --ship-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesShipPage {
+  --ship-bg: #ffffff;
+  --ship-surface: #ffffff;
+  --ship-surface2: #f3f4f8;
+  --ship-border: rgba(0, 0, 0, 0.08);
+  --ship-border-strong: rgba(0, 0, 0, 0.12);
+  --ship-text: #141820;
+  --ship-muted: #5f6775;
+  --ship-accent: #c9a227;
+  --ship-accent-text: #1a1406;
+}
+
+.mesShipPage .mesShipHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesShipPage .mesShipHeadMain {
+  min-width: 0;
+}
+
+.mesShipPage .mesShipTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ship-text);
+}
+
+.mesShipPage .mesShipDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--ship-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesShipPage .mesShipHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mesShipPage .mesShipCountBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--ship-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--ship-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesShipPage .mesShipBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--ship-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.mesShipPage .mesShipBtn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.mesShipPage .mesShipBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--ship-accent) 100%);
+  color: var(--ship-accent-text);
+  border-color: #a8841c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesShipPage .mesShipBtn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.mesShipPage .mesShipBtn--secondary {
+  background: var(--ship-surface2);
+  color: var(--ship-text);
+  border-color: var(--ship-border-strong);
+}
+
+.mesShipPage .mesShipBtn--secondary:hover {
+  border-color: var(--ship-accent);
+  color: var(--ship-accent);
+}
+
+.mesShipPage .mesShipBtn--danger {
+  background: transparent;
+  color: var(--ship-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesShipPage .mesShipBtn--danger:hover {
+  background: rgba(232, 93, 93, 0.1);
+}
+
+.mesShipPage .mesShipFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--ship-radius);
+  background: var(--ship-surface);
+  border: 1px solid var(--ship-border);
+}
+
+.mesShipPage .mesShipField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesShipPage .mesShipField--search {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.mesShipPage .mesShipField--select {
+  flex: 0 1 140px;
+  min-width: 120px;
+}
+
+.mesShipPage .mesShipField--period {
+  flex: 0 1 280px;
+  min-width: 240px;
+}
+
+.mesShipPage .mesShipPeriodRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesShipPage .mesShipPeriodSep {
+  color: var(--ship-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.mesShipPage .mesShipBtn--edit {
+  background: var(--ship-surface2);
+  color: var(--ship-text);
+  border-color: var(--ship-border-strong);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesShipPage .mesShipBtn--edit:hover {
+  border-color: var(--ship-accent);
+  color: var(--ship-accent);
+}
+
+.mesShipPage .mesShipFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ship-muted);
+}
+
+.mesShipPage .mesShipInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mesShipPage .mesShipInputIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--ship-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesShipPage .mesShipInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesShipPage .mesShipInput,
+.mesShipPage .mesShipSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--ship-radius-sm);
+  border: 1px solid var(--ship-border-strong);
+  background: var(--ship-surface2);
+  color: var(--ship-text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mesShipPage .mesShipInput--search {
+  padding-left: 34px;
+}
+
+.mesShipPage .mesShipFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesShipPage .mesShipStatsStrip {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 16px;
+  border-radius: var(--ship-radius);
+  background: var(--ship-surface);
+  border: 1px solid var(--ship-border);
+  overflow-x: auto;
+}
+
+.mesShipPage .mesShipStatItem {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  min-width: 150px;
+  position: relative;
+}
+
+.mesShipPage .mesShipStatItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--ship-border-strong);
+}
+
+.mesShipPage .mesShipStatIcon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='light'] .mesShipPage .mesShipStatIcon {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--ship-border);
+}
+
+.mesShipPage .mesShipStatIcon--gold {
+  color: var(--ship-accent);
+}
+
+.mesShipPage .mesShipStatIcon--blue {
+  color: var(--ship-info);
+}
+
+.mesShipPage .mesShipStatIcon--purple {
+  color: var(--ship-wip);
+}
+
+.mesShipPage .mesShipStatIcon--green {
+  color: #5cd68a;
+}
+
+.mesShipPage .mesShipStatIcon--orange {
+  color: #f0a030;
+}
+
+.mesShipPage .mesShipStatIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesShipPage .mesShipStatMeta {
+  min-width: 0;
+}
+
+.mesShipPage .mesShipStatLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ship-muted);
+  line-height: 1.3;
+}
+
+.mesShipPage .mesShipStatValue {
+  margin: 4px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  line-height: 1.1;
+}
+
+.mesShipPage .mesShipStatValueNum {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ship-text);
+  letter-spacing: -0.03em;
+}
+
+.mesShipPage .mesShipStatValueUnit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ship-muted);
+}
+
+.mesShipPage .mesShipTableCard {
+  border-radius: var(--ship-radius);
+  background: var(--ship-surface);
+  border: 1px solid var(--ship-border);
+  overflow: hidden;
+}
+
+.mesShipPage .mesShipTableViewport {
+  overflow-x: auto;
+}
+
+.mesShipPage .mesShipTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesShipPage .mesShipTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ship-muted);
+  background: var(--ship-surface2);
+  border-bottom: 1px solid var(--ship-border);
+  white-space: nowrap;
+}
+
+.mesShipPage .mesShipTable td {
+  padding: 12px 14px;
+  color: var(--ship-text);
+  border-bottom: 1px solid var(--ship-border);
+  vertical-align: middle;
+}
+
+.mesShipPage .mesShipTable tbody tr {
+  transition: background 0.1s;
+}
+
+.mesShipPage .mesShipTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesShipPage .mesShipTable tbody tr.mesShipRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesShipPage .mesShipTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesShipPage .mesShipTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesShipPage .mesShipThActions,
+.mesShipPage .mesShipTdActions {
+  text-align: center;
+  width: 96px;
+  white-space: nowrap;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.mesShipPage .mesShipTdActions .mesShipBtn {
+  display: inline-flex;
+}
+
+.mesShipPage .mesShipStatusBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesShipPage .mesShipStatusBadge--ready {
+  color: var(--ship-info);
+  border: 1px solid rgba(91, 164, 232, 0.45);
+  background: rgba(91, 164, 232, 0.08);
+}
+
+.mesShipPage .mesShipStatusBadge--shipped {
+  color: var(--ship-ok);
+  border: 1px solid rgba(61, 186, 114, 0.45);
+  background: rgba(61, 186, 114, 0.08);
+}
+
+.mesShipPage .mesShipStatusBadge--cancel {
+  color: #b08a8a;
+  border: 1px solid rgba(232, 93, 93, 0.35);
+  background: rgba(232, 93, 93, 0.06);
+}
+
+[data-theme='light'] .mesShipPage .mesShipStatusBadge--cancel {
+  color: #a05858;
+  border-color: rgba(160, 88, 88, 0.35);
+  background: rgba(160, 88, 88, 0.08);
+}
+
+.mesShipPage .mesShipPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--ship-border);
+  background: var(--ship-surface2);
+  font-size: 13px;
+  color: var(--ship-muted);
+}
+
+.mesShipPage .mesShipPagerTotal {
+  font-weight: 600;
+}
+
+.mesShipPage .mesShipPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesShipPage .mesShipPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--ship-radius-sm);
+  border: 1px solid var(--ship-border-strong);
+  background: var(--ship-surface);
+  color: var(--ship-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesShipPage .mesShipPagerBtn:hover:not(:disabled) {
+  border-color: var(--ship-accent);
+  color: var(--ship-accent);
+}
+
+.mesShipPage .mesShipPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesShipPage .mesShipPagerBtn--active {
+  background: var(--ship-accent);
+  color: var(--ship-accent-text);
+  border-color: #a8841c;
+}
+
+.mesShipPage .mesShipPageSize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesShipPage .mesShipPageSize select {
+  padding: 6px 10px;
+  border-radius: var(--ship-radius-sm);
+  border: 1px solid var(--ship-border-strong);
+  background: var(--ship-surface);
+  color: var(--ship-text);
+  font-size: 12px;
+}
+
+.mesShipPage .mesShipEmpty {
+  text-align: center;
+  padding: 32px 16px !important;
+  color: var(--ship-muted);
+}
+
+.mesShipPage .mesNotice {
+  margin-bottom: 14px;
+}
+
+.mesShipPage .mesShipSelectionBar {
+  font-size: 13px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: var(--ship-radius);
+  background: var(--ship-surface);
+  border: 1px solid var(--ship-border);
+  color: var(--ship-text);
+  line-height: 1.45;
+}
+
+.mesShipPage .mesShipSelectionBar .muted {
+  color: var(--ship-muted);
+}
+
+.mesShipPage .mesShipColNo {
+  width: 10%;
+  white-space: nowrap;
+}
+
+.mesShipPage .mesShipColCustomer {
+  width: 22%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesShipPage .mesShipColDate {
+  width: 11%;
+  white-space: nowrap;
+}
+
+.mesShipPage .mesShipColStatus {
+  width: 11%;
+  white-space: nowrap;
+}
+
+.mesShipPage .mesShipColLines {
+  width: auto;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.mesShipPage .mesShipColActions {
+  width: 96px;
+}
+
+.mesShipPage .mesShipLineList {
+  font-size: 12px;
+  line-height: 1.35;
+  max-height: 4.6em;
+  overflow-y: auto;
+}
+
+.mesShipPage .mesShipSelectBtn {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--ship-accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mesShipPage .mesShipSelectBtn:hover {
+  filter: brightness(1.1);
+}
+
+.mesShipPage .mesShipTable tbody tr {
+  cursor: default;
+}
+
+/* —— 품목 등록/수정 모달 —— */
+.mesShipModalRoot .mesModalBackdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.mesShipModalDialog {
+  width: min(1180px, 96vw) !important;
+  max-width: 1180px !important;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid var(--ship-border-strong, rgba(255, 255, 255, 0.12));
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesShipModalDialog {
+  background: #ffffff;
+}
+
+.mesShipModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ship-border, rgba(255, 255, 255, 0.08));
+  flex-shrink: 0;
+}
+
+.mesShipModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesShipModalHeadIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: var(--ship-accent, #e8c24a);
+}
+
+.mesShipModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesShipModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ship-text, #eef1f6);
+  letter-spacing: -0.02em;
+}
+
+.mesShipModalSub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--ship-muted, #9aa3b2);
+}
+
+.mesShipModalHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.mesShipModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.mesShipModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesShipModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mesShipModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, var(--ship-accent, #e8c24a) 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesShipModalBtn--save:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.mesShipModalBtn--cancel {
+  background: transparent;
+  color: var(--ship-text, #eef1f6);
+  border-color: var(--ship-border-strong, rgba(255, 255, 255, 0.2));
+}
+
+.mesShipModalBtn--cancel:hover:not(:disabled) {
+  border-color: var(--ship-accent, #e8c24a);
+}
+
+.mesShipModalBtn--close {
+  background: transparent;
+  color: var(--ship-muted, #9aa3b2);
+  border-color: transparent;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mesShipModalBtn--close:hover {
+  color: var(--ship-text, #eef1f6);
+}
+
+.mesShipModalBody {
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.mesShipModalGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .mesShipModalGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesShipModalSection {
+  border-radius: 12px;
+  border: 1px solid var(--ship-border, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+[data-theme='light'] .mesShipModalSection {
+  background: var(--ship-surface2, #f3f4f8);
+}
+
+.mesShipModalSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ship-text, #eef1f6);
+}
+
+.mesShipModalSectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 194, 74, 0.1);
+  color: var(--ship-accent, #e8c24a);
+  flex-shrink: 0;
+}
+
+.mesShipModalSectionIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesShipModalSectionBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.mesShipModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesShipModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesShipModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ship-text, #eef1f6);
+  line-height: 1.35;
+}
+
+.mesShipModalFieldKey {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ship-muted, #9aa3b2);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mesShipModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--ship-border-strong, rgba(255, 255, 255, 0.14));
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--ship-text, #eef1f6);
+  font-size: 13px;
+}
+
+[data-theme='light'] .mesShipModalInput {
+  background: #ffffff;
+}
+
+.mesShipModalInput::placeholder {
+  color: var(--ship-muted, #9aa3b2);
+  opacity: 0.85;
+}
+
+.mesShipModalInput:focus {
+  outline: none;
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 2px rgba(232, 194, 74, 0.12);
+}
+
+.mesShipModalFootMeta {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--ship-muted, #9aa3b2);
+}

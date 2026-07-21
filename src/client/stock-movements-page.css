@@ -1,0 +1,967 @@
+/* 입출고 관리 페이지 (mesSmPage) */
+
+.mesSmPage {
+  --sm-bg: #0c0e14;
+  --sm-surface: #12151e;
+  --sm-surface2: #181c28;
+  --sm-border: rgba(255, 255, 255, 0.08);
+  --sm-border-strong: rgba(255, 255, 255, 0.14);
+  --sm-text: #eef1f6;
+  --sm-muted: #9aa3b2;
+  --sm-accent: #e8c24a;
+  --sm-accent-text: #1a1406;
+  --sm-ok: #3dba72;
+  --sm-danger: #e85d5d;
+  --sm-info: #5ba4e8;
+  --sm-wip: #a78bfa;
+  --sm-raw: #4ecf8a;
+  --sm-fg: #5ba4e8;
+  --sm-radius: 12px;
+  --sm-radius-sm: 8px;
+  max-width: 100%;
+}
+
+[data-theme='light'] .mesSmPage {
+  --sm-bg: #ffffff;
+  --sm-surface: #ffffff;
+  --sm-surface2: #f3f4f8;
+  --sm-border: rgba(0, 0, 0, 0.08);
+  --sm-border-strong: rgba(0, 0, 0, 0.12);
+  --sm-text: #141820;
+  --sm-muted: #5f6775;
+  --sm-accent: #c9a227;
+  --sm-accent-text: #1a1406;
+}
+
+.mesSmPage .mesSmHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mesSmPage .mesSmHeadMain {
+  min-width: 0;
+}
+
+.mesSmPage .mesSmTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--sm-text);
+}
+
+.mesSmPage .mesSmDesc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--sm-muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.mesSmPage .mesSmHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mesSmPage .mesSmCountBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--sm-radius-sm);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+  color: var(--sm-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mesSmPage .mesSmBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--sm-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.mesSmPage .mesSmBtn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.mesSmPage .mesSmBtn--primary {
+  background: linear-gradient(180deg, #f0d060 0%, var(--sm-accent) 100%);
+  color: var(--sm-accent-text);
+  border-color: #a8841c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesSmPage .mesSmBtn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.mesSmPage .mesSmBtn--secondary {
+  background: var(--sm-surface2);
+  color: var(--sm-text);
+  border-color: var(--sm-border-strong);
+}
+
+.mesSmPage .mesSmBtn--secondary:hover {
+  border-color: var(--sm-accent);
+  color: var(--sm-accent);
+}
+
+.mesSmPage .mesSmBtn--danger {
+  background: transparent;
+  color: var(--sm-danger);
+  border-color: rgba(232, 93, 93, 0.45);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesSmPage .mesSmBtn--danger:hover {
+  background: rgba(232, 93, 93, 0.1);
+}
+
+.mesSmPage .mesSmFilterCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--sm-radius);
+  background: var(--sm-surface);
+  border: 1px solid var(--sm-border);
+}
+
+.mesSmPage .mesSmField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesSmPage .mesSmField--search {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.mesSmPage .mesSmField--select {
+  flex: 0 1 140px;
+  min-width: 120px;
+}
+
+.mesSmPage .mesSmField--period {
+  flex: 0 1 280px;
+  min-width: 240px;
+}
+
+.mesSmPage .mesSmPeriodRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesSmPage .mesSmPeriodSep {
+  color: var(--sm-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.mesSmPage .mesSmBtn--edit {
+  background: var(--sm-surface2);
+  color: var(--sm-text);
+  border-color: var(--sm-border-strong);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.mesSmPage .mesSmBtn--edit:hover {
+  border-color: var(--sm-accent);
+  color: var(--sm-accent);
+}
+
+.mesSmPage .mesSmFieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sm-muted);
+}
+
+.mesSmPage .mesSmInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mesSmPage .mesSmInputIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--sm-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.mesSmPage .mesSmInputIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesSmPage .mesSmInput,
+.mesSmPage .mesSmSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--sm-radius-sm);
+  border: 1px solid var(--sm-border-strong);
+  background: var(--sm-surface2);
+  color: var(--sm-text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.mesSmPage .mesSmInput--search {
+  padding-left: 34px;
+}
+
+.mesSmPage .mesSmFilterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.mesSmPage .mesSmStatsStrip {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 16px;
+  border-radius: var(--sm-radius);
+  background: var(--sm-surface);
+  border: 1px solid var(--sm-border);
+  overflow-x: auto;
+}
+
+.mesSmPage .mesSmStatItem {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  min-width: 150px;
+  position: relative;
+}
+
+.mesSmPage .mesSmStatItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--sm-border-strong);
+}
+
+.mesSmPage .mesSmStatIcon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='light'] .mesSmPage .mesSmStatIcon {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--sm-border);
+}
+
+.mesSmPage .mesSmStatIcon--gold {
+  color: var(--sm-accent);
+}
+
+.mesSmPage .mesSmStatIcon--blue {
+  color: var(--sm-info);
+}
+
+.mesSmPage .mesSmStatIcon--purple {
+  color: var(--sm-wip);
+}
+
+.mesSmPage .mesSmStatIcon--green {
+  color: #5cd68a;
+}
+
+.mesSmPage .mesSmStatIcon--orange {
+  color: #f0a030;
+}
+
+.mesSmPage .mesSmStatIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesSmPage .mesSmStatMeta {
+  min-width: 0;
+}
+
+.mesSmPage .mesSmStatLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sm-muted);
+  line-height: 1.3;
+}
+
+.mesSmPage .mesSmStatValue {
+  margin: 4px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  line-height: 1.1;
+}
+
+.mesSmPage .mesSmStatValueNum {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--sm-text);
+  letter-spacing: -0.03em;
+}
+
+.mesSmPage .mesSmStatValueUnit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sm-muted);
+}
+
+.mesSmPage .mesSmTableCard {
+  border-radius: var(--sm-radius);
+  background: var(--sm-surface);
+  border: 1px solid var(--sm-border);
+  overflow: hidden;
+}
+
+.mesSmPage .mesSmTableViewport {
+  overflow-x: auto;
+}
+
+.mesSmPage .mesSmTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesSmPage .mesSmTable th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sm-muted);
+  background: var(--sm-surface2);
+  border-bottom: 1px solid var(--sm-border);
+  white-space: nowrap;
+}
+
+.mesSmPage .mesSmTable td {
+  padding: 12px 14px;
+  color: var(--sm-text);
+  border-bottom: 1px solid var(--sm-border);
+  vertical-align: middle;
+}
+
+.mesSmPage .mesSmTable tbody tr {
+  transition: background 0.1s;
+}
+
+.mesSmPage .mesSmTable tbody tr:hover {
+  background: rgba(232, 194, 74, 0.04);
+}
+
+.mesSmPage .mesSmTable tbody tr.mesSmRowSelected {
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesSmPage .mesSmTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesSmPage .mesSmTable .mono {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+
+.mesSmPage .mesSmThActions,
+.mesSmPage .mesSmTdActions {
+  text-align: center;
+  width: 160px;
+  white-space: nowrap;
+}
+
+.mesSmPage .mesSmTdActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mesSmPage .mesSmStatusBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesSmPage .mesSmStatusBadge--ready {
+  color: var(--sm-info);
+  border: 1px solid rgba(91, 164, 232, 0.45);
+  background: rgba(91, 164, 232, 0.08);
+}
+
+.mesSmPage .mesSmStatusBadge--progress {
+  color: var(--sm-wip);
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.08);
+}
+
+.mesSmPage .mesSmStatusBadge--done {
+  color: var(--sm-ok);
+  border: 1px solid rgba(61, 186, 114, 0.45);
+  background: rgba(61, 186, 114, 0.08);
+}
+
+.mesSmPage .mesSmStatusBadge--hold {
+  color: var(--sm-danger);
+  border: 1px solid rgba(232, 93, 93, 0.45);
+  background: rgba(232, 93, 93, 0.08);
+}
+
+.mesSmPage .mesSmPager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--sm-border);
+  background: var(--sm-surface2);
+  font-size: 13px;
+  color: var(--sm-muted);
+}
+
+.mesSmPage .mesSmPagerTotal {
+  font-weight: 600;
+}
+
+.mesSmPage .mesSmPagerNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mesSmPage .mesSmPagerBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--sm-radius-sm);
+  border: 1px solid var(--sm-border-strong);
+  background: var(--sm-surface);
+  color: var(--sm-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mesSmPage .mesSmPagerBtn:hover:not(:disabled) {
+  border-color: var(--sm-accent);
+  color: var(--sm-accent);
+}
+
+.mesSmPage .mesSmPagerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mesSmPage .mesSmPagerBtn--active {
+  background: var(--sm-accent);
+  color: var(--sm-accent-text);
+  border-color: #a8841c;
+}
+
+.mesSmPage .mesSmPageSize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesSmPage .mesSmPageSize select {
+  padding: 6px 10px;
+  border-radius: var(--sm-radius-sm);
+  border: 1px solid var(--sm-border-strong);
+  background: var(--sm-surface);
+  color: var(--sm-text);
+  font-size: 12px;
+}
+
+.mesSmPage .mesSmEmpty {
+  text-align: center;
+  padding: 32px 16px !important;
+  color: var(--sm-muted);
+}
+
+.mesSmPage .mesNotice {
+  margin-bottom: 14px;
+}
+
+.mesSmPage .mesSmOkNotice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  border-radius: var(--sm-radius-sm);
+  border: 1px solid rgba(61, 186, 114, 0.45);
+  background: rgba(61, 186, 114, 0.1);
+  color: var(--sm-ok);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mesSmPage .mesSmTabRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mesSmPage .mesSmTab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--sm-border-strong);
+  background: var(--sm-surface2);
+  color: var(--sm-muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+
+.mesSmPage .mesSmTab:hover {
+  border-color: var(--sm-accent);
+  color: var(--sm-text);
+}
+
+.mesSmPage .mesSmTab--active {
+  background: linear-gradient(180deg, #f0d060 0%, var(--sm-accent) 100%);
+  color: var(--sm-accent-text);
+  border-color: #a8841c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mesSmPage .mesSmFormCard {
+  border-radius: var(--sm-radius);
+  background: var(--sm-surface);
+  border: 1px solid var(--sm-border);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.mesSmPage .mesSmFormGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .mesSmPage .mesSmFormGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesSmPage .mesSmFormMain {
+  min-width: 0;
+}
+
+.mesSmPage .mesSmFormRow {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mesSmPage .mesSmFormRow:last-child {
+  margin-bottom: 0;
+}
+
+.mesSmPage .mesSmFormRow--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mesSmPage .mesSmFormRow--5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  .mesSmPage .mesSmFormRow--5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .mesSmPage .mesSmFormRow--2,
+  .mesSmPage .mesSmFormRow--5 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesSmPage .mesSmField--submit {
+  justify-content: flex-end;
+}
+
+.mesSmPage .mesSmField--submit .mesSmBtn {
+  width: 100%;
+  justify-content: center;
+}
+
+.mesSmPage .mesSmSideCard {
+  border-radius: var(--sm-radius-sm);
+  background: var(--sm-surface2);
+  border: 1px solid var(--sm-border);
+  padding: 14px 16px;
+}
+
+.mesSmPage .mesSmSideTitle {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sm-text);
+}
+
+.mesSmPage .mesSmSideTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesSmPage .mesSmSideTable th {
+  padding: 6px 8px 6px 0;
+  text-align: left;
+  font-weight: 600;
+  color: var(--sm-muted);
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.mesSmPage .mesSmSideTable td {
+  padding: 6px 0;
+  color: var(--sm-text);
+  word-break: break-word;
+}
+
+.mesSmPage .mesSmTableHead {
+  padding: 14px 16px 0;
+}
+
+.mesSmPage .mesSmTableTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sm-text);
+}
+
+.mesSmPage .mesSmMoveBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mesSmPage .mesSmMoveBadge--in {
+  color: var(--sm-ok);
+  border: 1px solid rgba(61, 186, 114, 0.45);
+  background: rgba(61, 186, 114, 0.1);
+}
+
+.mesSmPage .mesSmMoveBadge--out {
+  color: #f0a030;
+  border: 1px solid rgba(240, 160, 48, 0.45);
+  background: rgba(240, 160, 48, 0.1);
+}
+
+.mesSmPage .mesSmTable tbody tr {
+  cursor: default;
+}
+
+/* —— 품목 등록/수정 모달 —— */
+.mesSmModalRoot .mesModalBackdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.mesSmModalDialog {
+  width: min(1180px, 96vw) !important;
+  max-width: 1180px !important;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid var(--sm-border-strong, rgba(255, 255, 255, 0.12));
+  background: #0e1018;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+[data-theme='light'] .mesSmModalDialog {
+  background: #ffffff;
+}
+
+.mesSmModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--sm-border, rgba(255, 255, 255, 0.08));
+  flex-shrink: 0;
+}
+
+.mesSmModalHeadTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mesSmModalHeadIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 194, 74, 0.12);
+  border: 1px solid rgba(232, 194, 74, 0.35);
+  color: var(--sm-accent, #e8c24a);
+}
+
+.mesSmModalHeadIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mesSmModalTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--sm-text, #eef1f6);
+  letter-spacing: -0.02em;
+}
+
+.mesSmModalSub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--sm-muted, #9aa3b2);
+}
+
+.mesSmModalHeadActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.mesSmModalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.mesSmModalBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesSmModalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mesSmModalBtn--save {
+  background: linear-gradient(180deg, #f0d060 0%, var(--sm-accent, #e8c24a) 100%);
+  color: #1a1406;
+  border-color: #a8841c;
+}
+
+.mesSmModalBtn--save:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.mesSmModalBtn--cancel {
+  background: transparent;
+  color: var(--sm-text, #eef1f6);
+  border-color: var(--sm-border-strong, rgba(255, 255, 255, 0.2));
+}
+
+.mesSmModalBtn--cancel:hover:not(:disabled) {
+  border-color: var(--sm-accent, #e8c24a);
+}
+
+.mesSmModalBtn--close {
+  background: transparent;
+  color: var(--sm-muted, #9aa3b2);
+  border-color: transparent;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mesSmModalBtn--close:hover {
+  color: var(--sm-text, #eef1f6);
+}
+
+.mesSmModalBody {
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.mesSmModalGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .mesSmModalGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesSmModalSection {
+  border-radius: 12px;
+  border: 1px solid var(--sm-border, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+[data-theme='light'] .mesSmModalSection {
+  background: var(--sm-surface2, #f3f4f8);
+}
+
+.mesSmModalSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sm-text, #eef1f6);
+}
+
+.mesSmModalSectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 194, 74, 0.1);
+  color: var(--sm-accent, #e8c24a);
+  flex-shrink: 0;
+}
+
+.mesSmModalSectionIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mesSmModalSectionBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.mesSmModalField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesSmModalField--full {
+  grid-column: 1 / -1;
+}
+
+.mesSmModalFieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sm-text, #eef1f6);
+  line-height: 1.35;
+}
+
+.mesSmModalFieldKey {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sm-muted, #9aa3b2);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mesSmModalInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--sm-border-strong, rgba(255, 255, 255, 0.14));
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--sm-text, #eef1f6);
+  font-size: 13px;
+}
+
+[data-theme='light'] .mesSmModalInput {
+  background: #ffffff;
+}
+
+.mesSmModalInput::placeholder {
+  color: var(--sm-muted, #9aa3b2);
+  opacity: 0.85;
+}
+
+.mesSmModalInput:focus {
+  outline: none;
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 2px rgba(232, 194, 74, 0.12);
+}
+
+.mesSmModalFootMeta {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--sm-muted, #9aa3b2);
+}
