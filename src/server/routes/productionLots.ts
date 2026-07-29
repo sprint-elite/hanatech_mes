@@ -65,6 +65,14 @@ const listSelect = {
           worker: { select: { id: true, workerCode: true, workerName: true } },
         },
       },
+      assignedProcessWorkers: {
+        select: {
+          processId: true,
+          workerId: true,
+          worker: { select: { id: true, workerCode: true, workerName: true } },
+          process: { select: { id: true, processCode: true, processName: true, sequence: true } },
+        },
+      },
     },
   },
 } as const

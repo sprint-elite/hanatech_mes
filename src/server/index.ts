@@ -10,6 +10,7 @@ import { productsRouter } from './routes/products'
 import { productionLotsRouter } from './routes/productionLots'
 import { workCentersRouter } from './routes/workCenters'
 import { workersRouter } from './routes/workers'
+import { processWorkerAssignRouter } from './routes/processWorkerAssign'
 import { customersRouter } from './routes/customers'
 import { authRouter } from './routes/auth'
 import { annualLeaveRouter } from './routes/annualLeave'
@@ -45,6 +46,7 @@ app.use('/api', payrollEmployeesRouter)
 app.use('/api', smartFactoryLogRouter)
 app.use('/api', workCentersRouter)
 app.use('/api', workersRouter)
+app.use('/api', processWorkerAssignRouter)
 app.use('/api', defectTypesRouter)
 app.use('/api', mbomProcessesRouter)
 app.use('/api', productionLotsRouter)

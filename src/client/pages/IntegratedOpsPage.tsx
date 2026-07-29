@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiJson } from '../lib/api'
 import { itemTypeLabel, normalizeItemTypeToCode } from '../lib/itemType'
+import {
+  formatAssignedWorkerNames,
+  processWorkerAssignmentsPayload,
+  buildProcessWorkerMap,
+  type ProcessWorkerMap,
+} from '../components/WorkOrderProcessWorkerAssign'
+import { WorkOrderProcessWorkerModal } from '../components/WorkOrderProcessWorkerModal'
 import '../integrated-ops-page.css'
 
 type ProductRef = {
@@ -40,6 +47,12 @@ type WorkOrderRow = {
   product?: { productCode: string; productName: string }
   workCenter?: { centerCode: string; centerName: string } | null
   assignedWorkers?: { worker: { id: number; workerCode: string; workerName: string } }[]
+  assignedProcessWorkers?: {
+    processId: number
+    workerId: number
+    process?: { id: number; processCode: string; processName: string; sequence: number }
+    worker: { id: number; workerCode: string; workerName: string }
+  }[]
 }
 type LotRow = {
   id: number
@@ -97,7 +110,7 @@ type WoForm = {
   woNo: string
   planId: string
   workCenterId: string
-  workerIds: number[]
+  processWorkerMap: ProcessWorkerMap
   orderQty: string
   status: WorkOrderStatus
   holdReason: string
@@ -518,10 +531,12 @@ export function IntegratedOpsPage() {
 
   const [planPanel, setPlanPanel] = useState(false)
   const [woPanel, setWoPanel] = useState(false)
+  const [woWorkerAssignOpen, setWoWorkerAssignOpen] = useState(false)
   const [lotPanel, setLotPanel] = useState(false)
   const [lotAllocNoticeOpen, setLotAllocNoticeOpen] = useState(false)
   const [editingPlanId, setEditingPlanId] = useState<number | null>(null)
   const [editingWoId, setEditingWoId] = useState<number | null>(null)
+  const [woLegacyWorkerSeed, setWoLegacyWorkerSeed] = useState<number[]>([])
   const [editingLotId, setEditingLotId] = useState<number | null>(null)
 
   const [planForm, setPlanForm] = useState<PlanForm>({ planNo: '', productId: '', planQty: '1', startDate: '', endDate: '', status: 'PLANNED' })
@@ -529,14 +544,12 @@ export function IntegratedOpsPage() {
     woNo: '',
     planId: '',
     workCenterId: '',
-    workerIds: [],
+    processWorkerMap: {},
     orderQty: '1',
     status: 'READY',
     holdReason: '',
   })
   const [lotForm, setLotForm] = useState<LotForm>({ lotNo: '', woId: '', lotQty: '1', status: 'CREATED' })
-  const [woWorkerQuery, setWoWorkerQuery] = useState('')
-  const [woOnlyActive, setWoOnlyActive] = useState(true)
 
   const [planProductListPage, setPlanProductListPage] = useState(1)
   const [planTableQuery, setPlanTableQuery] = useState('')
@@ -1021,6 +1034,13 @@ export function IntegratedOpsPage() {
     return workCenters.find((w) => w.id === id) ?? null
   }, [woForm.workCenterId, workCenters])
 
+  const woAssignedWorkerNames = useMemo(
+    () => formatAssignedWorkerNames(woForm.processWorkerMap, workers),
+    [woForm.processWorkerMap, workers],
+  )
+
+  const canOpenWoWorkerAssign = selectedWoPlan?.productId != null && selectedWoPlan.productId > 0
+
   const selectedPlanProduct = useMemo(() => {
     const id = Number(planForm.productId)
     if (!Number.isInteger(id) || id < 1) return null
@@ -1093,17 +1113,6 @@ export function IntegratedOpsPage() {
     if (!Number.isInteger(id) || id < 1) return null
     return workOrders.find((w) => w.id === id) ?? null
   }, [lotForm.woId, workOrders])
-
-  const woSelectableWorkers = useMemo(() => {
-    const q = woWorkerQuery.trim().toLowerCase()
-    return workers
-      .filter((w) => (!woOnlyActive ? true : w.status === 'ACTIVE'))
-      .filter((w) => {
-        if (!q) return true
-        const text = `${w.workerCode} ${w.workerName}`.toLowerCase()
-        return text.includes(q)
-      })
-  }, [workers, woOnlyActive, woWorkerQuery])
 
   const openPlanCreate = () => {
     setEditingPlanId(null)
@@ -1184,32 +1193,36 @@ export function IntegratedOpsPage() {
     const pl = woTabPlanId.trim() !== '' ? plans.find((p) => p.id === Number(woTabPlanId)) : null
     const pq = pl?.planQty != null ? String(pl.planQty) : '1'
     setEditingWoId(null)
+    setWoLegacyWorkerSeed([])
     setWoForm({
       woNo: '',
       planId: woTabPlanId.trim() !== '' ? woTabPlanId : '',
       workCenterId: '',
-      workerIds: [],
+      processWorkerMap: {},
       orderQty: pq,
       status: 'READY',
       holdReason: '',
     })
-    setWoWorkerQuery('')
-    setWoOnlyActive(true)
     setWoPanel(true)
   }
   const openWoEdit = (r: WorkOrderRow) => {
     setEditingWoId(r.id)
+    const hasProcessAssign = (r.assignedProcessWorkers?.length ?? 0) > 0
+    setWoLegacyWorkerSeed(hasProcessAssign ? [] : (r.assignedWorkers ?? []).map((a) => a.worker.id))
     setWoForm({
       woNo: r.woNo,
       planId: r.planId != null ? String(r.planId) : '',
       workCenterId: r.workCenterId != null ? String(r.workCenterId) : '',
-      workerIds: (r.assignedWorkers ?? []).map((a) => a.worker.id),
+      processWorkerMap: hasProcessAssign
+        ? buildProcessWorkerMap(
+            [...new Set((r.assignedProcessWorkers ?? []).map((a) => a.processId))],
+            r.assignedProcessWorkers,
+          )
+        : {},
       orderQty: String(r.orderQty),
       status: r.status,
       holdReason: r.holdReason ?? '',
     })
-    setWoWorkerQuery('')
-    setWoOnlyActive(false)
     setWoPanel(true)
   }
   const saveWo = async () => {
@@ -1246,7 +1259,7 @@ export function IntegratedOpsPage() {
         workCenterId,
         status: woForm.status,
         holdReason: woForm.status === 'HOLD' ? woForm.holdReason.trim() : null,
-        workerIds: woForm.workerIds,
+        processWorkerAssignments: processWorkerAssignmentsPayload(woForm.processWorkerMap),
       }
       if (editingWoId == null) {
         await apiJson('/api/work-orders', { method: 'POST', body: JSON.stringify(body) })
@@ -2729,7 +2742,15 @@ export function IntegratedOpsPage() {
 
       {woPanel ? (
         <div className="mesOpsPlanModalRoot" role="presentation">
-          <button type="button" className="mesModalBackdrop" aria-label="닫기" onClick={() => setWoPanel(false)} />
+          <button
+            type="button"
+            className="mesModalBackdrop"
+            aria-label="닫기"
+            onClick={() => {
+              setWoWorkerAssignOpen(false)
+              setWoPanel(false)
+            }}
+          />
           <div className="mesOpsPlanModalDialog mesOpsPlanModalDialog--wide" role="dialog" aria-modal="true" aria-labelledby="mes-wo-modal-title">
             <header className="mesOpsPlanModalHead">
               <div className="mesOpsPlanModalHeadTitle">
@@ -2739,7 +2760,7 @@ export function IntegratedOpsPage() {
                     {editingWoId == null ? '작업지시 등록' : '작업지시 수정'}
                   </h2>
                   <p className="mesOpsPlanModalSub">
-                    작업지시 기본정보와 배정 작업자를 입력합니다. 생산 LOT는 「생산 LOT」 탭에서 별도 등록합니다.
+                    작업지시 기본정보를 입력합니다. 공정별 작업자는 「공정별 작업 배정」에서 지정합니다.
                   </p>
                 </div>
               </div>
@@ -2841,6 +2862,22 @@ export function IntegratedOpsPage() {
                       </label>
                     ) : null}
                   </div>
+                  <div className="mesOpsPlanModalAssignBlock">
+                    <div className="mesOpsPlanModalAssignRow">
+                      <span className="mesOpsPlanModalFieldLabel">배정 작업자</span>
+                      <p className="mesOpsPlanModalAssignNames" title={woAssignedWorkerNames}>
+                        {woAssignedWorkerNames}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="mesOpsPlanModalAssignBtn"
+                      disabled={!canOpenWoWorkerAssign}
+                      onClick={() => setWoWorkerAssignOpen(true)}
+                    >
+                      공정별 작업 배정
+                    </button>
+                  </div>
                 </section>
 
                 <section className="mesOpsPlanModalCard mesOpsPlanModalCard--summary">
@@ -2864,77 +2901,18 @@ export function IntegratedOpsPage() {
                   </div>
                 </section>
               </div>
-
-              <section className="mesOpsPlanModalWorker">
-                <div className="mesOpsPlanModalWorkerHead">
-                  <h3 className="mesOpsPlanModalCardTitle">배정 작업자 (복수 선택)</h3>
-                  <p className="mesOpsPlanModalWorkerMeta">
-                    라인 {selectedWoCenter?.centerCode ?? '미지정'} · 계획 {selectedWoPlan?.planNo ?? '미선택'} · 선택 {woForm.workerIds.length}명
-                  </p>
-                </div>
-                <div className="mesOpsPlanModalWorkerTools">
-                  <div className="mesOpsPlanModalWorkerSearch">
-                    <span className="mesOpsV2SearchIcon"><IconSearch /></span>
-                    <input
-                      className="mesOpsPlanModalInput"
-                      value={woWorkerQuery}
-                      onChange={(e) => setWoWorkerQuery(e.target.value)}
-                      placeholder="작업자 코드/이름 검색"
-                    />
-                  </div>
-                  <label className="mesOpsPlanModalCheck">
-                    <input type="checkbox" checked={woOnlyActive} onChange={(e) => setWoOnlyActive(e.target.checked)} />
-                    <span>활성만</span>
-                  </label>
-                  <button
-                    type="button"
-                    className="mesOpsPlanModalToolBtn"
-                    onClick={() =>
-                      setWoForm((f) => ({
-                        ...f,
-                        workerIds: Array.from(new Set([...f.workerIds, ...woSelectableWorkers.map((w) => w.id)])),
-                      }))
-                    }
-                  >
-                    전체선택
-                  </button>
-                  <button
-                    type="button"
-                    className="mesOpsPlanModalToolBtn"
-                    onClick={() =>
-                      setWoForm((f) => ({
-                        ...f,
-                        workerIds: f.workerIds.filter((id) => !woSelectableWorkers.some((w) => w.id === id)),
-                      }))
-                    }
-                  >
-                    필터해제
-                  </button>
-                </div>
-                <div className="mesOpsPlanModalWorkerGrid">
-                  {woSelectableWorkers.length === 0 ? (
-                    <div className="mesOpsPlanModalMuted">조건에 맞는 작업자가 없습니다.</div>
-                  ) : (
-                    woSelectableWorkers.map((w) => (
-                      <label key={w.id} className="mesOpsPlanModalWorkerItem">
-                        <input
-                          type="checkbox"
-                          checked={woForm.workerIds.includes(w.id)}
-                          onChange={() => setWoForm((f) => ({ ...f, workerIds: toggleId(f.workerIds, w.id) }))}
-                        />
-                        <span>
-                          <span className="mono">{w.workerCode}</span> {w.workerName}
-                          {w.status !== 'ACTIVE' ? <span className="mesOpsPlanModalMuted"> ({w.status})</span> : null}
-                        </span>
-                      </label>
-                    ))
-                  )}
-                </div>
-              </section>
             </div>
 
             <footer className="mesOpsPlanModalFoot">
-              <button type="button" className="mesOpsPlanModalBtn mesOpsPlanModalBtn--cancel" disabled={saving} onClick={() => setWoPanel(false)}>
+              <button
+                type="button"
+                className="mesOpsPlanModalBtn mesOpsPlanModalBtn--cancel"
+                disabled={saving}
+                onClick={() => {
+                  setWoWorkerAssignOpen(false)
+                  setWoPanel(false)
+                }}
+              >
                 <IconX />
                 취소
               </button>
@@ -2945,6 +2923,21 @@ export function IntegratedOpsPage() {
             </footer>
           </div>
         </div>
+      ) : null}
+
+      {woPanel && woWorkerAssignOpen ? (
+        <WorkOrderProcessWorkerModal
+          open
+          onClose={() => setWoWorkerAssignOpen(false)}
+          variant="ops"
+          productId={selectedWoPlan?.productId ?? null}
+          workers={workers}
+          value={woForm.processWorkerMap}
+          onChange={(processWorkerMap) => setWoForm((f) => ({ ...f, processWorkerMap }))}
+          metaExtra={`라인 ${selectedWoCenter?.centerCode ?? '미지정'} · 계획 ${selectedWoPlan?.planNo ?? '미선택'}`}
+          legacyWorkerIds={woLegacyWorkerSeed}
+          orderQty={Math.max(1, Number(woForm.orderQty) || 1)}
+        />
       ) : null}
 
       {lotPanel ? (

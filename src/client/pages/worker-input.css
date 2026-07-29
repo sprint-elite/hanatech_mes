@@ -139,6 +139,23 @@
   gap: 10px;
 }
 
+.wi__workerPick {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.wi__workerPickLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wi-muted);
+}
+
+.wi__workerPick .wi__search {
+  margin-bottom: 0;
+}
+
 .wi__lotCard {
   width: 100%;
   text-align: left;

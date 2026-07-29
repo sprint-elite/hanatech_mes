@@ -371,7 +371,7 @@ body {
 }
 
 .mesSide {
-  width: 260px;
+  width: 284px;
   flex-shrink: 0;
   align-self: stretch;
   min-height: 100vh;
@@ -430,7 +430,7 @@ body {
   }
 
   .mesShellOverlay.mesSideOpen .mesSideToggle {
-    left: 260px;
+    left: 284px;
   }
 
   .mesSideToggle:focus-visible {
@@ -459,16 +459,16 @@ body {
 .mesThemeToggle {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
   margin-bottom: 12px;
-  padding: 7px 10px;
+  padding: 9px 12px;
   border: 1px solid var(--border2);
   border-radius: var(--r);
   background: var(--side-bg-nested);
   color: var(--side-text);
   font-family: inherit;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -559,14 +559,22 @@ body {
 }
 
 .mesAuthName {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--side-text);
 }
 
 .mesAuthId {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
+}
+
+.mesAuthStrip .mesBtnSm {
+  font-size: 12px;
+  padding: 7px 10px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-family: inherit;
 }
 
 .mesAuthLogout,
@@ -656,7 +664,7 @@ body {
 }
 
 .mesSideBody {
-  padding: 4px 8px 16px;
+  padding: 6px 6px 16px;
   flex: 1;
 }
 
@@ -676,15 +684,15 @@ body {
 .mesAccordionTrigger {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-  padding: 9px 8px 9px 8px;
+  padding: 11px 12px;
   margin: 0;
   border: none;
   background: transparent;
   color: var(--side-text);
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.01em;
   cursor: pointer;
@@ -709,6 +717,11 @@ body {
   color: var(--icon-muted);
 }
 
+.mesAccordionIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
 .mesAccordionTrigger[aria-expanded='true'] .mesAccordionIcon {
   color: var(--icon-muted2);
 }
@@ -716,6 +729,7 @@ body {
 .mesAccordionTitle {
   flex: 1;
   min-width: 0;
+  line-height: 1.35;
 }
 
 .mesAccordionChevron {
@@ -726,6 +740,11 @@ body {
   transition: transform 0.2s ease;
 }
 
+.mesAccordionChevron svg {
+  width: 16px;
+  height: 16px;
+}
+
 .mesAccordionTrigger[aria-expanded='true'] .mesAccordionChevron {
   transform: rotate(90deg);
   color: var(--icon-chevron-open);
@@ -733,7 +752,7 @@ body {
 
 .mesAccordionPanel {
   background: var(--side-bg-nested);
-  padding: 2px 0 6px;
+  padding: 4px 0 8px;
   box-shadow: inset 0 1px 0 var(--accordion-panel-inset);
 }
 
@@ -764,9 +783,10 @@ body {
 }
 
 .mesNavLinkSub {
-  padding: 5px 10px 5px 36px;
-  font-size: 12px;
+  padding: 9px 12px 9px 38px;
+  font-size: 14px;
   font-weight: 500;
+  line-height: 1.4;
   color: var(--nav-sub-text);
   border-left: 3px solid transparent;
 }
@@ -3393,6 +3413,608 @@ body {
   flex-shrink: 0;
 }
 
+.mesWoProcessAssignHint {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.mesWoProcessAssignRetryLink {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--mes-accent, #c9a227);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  font-size: inherit;
+}
+
+.mesWoProcessAssignRetryLink:hover {
+  opacity: 0.85;
+}
+
+/* —— 작업자 묶음 설정 모달 —— */
+.mesWoGroupOptDialog {
+  max-width: min(640px, 96vw);
+}
+
+.mesWoGroupOptBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mesWoGroupOptStrip .mesOpsPlanModalStripItem {
+  padding: 10px 14px;
+}
+
+.mesWoGroupOptStrip .mesWoGroupOptStripPreview {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mesWoGroupOptToolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mesWoGroupOptSegment {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='light'] .mesWoGroupOptSegment {
+  background: #eef0f5;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesWoGroupOptSegmentBtn {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.mesWoGroupOptSegmentBtn:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.mesWoGroupOptSegmentBtn--on {
+  opacity: 1;
+  background: rgba(212, 165, 36, 0.22);
+  color: var(--mes-accent, #d4a524);
+}
+
+[data-theme='light'] .mesWoGroupOptSegmentBtn--on {
+  background: #fff;
+  color: #9a7b1a;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* 공정 타임라인 (전체 너비, 생략 없음) */
+.mesWoGroupOptFlow {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme='light'] .mesWoGroupOptFlow {
+  background: #fafbfc;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesWoGroupOptFlowBlock:last-child .mesWoGroupOptJoin {
+  display: none;
+}
+
+.mesWoGroupOptStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-left: 4px solid transparent;
+}
+
+.mesWoGroupOptStep[data-tone='0'] {
+  border-left-color: #5b8def;
+}
+.mesWoGroupOptStep[data-tone='1'] {
+  border-left-color: #3d9a5f;
+}
+.mesWoGroupOptStep[data-tone='2'] {
+  border-left-color: #d9a321;
+}
+.mesWoGroupOptStep[data-tone='3'] {
+  border-left-color: #c45c5c;
+}
+.mesWoGroupOptStep[data-tone='4'] {
+  border-left-color: #9b7ed9;
+}
+.mesWoGroupOptStep[data-tone='5'] {
+  border-left-color: #4db6ac;
+}
+
+.mesWoGroupOptStepBadge {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  margin-top: 2px;
+}
+
+[data-theme='light'] .mesWoGroupOptStepBadge {
+  background: #e8eaef;
+}
+
+.mesWoGroupOptStepBody {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mesWoGroupOptStepSeq {
+  flex-shrink: 0;
+  width: 1.5rem;
+  font-weight: 700;
+  font-size: 13px;
+  opacity: 0.55;
+  text-align: center;
+}
+
+.mesWoGroupOptStepText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mesWoGroupOptStepCode {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.mesWoGroupOptStepName {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.mesWoGroupOptJoin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 4px 14px 4px 3.25rem;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+[data-theme='light'] .mesWoGroupOptJoin {
+  background: #f0f2f6;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.mesWoGroupOptJoin:hover:not(:disabled) {
+  background: rgba(212, 165, 36, 0.1);
+}
+
+.mesWoGroupOptJoin--on {
+  background: rgba(212, 165, 36, 0.12);
+}
+
+[data-theme='light'] .mesWoGroupOptJoin--on {
+  background: rgba(212, 165, 36, 0.18);
+}
+
+.mesWoGroupOptJoinRail {
+  width: 3px;
+  align-self: stretch;
+  min-height: 20px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  margin-left: 6px;
+}
+
+.mesWoGroupOptJoin--on .mesWoGroupOptJoinRail {
+  background: var(--mes-accent, #d4a524);
+}
+
+.mesWoGroupOptJoinLabel {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.mesWoGroupOptJoin--on .mesWoGroupOptJoinLabel {
+  color: var(--mes-accent, #c9a227);
+  opacity: 1;
+}
+
+.mesWoGroupOptFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+/* legacy lane styles — unused, keep minimal for safety */
+.mesWoGroupOptLanes {
+  display: none;
+}
+
+.mesWoAssignConfirmDialog {
+  max-width: min(720px, 96vw);
+}
+
+.mesWoAssignConfirmBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mesWoAssignConfirmStrip .mesOpsPlanModalStripItem {
+  padding: 10px 14px;
+}
+
+.mesWoAssignConfirmMakespan {
+  color: var(--mes-accent, #d4a524);
+}
+
+[data-theme='light'] .mesWoAssignConfirmMakespan {
+  color: #9a7b1a;
+}
+
+.mesWoAssignConfirmTableWrap {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: auto;
+  max-height: min(50vh, 360px);
+}
+
+[data-theme='light'] .mesWoAssignConfirmTableWrap {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.mesWoAssignConfirmTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mesWoAssignConfirmTable th,
+.mesWoAssignConfirmTable td {
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='light'] .mesWoAssignConfirmTable th,
+[data-theme='light'] .mesWoAssignConfirmTable td {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.mesWoAssignConfirmTable thead th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.7;
+  background: rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+[data-theme='light'] .mesWoAssignConfirmTable thead th {
+  background: #f0f2f6;
+}
+
+.mesWoAssignConfirmTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mesWoAssignConfirmProc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mesWoAssignConfirmCode {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.mesWoAssignConfirmProcName {
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.mesWoAssignConfirmSrc {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.mesWoAssignConfirmSrc--history {
+  background: rgba(61, 154, 95, 0.2);
+  color: #3d9a5f;
+}
+
+.mesWoAssignConfirmSrc--standard {
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 0.85;
+}
+
+[data-theme='light'] .mesWoAssignConfirmSrc--standard {
+  background: #e8eaef;
+}
+
+.mesWoAssignConfirmThNum,
+.mesWoAssignConfirmTdNum {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.mesWoProcessAssignDnD {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 12px;
+  min-height: 280px;
+  max-height: min(56vh, 460px);
+}
+
+.mesWoProcessAssignDnDCol {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  background: var(--modal-inset-bg);
+  overflow: hidden;
+}
+
+.mesWoProcessAssignDnDColTitle {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border2);
+  background: var(--modal-panel-bg-soft, rgba(0, 0, 0, 0.12));
+}
+
+.mesWoProcessAssignDnDList {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mesWoProcessCard {
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--modal-panel-bg-soft, rgba(0, 0, 0, 0.08));
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.mesWoProcessCard--focus {
+  border-color: var(--accent, #e8c24a);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #e8c24a) 40%, transparent);
+}
+
+.mesWoProcessCard--drop {
+  border-color: var(--accent, #e8c24a);
+  background: color-mix(in srgb, var(--accent, #e8c24a) 12%, var(--modal-panel-bg-soft, #222));
+}
+
+.mesWoProcessCardHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.mesWoProcessCardSeq {
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--border2);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mesWoProcessCardTitle {
+  flex: 1;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.mesWoProcessCardCount {
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.mesWoProcessCardDrop {
+  min-height: 44px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px dashed var(--border2);
+  background: var(--modal-inset-bg);
+}
+
+.mesWoProcessCardDropPlaceholder {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 28px;
+}
+
+.mesWoProcessCardChips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mesWoProcessChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: color-mix(in srgb, var(--accent, #e8c24a) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #e8c24a) 45%, var(--border2));
+}
+
+.mesWoProcessChipRemove {
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.mesWoProcessChipRemove:hover {
+  opacity: 1;
+}
+
+.mesWoWorkerDragCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: var(--modal-panel-bg-soft, rgba(255, 255, 255, 0.04));
+  cursor: grab;
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.mesWoWorkerDragCard:active {
+  cursor: grabbing;
+}
+
+.mesWoWorkerDragCard--onFocus {
+  border-color: var(--accent, #e8c24a);
+  background: color-mix(in srgb, var(--accent, #e8c24a) 14%, transparent);
+}
+
+.mesWoWorkerDragCardGrip {
+  flex-shrink: 0;
+  font-size: 10px;
+  letter-spacing: -2px;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.mesWoWorkerDragCardBody {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  font-size: 13px;
+}
+
+.mesWoWorkerDragCardCode {
+  font-weight: 600;
+}
+
+.mesWoAssignBlock {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesWoAssignBlockRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mesWoAssignNames {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.mesWoAssignOpenBtn {
+  align-self: flex-start;
+}
+
+.mesOpsPlanModalWorker.mesWoProcessAssign .mesWoProcessAssignDnDCol {
+  background: #141820;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='light'] .mesOpsPlanModalWorker.mesWoProcessAssign .mesWoProcessAssignDnDCol {
+  background: #fff;
+}
+
+@media (max-width: 720px) {
+  .mesWoProcessAssignDnD {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+
+  .mesWoProcessAssignDnDCol {
+    max-height: 240px;
+  }
+}
+
 .mesWoWorkbench {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
@@ -4610,6 +5232,22 @@ body {
   padding: 5px 8px;
   font-size: 12px;
   text-align: right;
+}
+
+.mesWorkerTimeCell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesWorkerTimeSum {
+  font-size: 12px;
+  min-width: 3rem;
+}
+
+.mesModalRootNested {
+  z-index: 4100;
 }
 
 .mesTrHighlight td {

@@ -24,7 +24,18 @@ const woListInclude = {
       worker: { select: { id: true, workerCode: true, workerName: true } },
     },
   },
+  assignedProcessWorkers: {
+    include: {
+      process: { select: { id: true, processCode: true, processName: true, sequence: true } },
+      worker: { select: { id: true, workerCode: true, workerName: true } },
+    },
+  },
 } as const satisfies Prisma.WorkOrderInclude
+
+const processWorkerAssignmentRow = z.object({
+  processId: z.number().int().positive(),
+  workerIds: z.array(z.number().int().positive()).max(50),
+})
 
 /** 유효한 작업자 ID만 남긴 배열. 존재하지 않는 ID가 있으면 null. */
 async function normalizeWorkerIds(workerIds: number[] | undefined): Promise<number[] | null> {
@@ -34,6 +45,63 @@ async function normalizeWorkerIds(workerIds: number[] | undefined): Promise<numb
   const cnt = await prisma.worker.count({ where: { id: { in: unique } } })
   if (cnt !== unique.length) return null
   return unique
+}
+
+type ProcessWorkerRow = { processId: number; workerId: number }
+
+/** 공정별 작업자 배정 정규화. 잘못된 공정/작업자면 null. */
+async function normalizeProcessWorkerAssignments(
+  productId: number,
+  assignments: { processId: number; workerIds: number[] }[] | undefined,
+): Promise<ProcessWorkerRow[] | null | undefined> {
+  if (assignments === undefined) return undefined
+  if (assignments.length === 0) return []
+
+  const parsed = z.array(processWorkerAssignmentRow).safeParse(assignments)
+  if (!parsed.success) return null
+
+  const processIds = [...new Set(parsed.data.map((a) => a.processId))]
+  const validProcesses = await prisma.mbomProcess.findMany({
+    where: { productId, useYn: 'Y', id: { in: processIds } },
+    select: { id: true },
+  })
+  const validProcessSet = new Set(validProcesses.map((p) => p.id))
+  if (processIds.some((id) => !validProcessSet.has(id))) return null
+
+  const allWorkerIds = new Set<number>()
+  const rows: ProcessWorkerRow[] = []
+  for (const a of parsed.data) {
+    const wids = [...new Set(a.workerIds)].filter((id) => id > 0)
+    for (const workerId of wids) {
+      rows.push({ processId: a.processId, workerId })
+      allWorkerIds.add(workerId)
+    }
+  }
+  if (allWorkerIds.size > 0) {
+    const normalized = await normalizeWorkerIds([...allWorkerIds])
+    if (normalized === null) return null
+  }
+  return rows
+}
+
+async function replaceWorkOrderWorkerAssignments(
+  tx: Prisma.TransactionClient,
+  woId: number,
+  processRows: ProcessWorkerRow[],
+): Promise<void> {
+  await tx.workOrderProcessWorker.deleteMany({ where: { woId } })
+  if (processRows.length > 0) {
+    await tx.workOrderProcessWorker.createMany({
+      data: processRows.map((r) => ({ woId, processId: r.processId, workerId: r.workerId })),
+    })
+  }
+  const uniqueWorkerIds = [...new Set(processRows.map((r) => r.workerId))]
+  await tx.workOrderWorker.deleteMany({ where: { woId } })
+  if (uniqueWorkerIds.length > 0) {
+    await tx.workOrderWorker.createMany({
+      data: uniqueWorkerIds.map((workerId) => ({ woId, workerId })),
+    })
+  }
 }
 
 export const extendedOpsRouter = Router()
@@ -168,6 +236,7 @@ const woBody = z.object({
   priority: z.string().optional().nullable(),
   remark: z.string().optional().nullable(),
   workerIds: z.array(z.number().int().positive()).max(50).optional(),
+  processWorkerAssignments: z.array(processWorkerAssignmentRow).max(100).optional(),
 })
 
 function resolveWorkOrderHoldFields(
@@ -185,14 +254,30 @@ extendedOpsRouter.post('/work-orders', async (req, res) => {
   const p = woBody.safeParse(req.body)
   if (!p.success) return res.status(400).json({ ok: false, error: 'VALIDATION_ERROR', details: p.error.flatten() })
   const b = p.data
-  const workerIds = b.workerIds ?? []
+  const workerIds = b.workerIds
   const status = b.status ?? WorkOrderStatus.READY
   const holdFields = resolveWorkOrderHoldFields(status, b.holdReason)
   try {
-    const uniqueWorkers = await normalizeWorkerIds(workerIds)
-    if (uniqueWorkers === null) {
-      return res.status(400).json({ ok: false, error: 'INVALID_WORKER_IDS', message: '존재하지 않는 작업자가 포함되어 있습니다.' })
+    let processRows: ProcessWorkerRow[] | undefined
+    let legacyWorkerOnly: number[] | null | undefined
+
+    if (b.processWorkerAssignments !== undefined) {
+      const normalized = await normalizeProcessWorkerAssignments(b.productId, b.processWorkerAssignments)
+      if (normalized === null) {
+        return res.status(400).json({
+          ok: false,
+          error: 'INVALID_PROCESS_WORKER_ASSIGNMENTS',
+          message: '공정 또는 작업자 배정이 올바르지 않습니다.',
+        })
+      }
+      processRows = normalized
+    } else if (workerIds !== undefined) {
+      legacyWorkerOnly = await normalizeWorkerIds(workerIds)
+      if (legacyWorkerOnly === null) {
+        return res.status(400).json({ ok: false, error: 'INVALID_WORKER_IDS', message: '존재하지 않는 작업자가 포함되어 있습니다.' })
+      }
     }
+
     const item = await prisma.$transaction(async (tx) => {
       const wo = await tx.workOrder.create({
         data: {
@@ -208,10 +293,15 @@ extendedOpsRouter.post('/work-orders', async (req, res) => {
         },
         select: { id: true },
       })
-      if (uniqueWorkers.length > 0) {
-        await tx.workOrderWorker.createMany({
-          data: uniqueWorkers.map((workerId) => ({ woId: wo.id, workerId })),
-        })
+      if (processRows !== undefined) {
+        await replaceWorkOrderWorkerAssignments(tx, wo.id, processRows)
+      } else if (legacyWorkerOnly !== undefined) {
+        await tx.workOrderWorker.deleteMany({ where: { woId: wo.id } })
+        if (legacyWorkerOnly.length > 0) {
+          await tx.workOrderWorker.createMany({
+            data: legacyWorkerOnly.map((workerId) => ({ woId: wo.id, workerId })),
+          })
+        }
       }
       return tx.workOrder.findUniqueOrThrow({
         where: { id: wo.id },
@@ -235,7 +325,7 @@ extendedOpsRouter.patch('/work-orders/:id', async (req, res) => {
   try {
     const current = await prisma.workOrder.findUnique({
       where: { id },
-      select: { status: true, holdReason: true },
+      select: { status: true, holdReason: true, productId: true },
     })
     if (!current) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
 
@@ -248,10 +338,23 @@ extendedOpsRouter.patch('/work-orders/:id', async (req, res) => {
           : undefined
     const holdFields = resolveWorkOrderHoldFields(nextStatus, holdReasonInput)
 
-    let uniqueWorkers: number[] | null | undefined
-    if (workerIds !== undefined) {
-      uniqueWorkers = await normalizeWorkerIds(workerIds)
-      if (uniqueWorkers === null) {
+    const productIdForAssignments = b.productId ?? current.productId
+
+    let processRows: ProcessWorkerRow[] | undefined
+    let legacyWorkerOnly: number[] | null | undefined
+    if (b.processWorkerAssignments !== undefined) {
+      const normalized = await normalizeProcessWorkerAssignments(productIdForAssignments, b.processWorkerAssignments)
+      if (normalized === null) {
+        return res.status(400).json({
+          ok: false,
+          error: 'INVALID_PROCESS_WORKER_ASSIGNMENTS',
+          message: '공정 또는 작업자 배정이 올바르지 않습니다.',
+        })
+      }
+      processRows = normalized
+    } else if (workerIds !== undefined) {
+      legacyWorkerOnly = await normalizeWorkerIds(workerIds)
+      if (legacyWorkerOnly === null) {
         return res.status(400).json({ ok: false, error: 'INVALID_WORKER_IDS', message: '존재하지 않는 작업자가 포함되어 있습니다.' })
       }
     }
@@ -269,11 +372,14 @@ extendedOpsRouter.patch('/work-orders/:id', async (req, res) => {
       if (Object.keys(data).length > 0) {
         await tx.workOrder.update({ where: { id }, data })
       }
-      if (uniqueWorkers !== undefined) {
+      if (processRows !== undefined) {
+        await replaceWorkOrderWorkerAssignments(tx, id, processRows)
+      } else if (legacyWorkerOnly !== undefined) {
         await tx.workOrderWorker.deleteMany({ where: { woId: id } })
-        if (uniqueWorkers.length > 0) {
+        await tx.workOrderProcessWorker.deleteMany({ where: { woId: id } })
+        if (legacyWorkerOnly.length > 0) {
           await tx.workOrderWorker.createMany({
-            data: uniqueWorkers.map((workerId) => ({ woId: id, workerId })),
+            data: legacyWorkerOnly.map((workerId) => ({ woId: id, workerId })),
           })
         }
       }

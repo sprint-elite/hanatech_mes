@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiJson } from '../lib/api'
+import {
+  formatAssignedWorkerNames,
+  processWorkerAssignmentsPayload,
+  buildProcessWorkerMap,
+  type ProcessWorkerMap,
+} from '../components/WorkOrderProcessWorkerAssign'
+import { WorkOrderProcessWorkerModal } from '../components/WorkOrderProcessWorkerModal'
 import '../work-orders-page.css'
 
 type AssignedWorker = { worker: { id: number; workerCode: string; workerName: string } }
@@ -20,6 +27,11 @@ type Row = {
   plan?: { planNo: string } | null
   workCenter?: { centerCode: string; centerName: string } | null
   assignedWorkers?: AssignedWorker[]
+  assignedProcessWorkers?: {
+    processId: number
+    workerId: number
+    worker: { id: number; workerCode: string; workerName: string }
+  }[]
 }
 
 type ProductRef = { id: number; productCode: string; productName: string }
@@ -68,9 +80,6 @@ function matchesFilters(row: Row, filters: Filters): boolean {
   return true
 }
 
-function toggleId(ids: number[], id: number): number[] {
-  return ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]
-}
 
 function IconSearch() {
   return (
@@ -197,7 +206,9 @@ export function WorkOrdersPage() {
   const [holdReason, setHoldReason] = useState('')
   const [priority, setPriority] = useState('')
   const [remark, setRemark] = useState('')
-  const [selectedWorkerIds, setSelectedWorkerIds] = useState<number[]>([])
+  const [processWorkerMap, setProcessWorkerMap] = useState<ProcessWorkerMap>({})
+  const [legacyWorkerSeed, setLegacyWorkerSeed] = useState<number[]>([])
+  const [workerAssignOpen, setWorkerAssignOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -295,12 +306,14 @@ export function WorkOrdersPage() {
     setRemark('')
     setHoldReason('')
     setStatus('READY')
-    setSelectedWorkerIds([])
+    setProcessWorkerMap({})
+    setLegacyWorkerSeed([])
   }
 
   const closePanel = () => {
     setEditingId(null)
     resetForm()
+    setWorkerAssignOpen(false)
     setPanelOpen(false)
   }
 
@@ -321,7 +334,16 @@ export function WorkOrdersPage() {
     setHoldReason(r.holdReason ?? '')
     setPriority(r.priority ?? '')
     setRemark(r.remark ?? '')
-    setSelectedWorkerIds((r.assignedWorkers ?? []).map((a) => a.worker.id))
+    const hasProcessAssign = (r.assignedProcessWorkers?.length ?? 0) > 0
+    setLegacyWorkerSeed(hasProcessAssign ? [] : (r.assignedWorkers ?? []).map((a) => a.worker.id))
+    setProcessWorkerMap(
+      hasProcessAssign
+        ? buildProcessWorkerMap(
+            [...new Set((r.assignedProcessWorkers ?? []).map((a) => a.processId))],
+            r.assignedProcessWorkers,
+          )
+        : {},
+    )
     setPanelOpen(true)
   }
 
@@ -363,7 +385,7 @@ export function WorkOrdersPage() {
         holdReason: status === 'HOLD' ? holdReason.trim() : null,
         priority: priority.trim() || null,
         remark: remark.trim() || null,
-        workerIds: selectedWorkerIds,
+        processWorkerAssignments: processWorkerAssignmentsPayload(processWorkerMap),
       }
       if (editingId == null) {
         await apiJson('/api/work-orders', { method: 'POST', body: JSON.stringify(body) })
@@ -405,13 +427,20 @@ export function WorkOrdersPage() {
 
   const modalTitle = editingId == null ? '작업 지시 등록' : `작업 지시 수정 (ID ${editingId})`
 
+  const assignedWorkerNames = useMemo(
+    () => formatAssignedWorkerNames(processWorkerMap, workers),
+    [processWorkerMap, workers],
+  )
+
+  const canOpenWorkerAssign = productId.trim() !== '' && Number(productId) > 0
+
   return (
     <div className="mesPage mesPageWide mesWoPage">
       <header className="mesWoHead">
         <div className="mesWoHeadMain">
           <h1 className="mesWoTitle">작업 지시</h1>
           <p className="mesWoDesc">
-            생산 계획·품목·수량·작업장·배정 작업자(복수)를 등록합니다. 상단 숫자는 필터 적용 후 목록 기준입니다.
+            생산 계획·품목·수량·작업장·공정별 배정 작업자를 등록합니다. 상단 숫자는 필터 적용 후 목록 기준입니다.
           </p>
         </div>
         <div className="mesWoHeadActions">
@@ -702,30 +731,39 @@ export function WorkOrdersPage() {
                   <input className="mesInput" value={remark} onChange={(ev) => setRemark(ev.target.value)} />
                 </label>
               </div>
-              <div className="mesWoWorkerBlock">
-                <div className="mesWoWorkerTitle">배정 작업자 (복수 선택)</div>
-                <div className="mesWoWorkerGrid">
-                  {workers.map((w) => (
-                    <label key={w.id} className="mesWoWorkerItem">
-                      <input
-                        type="checkbox"
-                        checked={selectedWorkerIds.includes(w.id)}
-                        onChange={() => setSelectedWorkerIds((ids) => toggleId(ids, w.id))}
-                      />
-                      <span>
-                        <span className="mono">{w.workerCode}</span> {w.workerName}
-                        {w.status !== 'ACTIVE' ? <span className="muted small"> ({w.status})</span> : null}
-                      </span>
-                    </label>
-                  ))}
+              <div className="mesWoAssignBlock">
+                <div className="mesWoAssignBlockRow">
+                  <span className="mesWoFieldLabel">배정 작업자</span>
+                  <p className="mesWoAssignNames" title={assignedWorkerNames}>
+                    {assignedWorkerNames}
+                  </p>
                 </div>
-                <p className="muted small" style={{ marginTop: 8 }}>
-                  선택 {selectedWorkerIds.length}명 · 저장 시 서버에 반영됩니다.
-                </p>
+                <button
+                  type="button"
+                  className="mesWoBtn mesWoBtn--secondary mesWoAssignOpenBtn"
+                  disabled={!canOpenWorkerAssign}
+                  onClick={() => setWorkerAssignOpen(true)}
+                >
+                  공정별 작업 배정
+                </button>
               </div>
             </div>
           </div>
         </div>
+      ) : null}
+
+      {panelOpen && workerAssignOpen ? (
+        <WorkOrderProcessWorkerModal
+          open
+          onClose={() => setWorkerAssignOpen(false)}
+          variant="wo"
+          productId={productId.trim() === '' ? null : Number(productId)}
+          workers={workers}
+          value={processWorkerMap}
+          onChange={setProcessWorkerMap}
+          legacyWorkerIds={legacyWorkerSeed}
+          orderQty={Math.max(1, Number(orderQty) || 1)}
+        />
       ) : null}
 
       <div className="mesWoTableCard">

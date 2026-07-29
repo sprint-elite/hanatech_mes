@@ -17,6 +17,19 @@ type Row = {
   createdAt: string
 }
 
+type ProductProcessSummaryRow = {
+  processId: number
+  processCode: string
+  processName: string
+  sequence: number
+  standardTime: number | null
+  baseQty: number | null
+  inputQty: number
+  goodQty: number
+  defectQty: number
+  workMinutes: number
+}
+
 type ProductSummaryRow = {
   productId: number
   productCode: string
@@ -26,6 +39,7 @@ type ProductSummaryRow = {
   goodQty: number
   defectQty: number
   workMinutes: number
+  processes: ProductProcessSummaryRow[]
 }
 
 const PAGE_SIZE = 20
@@ -43,6 +57,86 @@ const empty = (): WorkerFormState => ({
 
 function totalPages(n: number, pageSize: number) {
   return Math.max(1, Math.ceil(Math.max(0, n) / pageSize))
+}
+
+function fmtSeconds(sec: number): string {
+  const rounded = Math.round(sec * 10000) / 10000
+  return rounded.toLocaleString('ko-KR', { maximumFractionDigits: 4 })
+}
+
+function fmtStandardLabel(standardTime: number | null, baseQty: number | null): string {
+  if (standardTime == null || baseQty == null) return '표준 미등록'
+  return `${fmtSeconds(standardTime)}초 / ${baseQty.toLocaleString('ko-KR')}개`
+}
+
+function fmtProductStandardSummary(processes: ProductProcessSummaryRow[]): string {
+  const withStd = processes.filter((p) => p.standardTime != null && p.baseQty != null)
+  if (withStd.length === 0) return '—'
+  const totalSec = withStd.reduce((s, p) => s + (p.standardTime ?? 0), 0)
+  return `${fmtSeconds(totalSec)}초 (${withStd.length}공정)`
+}
+
+function sumDraftWorkMinutes(processes: ProductProcessSummaryRow[], draft: Record<number, string>): number {
+  return processes.reduce((s, p) => {
+    const n = Number((draft[p.processId] ?? '0').replace(/\D/g, '') || 0)
+    return s + (Number.isFinite(n) ? n : 0)
+  }, 0)
+}
+
+function processMinutesFromDraft(processId: number, draft: Record<number, string>): number {
+  const n = Number((draft[processId] ?? '0').replace(/\D/g, '') || 0)
+  return Number.isFinite(n) ? n : 0
+}
+
+function qtyBasisForEfficiency(goodQty: number, inputQty: number): number {
+  if (goodQty > 0) return goodQty
+  if (inputQty > 0) return inputQty
+  return 0
+}
+
+function fmtWorkEfficiency(
+  workMinutes: number,
+  goodQty: number,
+  inputQty: number,
+  standardTime: number | null,
+  baseQty: number | null,
+): string {
+  const qty = qtyBasisForEfficiency(goodQty, inputQty)
+  if (workMinutes <= 0 || qty <= 0) return '—'
+  const secPerUnit = (workMinutes * 60) / qty
+  const secLabel = `${fmtSeconds(secPerUnit)}초/개`
+  if (standardTime == null || baseQty == null || baseQty <= 0) return secLabel
+  const stdSecPerUnit = standardTime / baseQty
+  const effPct = stdSecPerUnit > 0 ? Math.round((stdSecPerUnit / secPerUnit) * 1000) / 10 : 0
+  return `${secLabel} · 효율 ${effPct}%`
+}
+
+function todayYmdLocal(): string {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+type WorkTimeEntryDraft = {
+  productionLotId: number | null
+  workDate: string
+  planNo: string
+  woNo: string
+  lotNo: string
+  inputQty: string
+  goodQty: string
+  defectQty: string
+  workMinutes: string
+}
+
+function workTimeRowKey(row: WorkTimeEntryDraft): string {
+  return row.productionLotId != null ? `lot:${row.productionLotId}` : `date:${row.workDate}`
+}
+
+function digitsOnly(value: string): string {
+  return value.replace(/\D/g, '')
 }
 
 function IconSearch() {
@@ -191,12 +285,16 @@ function AbilityRing({
 function sumWorkerTotals(rows: ProductSummaryRow[], workMinutesDraft: Record<number, string>) {
   return rows.reduce(
     (a, r) => {
-      const wm = Number(workMinutesDraft[r.productId]?.replace(/\D/g, '') || 0)
+      let minutes = 0
+      for (const p of r.processes ?? []) {
+        const wm = Number(workMinutesDraft[p.processId]?.replace(/\D/g, '') || 0)
+        minutes += Number.isFinite(wm) ? wm : 0
+      }
       return {
         input: a.input + r.inputQty,
         good: a.good + r.goodQty,
         defect: a.defect + r.defectQty,
-        minutes: a.minutes + (Number.isFinite(wm) ? wm : 0),
+        minutes: a.minutes + minutes,
       }
     },
     { input: 0, good: 0, defect: 0, minutes: 0 },
@@ -413,6 +511,23 @@ type StatsProduct = {
   itemType: string
 }
 
+type StatsProcessCell = {
+  workerId: number
+  workerName: string
+  productId: number
+  processId: number
+  processCode: string
+  processName: string
+  sequence: number
+  inputQty: number
+  goodQty: number
+  defectQty: number
+  workMinutes: number
+  secPerUnit: number | null
+  standardSecPerUnit: number | null
+  efficiencyPct: number | null
+}
+
 type WorkerAggRow = {
   workerId: number
   workerName: string
@@ -526,7 +641,7 @@ function CompareBarChart({
               title={`${r.workerName} · 투입 ${r.inputQty} · 양품 ${r.goodQty} · 불량 ${r.defectQty}`}
             >
               <span className="mesWrBarRank">{i + 1}</span>
-              <span className="mesWrBarLabel">{r.workerName}</span>
+              <span className="mesWrBarLabel mesWrBarLabel--full">{r.workerName}</span>
               <div className="mesWrBarTrack">
                 <div className={`mesWrBarFill mesWrBarFill--${barVariant}`} style={{ width: `${Math.max(pct, val > 0 ? 4 : 0)}%` }} />
               </div>
@@ -539,14 +654,335 @@ function CompareBarChart({
   )
 }
 
+type ProcessChartFilters = {
+  productId: string
+  processId: string
+  workerId: string
+}
+
+type ProcessGroup = {
+  processId: number
+  sequence: number
+  processName: string
+  processCode: string
+  standardSecPerUnit: number | null
+  rows: StatsProcessCell[]
+}
+
+function productOptionsFromCells(processCells: StatsProcessCell[], products: StatsProduct[]) {
+  const ids = new Set(processCells.map((c) => c.productId))
+  return products.filter((p) => ids.has(p.id))
+}
+
+function processOptionsFromCells(processCells: StatsProcessCell[], productId: number) {
+  const map = new Map<number, { id: number; sequence: number; name: string; code: string }>()
+  for (const c of processCells) {
+    if (c.productId !== productId) continue
+    if (!map.has(c.processId)) {
+      map.set(c.processId, { id: c.processId, sequence: c.sequence, name: c.processName, code: c.processCode })
+    }
+  }
+  return [...map.values()].sort((a, b) => a.sequence - b.sequence)
+}
+
+function workerOptionsFromCells(
+  processCells: StatsProcessCell[],
+  productId: number,
+  processId: string,
+) {
+  const map = new Map<number, string>()
+  for (const c of processCells) {
+    if (c.productId !== productId) continue
+    if (processId && c.processId !== Number(processId)) continue
+    map.set(c.workerId, c.workerName)
+  }
+  return [...map.entries()]
+    .map(([id, name]) => ({ id, name }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+}
+
+function buildProcessGroups(
+  processCells: StatsProcessCell[],
+  filters: ProcessChartFilters,
+  requireSecPerUnit: boolean,
+): ProcessGroup[] {
+  const productId = filters.productId ? Number(filters.productId) : null
+  if (productId == null || !Number.isFinite(productId)) return []
+
+  let scoped = processCells.filter((c) => c.productId === productId)
+  if (filters.processId) scoped = scoped.filter((c) => c.processId === Number(filters.processId))
+  if (filters.workerId) scoped = scoped.filter((c) => c.workerId === Number(filters.workerId))
+
+  const byProcess = new Map<number, StatsProcessCell[]>()
+  for (const c of scoped) {
+    if (requireSecPerUnit && (c.secPerUnit == null || c.secPerUnit <= 0)) continue
+    const list = byProcess.get(c.processId) ?? []
+    list.push(c)
+    byProcess.set(c.processId, list)
+  }
+
+  return [...byProcess.entries()]
+    .map(([processId, rows]) => ({
+      processId,
+      sequence: rows[0]!.sequence,
+      processName: rows[0]!.processName,
+      processCode: rows[0]!.processCode,
+      standardSecPerUnit: rows[0]!.standardSecPerUnit,
+      rows,
+    }))
+    .filter((g) => g.rows.length > 0)
+    .sort((a, b) => a.sequence - b.sequence)
+}
+
+function ProcessChartFilterRow({
+  idPrefix,
+  filters,
+  onChange,
+  productList,
+  processCells,
+}: {
+  idPrefix: string
+  filters: ProcessChartFilters
+  onChange: (next: ProcessChartFilters) => void
+  productList: StatsProduct[]
+  processCells: StatsProcessCell[]
+}) {
+  const productIdNum = filters.productId ? Number(filters.productId) : null
+  const processOpts =
+    productIdNum != null && Number.isFinite(productIdNum)
+      ? processOptionsFromCells(processCells, productIdNum)
+      : []
+  const workerOpts =
+    productIdNum != null && Number.isFinite(productIdNum)
+      ? workerOptionsFromCells(processCells, productIdNum, filters.processId)
+      : []
+
+  const setProduct = (productId: string) => {
+    onChange({ productId, processId: '', workerId: '' })
+  }
+  const setProcess = (processId: string) => {
+    onChange({ ...filters, processId, workerId: '' })
+  }
+  const setWorker = (workerId: string) => {
+    onChange({ ...filters, workerId })
+  }
+
+  return (
+    <div className="mesWrStatsCardFilters">
+      <label className="mesWrStatsCardFilter" htmlFor={`${idPrefix}-product`}>
+        <span className="mesWrFieldLabel">생산품</span>
+        <select
+          id={`${idPrefix}-product`}
+          className="mesWrSelect mesWrStatsCardSelect"
+          value={filters.productId}
+          onChange={(e) => setProduct(e.target.value)}
+          aria-label="생산품 필터"
+        >
+          <option value="">선택</option>
+          {productList.map((p) => (
+            <option key={p.id} value={String(p.id)}>
+              {p.productName}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="mesWrStatsCardFilter" htmlFor={`${idPrefix}-process`}>
+        <span className="mesWrFieldLabel">공정</span>
+        <select
+          id={`${idPrefix}-process`}
+          className="mesWrSelect mesWrStatsCardSelect"
+          value={filters.processId}
+          onChange={(e) => setProcess(e.target.value)}
+          disabled={!filters.productId || processOpts.length === 0}
+          aria-label="공정 필터"
+        >
+          <option value="">전체 공정</option>
+          {processOpts.map((p) => (
+            <option key={p.id} value={String(p.id)}>
+              {p.sequence}. {p.name} ({p.code})
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="mesWrStatsCardFilter" htmlFor={`${idPrefix}-worker`}>
+        <span className="mesWrFieldLabel">작업자</span>
+        <select
+          id={`${idPrefix}-worker`}
+          className="mesWrSelect mesWrStatsCardSelect"
+          value={filters.workerId}
+          onChange={(e) => setWorker(e.target.value)}
+          disabled={!filters.productId || workerOpts.length === 0}
+          aria-label="작업자 필터"
+        >
+          <option value="">전체 작업자</option>
+          {workerOpts.map((w) => (
+            <option key={w.id} value={String(w.id)}>
+              {w.name}
+            </option>
+          ))}
+        </select>
+      </label>
+    </div>
+  )
+}
+
+function ProcessEfficiencyCharts({
+  products,
+  defaultProductId,
+  processCells,
+}: {
+  products: StatsProduct[]
+  defaultProductId: number | null
+  processCells: StatsProcessCell[]
+}) {
+  const emptyFilters = (): ProcessChartFilters => ({ productId: '', processId: '', workerId: '' })
+
+  const [secFilters, setSecFilters] = useState<ProcessChartFilters>(emptyFilters)
+  const [effFilters, setEffFilters] = useState<ProcessChartFilters>(emptyFilters)
+
+  const productList = useMemo(() => productOptionsFromCells(processCells, products), [processCells, products])
+
+  useEffect(() => {
+    if (defaultProductId == null) return
+    const id = String(defaultProductId)
+    setSecFilters({ productId: id, processId: '', workerId: '' })
+    setEffFilters({ productId: id, processId: '', workerId: '' })
+  }, [defaultProductId])
+
+  const secGroups = useMemo(
+    () => buildProcessGroups(processCells, secFilters, true),
+    [processCells, secFilters],
+  )
+
+  const effGroups = useMemo(() => buildProcessGroups(processCells, effFilters, true), [processCells, effFilters])
+
+  const effRows = useMemo(() => {
+    return effGroups
+      .flatMap((g) => g.rows.filter((r) => r.efficiencyPct != null))
+      .sort((a, b) => (b.efficiencyPct ?? 0) - (a.efficiencyPct ?? 0))
+      .slice(0, 12)
+  }, [effGroups])
+
+  const secProductName = productList.find((p) => String(p.id) === secFilters.productId)?.productName
+
+  return (
+    <>
+      <section className="mesWrStatsCard">
+        <h3 className="mesWrStatsCardTitle">공정별 개당 작업시간(초)</h3>
+        <ProcessChartFilterRow
+          idPrefix="mes-stats-sec"
+          filters={secFilters}
+          onChange={setSecFilters}
+          productList={productList}
+          processCells={processCells}
+        />
+        <p className="mesWrStatsBest muted small">작업시간(분)×60 ÷ 양품(없으면 투입) · 작업자 비교</p>
+        {!secFilters.productId ? (
+          <div className="mesWrStatsEmpty">생산품을 선택하세요.</div>
+        ) : secGroups.length === 0 ? (
+          <div className="mesWrStatsEmpty">조건에 맞는 작업시간 데이터가 없습니다.</div>
+        ) : (
+          <div className="mesWrProcessChartStack">
+            {secGroups.map((g) => {
+              const std =
+                g.standardSecPerUnit != null
+                  ? `표준 ${fmtSeconds(g.standardSecPerUnit)}초/개`
+                  : '표준 미등록'
+              const localMax = Math.max(1, ...g.rows.map((r) => r.secPerUnit ?? 0))
+              return (
+                <div key={g.processId} className="mesWrProcessChartGroup">
+                  <div className="mesWrProcessChartHead">
+                    <span className="mesWrProcessChartTitle">
+                      {g.sequence}. {g.processName}
+                    </span>
+                    <span className="muted small mono">
+                      {g.processCode} · {std}
+                      {secProductName ? ` · ${secProductName}` : ''}
+                    </span>
+                  </div>
+                  <div className="mesWrBarChart">
+                    {g.rows
+                      .sort((a, b) => (a.secPerUnit ?? 0) - (b.secPerUnit ?? 0))
+                      .map((r, i) => {
+                        const val = r.secPerUnit ?? 0
+                        const pct = Math.round((val / localMax) * 100)
+                        return (
+                          <div
+                            key={r.workerId}
+                            className={`mesWrBarRow mesWrBarRow--plain${i === 0 ? ' mesWrBarRow--best' : ''}`}
+                          >
+                            <span className="mesWrBarLabel mesWrBarLabel--full">{r.workerName}</span>
+                            <div className="mesWrBarTrack">
+                              <div className="mesWrBarFill mesWrBarFill--eff" style={{ width: `${Math.max(pct, 4)}%` }} />
+                            </div>
+                            <span className="mesWrBarVal mono">{fmtSeconds(val)}초</span>
+                          </div>
+                        )
+                      })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="mesWrStatsCard">
+        <h3 className="mesWrStatsCardTitle">공정별 표준 대비 효율(%)</h3>
+        <ProcessChartFilterRow
+          idPrefix="mes-stats-eff"
+          filters={effFilters}
+          onChange={setEffFilters}
+          productList={productList}
+          processCells={processCells}
+        />
+        {!effFilters.productId ? (
+          <div className="mesWrStatsEmpty">생산품을 선택하세요.</div>
+        ) : effRows.length === 0 ? (
+          <div className="mesWrStatsEmpty">조건에 맞는 표준 대비 효율 데이터가 없습니다.</div>
+        ) : (
+          <>
+            {effRows[0] ? (
+              <p className="mesWrStatsBest">
+                최고 효율: <strong>{effRows[0].workerName}</strong> ({effRows[0].efficiencyPct}%)
+              </p>
+            ) : null}
+            <div className="mesWrBarChart">
+              {effRows.map((r, i) => {
+                const val = r.efficiencyPct ?? 0
+                const pct = Math.min(100, Math.round(val))
+                return (
+                  <div
+                    key={`${r.processId}-${r.workerId}`}
+                    className={`mesWrBarRow${i === 0 ? ' mesWrBarRow--best' : ''}`}
+                  >
+                    <span className="mesWrBarRank">{i + 1}</span>
+                    <span className="mesWrBarLabel mesWrBarLabel--full">{r.workerName}</span>
+                    <div className="mesWrBarTrack">
+                      <div className="mesWrBarFill mesWrBarFill--good" style={{ width: `${Math.max(pct, val > 0 ? 4 : 0)}%` }} />
+                    </div>
+                    <span className="mesWrBarVal mono">{val}%</span>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        )}
+      </section>
+    </>
+  )
+}
+
 function WorkerStatsPanel({
   loading,
   products,
   cells,
+  processCells,
 }: {
   loading: boolean
   products: StatsProduct[]
   cells: StatsCell[]
+  processCells: StatsProcessCell[]
 }) {
   const [productFilter, setProductFilter] = useState('')
 
@@ -565,6 +1001,28 @@ function WorkerStatsPanel({
   const selectedName = productFilter
     ? products.find((p) => String(p.id) === productFilter)?.productName ?? null
     : null
+
+  const chartProductId = useMemo(() => {
+    if (productFilter) return Number(productFilter)
+    const totals = new Map<number, number>()
+    for (const c of processCells) {
+      totals.set(c.productId, (totals.get(c.productId) ?? 0) + c.goodQty)
+    }
+    let bestId: number | null = null
+    let bestGood = 0
+    for (const [id, good] of totals) {
+      if (good > bestGood) {
+        bestGood = good
+        bestId = id
+      }
+    }
+    return bestId
+  }, [productFilter, processCells])
+
+  const chartProductName = useMemo(() => {
+    if (chartProductId == null) return null
+    return products.find((p) => p.id === chartProductId)?.productName ?? null
+  }, [chartProductId, products])
 
   if (loading) {
     return <div className="mesWrStatsEmpty mesWrStatsEmpty--page">통계 로딩 중…</div>
@@ -591,6 +1049,9 @@ function WorkerStatsPanel({
         </div>
         <div className="mesWrStatsFilterHint">
           {selectedName ? `${selectedName} · 작업자별 비교` : '전체 품목 실적 합산 비교'}
+          {chartProductName && !productFilter ? (
+            <span className="mesWrStatsFilterCount muted"> · 공정 차트: {chartProductName}</span>
+          ) : null}
           {aggRows.length > 0 ? <span className="mesWrStatsFilterCount"> · {aggRows.length}명</span> : null}
         </div>
       </div>
@@ -659,9 +1120,127 @@ function WorkerStatsPanel({
               </table>
             </div>
           </section>
+          <div className="mesWrStatsProcessRow">
+            <ProcessEfficiencyCharts
+              products={products}
+              defaultProductId={chartProductId}
+              processCells={processCells}
+            />
+          </div>
         </div>
       )}
     </section>
+  )
+}
+
+function WorkTimeEntryModal({
+  open,
+  workerName,
+  process,
+  rows,
+  loading,
+  saving,
+  onChangeRows,
+  onSave,
+  onClose,
+}: {
+  open: boolean
+  workerName: string
+  process: ProductProcessSummaryRow
+  rows: WorkTimeEntryDraft[]
+  loading: boolean
+  saving: boolean
+  onChangeRows: (rows: WorkTimeEntryDraft[]) => void
+  onSave: () => void
+  onClose: () => void
+}) {
+  if (!open) return null
+
+  const totalMinutes = rows.reduce((s, r) => s + Number(digitsOnly(r.workMinutes) || 0), 0)
+
+  return (
+    <div className="mesModalRoot mesModalRootNested" role="presentation">
+      <button type="button" className="mesModalBackdrop" aria-label="닫기" onClick={() => !saving && onClose()} />
+      <div className="mesModalDialog mesModalDialogWide" role="dialog" aria-modal="true">
+        <div className="mesModalHead">
+          <div>
+            <h2 className="mesModalTitle">
+              작업시간 입력 · {process.processName}
+            </h2>
+            <p className="mesModalMeta muted">
+              {workerName} · 투입·양품·불량은 공정 실적(LOT별) 자동 집계, 작업시간(분)만 입력. 합계{' '}
+              {totalMinutes.toLocaleString()}분
+            </p>
+          </div>
+          <div className="mesModalHeadActions">
+            <button type="button" className="mesBtnPrimary" disabled={saving || loading} onClick={() => void onSave()}>
+              {saving ? '저장 중…' : '저장'}
+            </button>
+            <button type="button" className="mesBtnSecondary" disabled={saving} onClick={onClose}>
+              닫기
+            </button>
+          </div>
+        </div>
+        <div className="mesModalBody">
+          {loading ? (
+            <p className="muted">불러오는 중…</p>
+          ) : (
+            <>
+              <div className="mesTableWrap mesTableScroll" style={{ maxHeight: 'min(50vh, 400px)' }}>
+                <table className="mesTable mesTableCompact">
+                  <thead>
+                    <tr>
+                      <th>작업일</th>
+                      <th>생산계획</th>
+                      <th>작업지시</th>
+                      <th>생산 LOT</th>
+                      <th>투입</th>
+                      <th>양품</th>
+                      <th>불량</th>
+                      <th>작업시간 (분)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="muted">
+                          해당 공정에 실적이 있는 LOT가 없습니다. 현장 실적 입력 후 다시 열어 주세요.
+                        </td>
+                      </tr>
+                    ) : (
+                      rows.map((row, idx) => (
+                        <tr key={workTimeRowKey(row)}>
+                          <td className="mono">{row.workDate}</td>
+                          <td className="mono">{row.planNo || '—'}</td>
+                          <td className="mono">{row.woNo || '—'}</td>
+                          <td className="mono">{row.lotNo || '—'}</td>
+                          <td className="mono">{Number(row.inputQty || 0).toLocaleString()}</td>
+                          <td className="mono">{Number(row.goodQty || 0).toLocaleString()}</td>
+                          <td className="mono">{Number(row.defectQty || 0).toLocaleString()}</td>
+                          <td>
+                            <input
+                              className="mesInput mesWorkerMinutesInput"
+                              inputMode="numeric"
+                              aria-label={`${row.lotNo || row.workDate} 작업시간(분)`}
+                              value={row.workMinutes}
+                              onChange={(ev) => {
+                                const next = [...rows]
+                                next[idx] = { ...row, workMinutes: digitsOnly(ev.target.value) }
+                                onChangeRows(next)
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -684,11 +1263,19 @@ export function WorkersPage() {
   const [detailWorker, setDetailWorker] = useState<Row | null>(null)
   const [summaryRows, setSummaryRows] = useState<ProductSummaryRow[]>([])
   const [summaryLoading, setSummaryLoading] = useState(false)
-  const [summarySaving, setSummarySaving] = useState(false)
   const [workMinutesDraft, setWorkMinutesDraft] = useState<Record<number, string>>({})
+  const [processModalProduct, setProcessModalProduct] = useState<ProductSummaryRow | null>(null)
+  const [workTimeEntryTarget, setWorkTimeEntryTarget] = useState<{
+    process: ProductProcessSummaryRow
+    product: ProductSummaryRow
+  } | null>(null)
+  const [workTimeEntryRows, setWorkTimeEntryRows] = useState<WorkTimeEntryDraft[]>([])
+  const [workTimeEntryLoading, setWorkTimeEntryLoading] = useState(false)
+  const [workTimeEntrySaving, setWorkTimeEntrySaving] = useState(false)
 
   const [statsProducts, setStatsProducts] = useState<StatsProduct[]>([])
   const [statsCells, setStatsCells] = useState<StatsCell[]>([])
+  const [statsProcessCells, setStatsProcessCells] = useState<StatsProcessCell[]>([])
   const [statsLoading, setStatsLoading] = useState(false)
 
   const load = useCallback(async () => {
@@ -708,16 +1295,21 @@ export function WorkersPage() {
   const loadStats = useCallback(async () => {
     setStatsLoading(true)
     try {
-      const data = await apiJson<{ ok: boolean; products: StatsProduct[]; cells: StatsCell[] }>(
-        '/api/workers/stats/comparison',
-      )
+      const data = await apiJson<{
+        ok: boolean
+        products: StatsProduct[]
+        cells: StatsCell[]
+        processCells: StatsProcessCell[]
+      }>('/api/workers/stats/comparison')
       setStatsProducts(data.products)
       setStatsCells(data.cells)
+      setStatsProcessCells(data.processCells ?? [])
       setErr(null)
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
       setStatsProducts([])
       setStatsCells([])
+      setStatsProcessCells([])
     } finally {
       setStatsLoading(false)
     }
@@ -808,10 +1400,17 @@ export function WorkersPage() {
       const data = await apiJson<{ ok: boolean; items: ProductSummaryRow[] }>(
         `/api/workers/${worker.id}/product-summary`,
       )
-      setSummaryRows(data.items)
+      setSummaryRows(
+        data.items.map((r) => ({
+          ...r,
+          processes: r.processes ?? [],
+        })),
+      )
       const draft: Record<number, string> = {}
       for (const r of data.items) {
-        draft[r.productId] = String(r.workMinutes)
+        for (const p of r.processes ?? []) {
+          draft[p.processId] = String(p.workMinutes)
+        }
       }
       setWorkMinutesDraft(draft)
     } catch (e) {
@@ -827,27 +1426,84 @@ export function WorkersPage() {
     setDetailWorker(null)
     setSummaryRows([])
     setWorkMinutesDraft({})
+    setProcessModalProduct(null)
+    setWorkTimeEntryTarget(null)
+    setWorkTimeEntryRows([])
   }
 
-  const saveWorkTimes = async () => {
+  const openWorkTimeEntry = async (product: ProductSummaryRow, process: ProductProcessSummaryRow) => {
     if (!detailWorker) return
-    setSummarySaving(true)
+    setWorkTimeEntryTarget({ product, process })
+    setWorkTimeEntryLoading(true)
+    setWorkTimeEntryRows([])
+    try {
+      const data = await apiJson<{
+        ok: boolean
+        items: Array<{
+          productionLotId: number | null
+          workDate: string
+          planNo: string | null
+          woNo: string | null
+          lotNo: string | null
+          inputQty: number
+          goodQty: number
+          defectQty: number
+          workMinutes: number
+        }>
+      }>(`/api/workers/${detailWorker.id}/process-work-time-entries?processId=${process.processId}`)
+      const rows = data.items.map((e) => ({
+        productionLotId: e.productionLotId,
+        workDate: e.workDate,
+        planNo: e.planNo ?? '',
+        woNo: e.woNo ?? '',
+        lotNo: e.lotNo ?? '',
+        inputQty: String(e.inputQty),
+        goodQty: String(e.goodQty),
+        defectQty: String(e.defectQty),
+        workMinutes: String(e.workMinutes),
+      }))
+      setWorkTimeEntryRows(rows)
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'unknown error')
+      setWorkTimeEntryRows([])
+    } finally {
+      setWorkTimeEntryLoading(false)
+    }
+  }
+
+  const closeWorkTimeEntry = () => {
+    if (workTimeEntrySaving) return
+    setWorkTimeEntryTarget(null)
+    setWorkTimeEntryRows([])
+  }
+
+  const saveWorkTimeEntries = async () => {
+    if (!detailWorker || !workTimeEntryTarget) return
+    setWorkTimeEntrySaving(true)
     setErr(null)
     try {
-      const items = summaryRows.map((r) => {
-        const raw = workMinutesDraft[r.productId] ?? '0'
-        const n = Number(raw.replace(/\D/g, ''))
-        return { productId: r.productId, workMinutes: Number.isFinite(n) ? Math.max(0, n) : 0 }
-      })
-      await apiJson(`/api/workers/${detailWorker.id}/product-work-times`, {
-        method: 'PUT',
-        body: JSON.stringify({ items }),
-      })
-      await openDetail(detailWorker)
+      const entries = workTimeEntryRows.map((r) => ({
+        productionLotId: r.productionLotId,
+        workDate: r.workDate,
+        workMinutes: Number(digitsOnly(r.workMinutes) || 0),
+      }))
+      const res = await apiJson<{ ok: boolean; workMinutes: number }>(
+        `/api/workers/${detailWorker.id}/process-work-time-entries`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({
+            processId: workTimeEntryTarget.process.processId,
+            entries,
+          }),
+        },
+      )
+      const pid = workTimeEntryTarget.process.processId
+      setWorkMinutesDraft((d) => ({ ...d, [pid]: String(res.workMinutes ?? 0) }))
+      closeWorkTimeEntry()
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
     } finally {
-      setSummarySaving(false)
+      setWorkTimeEntrySaving(false)
     }
   }
 
@@ -956,7 +1612,12 @@ export function WorkersPage() {
       ) : null}
 
       {pageTab === 'stats' ? (
-        <WorkerStatsPanel loading={statsLoading} products={statsProducts} cells={statsCells} />
+        <WorkerStatsPanel
+          loading={statsLoading}
+          products={statsProducts}
+          cells={statsCells}
+          processCells={statsProcessCells}
+        />
       ) : null}
 
       {pageTab === 'list' ? (
@@ -1153,18 +1814,10 @@ export function WorkersPage() {
                   작업 실적 상세 · {detailWorker.workerName}
                 </h2>
                 <p className="mesModalMeta muted">
-                  {detailWorker.workerCode} · 품목별 투입·양품·불량은 공정 실적 집계, 작업시간은 관리자 수동 입력(분)
+                  {detailWorker.workerCode} · 투입·양품·불량은 공정 실적 집계, 작업시간은 일자별 입력 합계(분)
                 </p>
               </div>
               <div className="mesModalHeadActions">
-                <button
-                  type="button"
-                  className="mesBtnPrimary"
-                  disabled={summaryLoading || summarySaving}
-                  onClick={() => void saveWorkTimes()}
-                >
-                  {summarySaving ? '저장 중…' : '작업시간 저장'}
-                </button>
                 <button type="button" className="mesBtnSecondary" onClick={closeDetail}>
                   닫기
                 </button>
@@ -1177,7 +1830,7 @@ export function WorkersPage() {
                 loading={summaryLoading}
               />
               <div className="mesTableWrap mesTableScroll" style={{ maxHeight: 'min(50vh, 420px)', marginTop: 12 }}>
-                <table className="mesTable">
+                <table className="mesTable mesWorkerProcessTable">
                   <thead>
                     <tr>
                       <th>품목</th>
@@ -1185,26 +1838,28 @@ export function WorkersPage() {
                       <th>투입</th>
                       <th>양품</th>
                       <th>불량</th>
+                      <th>표준시간 (MBOM)</th>
                       <th>작업시간 (분)</th>
                     </tr>
                   </thead>
                   <tbody>
                     {summaryLoading ? (
                       <tr>
-                        <td colSpan={6} className="muted">
+                        <td colSpan={7} className="muted">
                           로딩 중…
                         </td>
                       </tr>
                     ) : summaryRows.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="muted">
+                        <td colSpan={7} className="muted">
                           등록된 생산 품목이 없습니다.
                         </td>
                       </tr>
                     ) : (
                       summaryRows.map((r) => {
+                        const processes = r.processes ?? []
                         const hasActivity = r.inputQty > 0 || r.goodQty > 0 || r.defectQty > 0
-                        const wm = workMinutesDraft[r.productId] ?? '0'
+                        const totalMinutes = sumDraftWorkMinutes(processes, workMinutesDraft)
                         return (
                           <tr key={r.productId} className={hasActivity ? 'mesTrHighlight' : undefined}>
                             <td>
@@ -1215,19 +1870,28 @@ export function WorkersPage() {
                             <td>{r.inputQty.toLocaleString()}</td>
                             <td>{r.goodQty.toLocaleString()}</td>
                             <td>{r.defectQty.toLocaleString()}</td>
+                            <td className="small">
+                              {processes.length === 0 ? (
+                                <span className="muted">공정 없음</span>
+                              ) : (
+                                fmtProductStandardSummary(processes)
+                              )}
+                            </td>
                             <td>
-                              <input
-                                className="mesInput mesWorkerMinutesInput"
-                                inputMode="numeric"
-                                aria-label={`${r.productName} 작업시간(분)`}
-                                value={wm}
-                                onChange={(ev) =>
-                                  setWorkMinutesDraft((d) => ({
-                                    ...d,
-                                    [r.productId]: ev.target.value.replace(/\D/g, ''),
-                                  }))
-                                }
-                              />
+                              {processes.length === 0 ? (
+                                <span className="muted small">—</span>
+                              ) : (
+                                <div className="mesWorkerTimeCell">
+                                  <span className="mono mesWorkerTimeSum">{totalMinutes.toLocaleString()}분</span>
+                                  <button
+                                    type="button"
+                                    className="mesWrActionBtn"
+                                    onClick={() => setProcessModalProduct(r)}
+                                  >
+                                    상세보기
+                                  </button>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         )
@@ -1238,6 +1902,108 @@ export function WorkersPage() {
               </div>
             </div>
           </div>
+
+          {processModalProduct ? (
+            <div className="mesModalRoot mesModalRootNested" role="presentation">
+              <button
+                type="button"
+                className="mesModalBackdrop"
+                aria-label="닫기"
+                onClick={() => !workTimeEntrySaving && setProcessModalProduct(null)}
+              />
+              <div
+                className="mesModalDialog mesModalDialogWide"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="mes-worker-process-modal-title"
+              >
+                <div className="mesModalHead">
+                  <div>
+                    <h2 className="mesModalTitle" id="mes-worker-process-modal-title">
+                      공정별 작업시간 · {processModalProduct.productName}
+                    </h2>
+                    <p className="mesModalMeta muted">
+                      {processModalProduct.productCode} · 표준시간은 MBOM 공정에 등록된 값(초/기준수량)입니다.
+                    </p>
+                  </div>
+                  <div className="mesModalHeadActions">
+                    <button
+                      type="button"
+                      className="mesBtnSecondary"
+                      onClick={() => setProcessModalProduct(null)}
+                    >
+                      닫기
+                    </button>
+                  </div>
+                </div>
+                <div className="mesModalBody">
+                  <div className="mesTableWrap mesTableScroll" style={{ maxHeight: 'min(55vh, 480px)' }}>
+                    <table className="mesTable mesTableCompact">
+                      <thead>
+                        <tr>
+                          <th>공정</th>
+                          <th>순서</th>
+                          <th>표준시간</th>
+                          <th>투입</th>
+                          <th>양품</th>
+                          <th>불량</th>
+                          <th>작업시간 (분)</th>
+                          <th>작업시간 입력</th>
+                          <th>작업효율</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(processModalProduct.processes ?? []).map((p) => {
+                          const minutes = processMinutesFromDraft(p.processId, workMinutesDraft)
+                          const rowActive = p.inputQty > 0 || p.goodQty > 0 || p.defectQty > 0
+                          return (
+                            <tr key={p.processId} className={rowActive ? 'mesTrHighlight' : undefined}>
+                              <td>
+                                <div>{p.processName}</div>
+                                <div className="muted small mono">{p.processCode}</div>
+                              </td>
+                              <td className="mono">{p.sequence}</td>
+                              <td className="small">{fmtStandardLabel(p.standardTime, p.baseQty)}</td>
+                              <td>{p.inputQty.toLocaleString()}</td>
+                              <td>{p.goodQty.toLocaleString()}</td>
+                              <td>{p.defectQty.toLocaleString()}</td>
+                              <td className="mono">{minutes.toLocaleString()}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="mesWrActionBtn"
+                                  onClick={() => void openWorkTimeEntry(processModalProduct, p)}
+                                >
+                                  작업시간 입력
+                                </button>
+                              </td>
+                              <td className="small">
+                                {fmtWorkEfficiency(minutes, p.goodQty, p.inputQty, p.standardTime, p.baseQty)}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {workTimeEntryTarget ? (
+                <WorkTimeEntryModal
+                  open
+                  workerName={detailWorker.workerName}
+                  process={workTimeEntryTarget.process}
+                  rows={workTimeEntryRows}
+                  loading={workTimeEntryLoading}
+                  saving={workTimeEntrySaving}
+                  onChangeRows={setWorkTimeEntryRows}
+                  onSave={() => void saveWorkTimeEntries()}
+                  onClose={closeWorkTimeEntry}
+                />
+              ) : null}
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>

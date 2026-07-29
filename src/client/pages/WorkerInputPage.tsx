@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError, apiJson } from '../lib/api'
-import { getStoredUser, isGuestRole, setStoredUser } from '../lib/auth'
+import { getStoredUser, isGuestRole, setStoredUser, type MesAuthUser } from '../lib/auth'
 import './worker-input.css'
 
 type LotRow = {
@@ -23,6 +23,12 @@ type LotRow = {
     holdReason?: string | null
     plan?: { planNo: string }
     assignedWorkers?: { worker: { id: number; workerCode: string; workerName: string } }[]
+    assignedProcessWorkers?: {
+      processId: number
+      workerId: number
+      worker?: { id: number; workerCode: string; workerName: string }
+      process?: { id: number; processCode: string; processName: string; sequence: number }
+    }[]
   }
 }
 
@@ -59,6 +65,8 @@ const lineLabel = (lot: LotRow) => {
   if (lot.workCenter) return lot.workCenter.centerName
   return '라인 미지정'
 }
+
+type WorkerBrief = { id: number; workerCode: string; workerName: string }
 
 function QtyStepper({
   label,
@@ -118,6 +126,16 @@ export function WorkerInputPage() {
 
   const selectedLot = useMemo(() => lots.find((l) => l.id === selectedLotId) ?? null, [lots, selectedLotId])
 
+  const assignableWorkersOnLot = useMemo(() => {
+    const rows = selectedLot?.workOrder?.assignedProcessWorkers ?? []
+    const map = new Map<number, { id: number; workerCode: string; workerName: string }>()
+    for (const r of rows) {
+      if (r.worker) map.set(r.worker.id, r.worker)
+      else map.set(r.workerId, { id: r.workerId, workerCode: String(r.workerId), workerName: `작업자#${r.workerId}` })
+    }
+    return [...map.values()].sort((a, b) => a.workerCode.localeCompare(b.workerCode, 'ko'))
+  }, [selectedLot])
+
   const activeLots = useMemo(
     () =>
       lots.filter(
@@ -146,10 +164,38 @@ export function WorkerInputPage() {
 
   const remainingQty = selectedLot ? Math.max(0, selectedLot.lotQty - selectedLot.goodQty - selectedLot.defectQty) : 0
 
-  const resolvedWorkerId = useMemo(() => {
-    const workers = selectedLot?.workOrder?.assignedWorkers ?? []
-    return workers[0]?.worker.id ?? undefined
-  }, [selectedLot])
+  const woProcessAssignments = useMemo(
+    () =>
+      [...(selectedLot?.workOrder?.assignedProcessWorkers ?? [])].sort(
+        (a, b) => (a.process?.sequence ?? 0) - (b.process?.sequence ?? 0),
+      ),
+    [selectedLot],
+  )
+
+  const hasWoAssignments = woProcessAssignments.length > 0
+
+  const assignmentSummaryLabel = useMemo(() => {
+    if (!hasWoAssignments) return null
+    const names = [...new Set(woProcessAssignments.map((a) => a.worker?.workerName ?? `작업자#${a.workerId}`))]
+    return `배정 ${names.length}명 · 공정 ${woProcessAssignments.length}건 (${names.join(', ')})`
+  }, [hasWoAssignments, woProcessAssignments])
+
+  const targetProcessIds = useMemo(
+    () => woProcessAssignments.map((a) => a.processId),
+    [woProcessAssignments],
+  )
+
+  const targetProcessLabel = useMemo(() => {
+    if (woProcessAssignments.length === 0) return null
+    return woProcessAssignments
+      .map((a) => {
+        const seq = a.process?.sequence ?? '?'
+        const name = a.process?.processName ?? `공정#${a.processId}`
+        const who = a.worker?.workerName ?? `작업자#${a.workerId}`
+        return `${seq}. ${name} (${who})`
+      })
+      .join(' · ')
+  }, [woProcessAssignments])
 
   const defectLineSum = useMemo(() => defectLines.reduce((s, d) => s + d.qty, 0), [defectLines])
 
@@ -187,8 +233,12 @@ export function WorkerInputPage() {
           apiJson<{ ok: boolean; items: DefectTypeRow[] }>(`/api/defect-types?productId=${selectedLot.productId}`),
         ])
         const processList = proc.items ?? []
-        const lastProcess = [...processList].sort((a, b) => b.sequence - a.sequence)[0]
-        setAutoProcessId(selectedLot.currentProcessId ?? lastProcess?.id ?? null)
+        if (woProcessAssignments.length > 0) {
+          setAutoProcessId(woProcessAssignments[0]!.processId)
+        } else {
+          const lastProcess = [...processList].sort((a, b) => b.sequence - a.sequence)[0]
+          setAutoProcessId(selectedLot.currentProcessId ?? lastProcess?.id ?? null)
+        }
         setDefectTypes((dt.items ?? []).filter((d) => d.useYn === 'Y'))
       } catch {
         setAutoProcessId(null)
@@ -196,7 +246,7 @@ export function WorkerInputPage() {
       }
     }
     void run()
-  }, [selectedLot])
+  }, [selectedLot, woProcessAssignments])
 
   useEffect(() => {
     if (defectQty <= 0) {
@@ -249,9 +299,15 @@ export function WorkerInputPage() {
     if (s === 0) {
       if (!selectedLotId) return '생산 LOT를 선택하세요.'
       if (selectedLot?.workOrder?.status === 'HOLD') return '보류 중인 작업지시입니다. 보류 해제 후 입력하세요.'
+      if (!hasWoAssignments && assignableWorkersOnLot.length === 0) {
+        return '작업지시에 공정별 작업자 배정이 없습니다. 관리자에게 배정을 요청하세요.'
+      }
       return null
     }
     if (s === 1) {
+      if (!hasWoAssignments) {
+        return '작업지시에 공정별 작업자 배정이 없습니다. 관리자에게 배정을 요청하세요.'
+      }
       if (autoProcessId == null) return '이 품목에 등록된 공정이 없습니다. 관리자에게 MBOM 공정 등록을 요청하세요.'
       if (inputQty <= 0) return '투입 수량을 입력하세요.'
       if (goodQty + defectQty > inputQty) return '양품 + 불량은 투입 수량 이하여야 합니다.'
@@ -319,7 +375,6 @@ export function WorkerInputPage() {
           input_qty: inputQty,
           good_qty: goodQty,
           defect_qty: defectQty,
-          worker_id: resolvedWorkerId,
           work_center_id: selectedLot?.workCenterId ?? undefined,
           defects,
         }),
@@ -469,6 +524,12 @@ export function WorkerInputPage() {
                 })
               )}
             </div>
+            {selectedLot && assignmentSummaryLabel ? (
+              <p className="wi__hint" style={{ marginTop: 12 }}>
+                실적 반영: <strong>{assignmentSummaryLabel}</strong>
+                {targetProcessLabel ? <> · {targetProcessLabel}</> : null}
+              </p>
+            ) : null}
           </>
         ) : null}
 
@@ -480,7 +541,7 @@ export function WorkerInputPage() {
             </div>
             <div className="wi__infoRow">
               <span>작업자</span>
-              <span>{workersLabel(selectedLot)}</span>
+              <span>{assignmentSummaryLabel ?? workersLabel(selectedLot)}</span>
             </div>
             <div className="wi__infoRow">
               <span>LOT</span>
@@ -504,6 +565,12 @@ export function WorkerInputPage() {
               <div className="wi__banner wi__banner--warn">
                 이 LOT의 작업지시가 보류(HOLD) 상태입니다.
                 {selectedLot.workOrder.holdReason ? ` 사유: ${selectedLot.workOrder.holdReason}` : ''}
+              </div>
+            ) : null}
+
+            {targetProcessLabel ? (
+              <div className="wi__banner" style={{ marginBottom: 14 }}>
+                실적이 기록될 공정: {targetProcessLabel}
               </div>
             ) : null}
 

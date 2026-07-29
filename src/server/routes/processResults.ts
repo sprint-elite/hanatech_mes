@@ -169,6 +169,7 @@ processResultsRouter.post('/process-results', async (req, res) => {
     })
   }
 
+
   try {
     const result = await prisma.$transaction(async (tx) => {
       // 1) LOT 단위 Lock (FOR UPDATE)
@@ -197,33 +198,94 @@ processResultsRouter.post('/process-results', async (req, res) => {
         return { ok: false as const, status: 404 as const, payload: { ok: false, error: 'LOT_NOT_FOUND' } }
       }
 
-      // 2) 공정 정보 확인 (sequence / 마지막 공정 판단)
-      const proc = await tx.mbomProcess.findUnique({
-        where: { id: body.process_id },
-        select: { id: true, productId: true, sequence: true, useYn: true },
-      })
-      if (!proc || proc.useYn !== 'Y') {
-        return { ok: false as const, status: 400 as const, payload: { ok: false, error: 'PROCESS_INVALID' } }
+      type ResultTarget = { processId: number; sequence: number; workerId: number }
+      let resultTargets: ResultTarget[] = []
+
+      if (lot.woId != null) {
+        const assigned = await tx.workOrderProcessWorker.findMany({
+          where: { woId: lot.woId },
+          select: {
+            workerId: true,
+            processId: true,
+            process: { select: { productId: true, sequence: true, useYn: true } },
+          },
+        })
+        resultTargets = assigned
+          .filter((a) => a.process.useYn === 'Y' && a.process.productId === lot.productId)
+          .map((a) => ({
+            processId: a.processId,
+            sequence: a.process.sequence,
+            workerId: a.workerId,
+          }))
+          .sort((a, b) => a.sequence - b.sequence)
       }
-      if (proc.productId !== lot.productId) {
-        return {
-          ok: false as const,
-          status: 400 as const,
-          payload: { ok: false, error: 'PROCESS_PRODUCT_MISMATCH' },
+
+      if (resultTargets.length === 0) {
+        const proc = await tx.mbomProcess.findUnique({
+          where: { id: body.process_id },
+          select: { id: true, productId: true, sequence: true, useYn: true },
+        })
+        if (!proc || proc.useYn !== 'Y') {
+          return { ok: false as const, status: 400 as const, payload: { ok: false, error: 'PROCESS_INVALID' } }
+        }
+        if (proc.productId !== lot.productId) {
+          return {
+            ok: false as const,
+            status: 400 as const,
+            payload: { ok: false, error: 'PROCESS_PRODUCT_MISMATCH' },
+          }
+        }
+        const fallbackWorkerId = body.worker_id ?? null
+        if (fallbackWorkerId == null) {
+          return {
+            ok: false as const,
+            status: 400 as const,
+            payload: {
+              ok: false,
+              error: 'NO_WO_ASSIGNMENT',
+              message: '작업지시에 공정별 작업자 배정이 없습니다. 관리자에게 배정을 요청하세요.',
+            },
+          }
+        }
+        resultTargets = [{ processId: proc.id, sequence: proc.sequence, workerId: fallbackWorkerId }]
+      } else {
+        const hint = await tx.mbomProcess.findUnique({
+          where: { id: body.process_id },
+          select: { productId: true, useYn: true },
+        })
+        if (!hint || hint.useYn !== 'Y' || hint.productId !== lot.productId) {
+          return { ok: false as const, status: 400 as const, payload: { ok: false, error: 'PROCESS_INVALID' } }
         }
       }
 
-      const last = await tx.mbomProcess.findFirst({
+      const processRows = resultTargets
+      if (processRows.length === 0) {
+        return {
+          ok: false as const,
+          status: 400 as const,
+          payload: {
+            ok: false,
+            error: 'NO_ASSIGNED_PROCESS',
+            message: '이 작업지시에 배정된 공정이 없습니다. 관리자에게 공정별 작업자 배정을 요청하세요.',
+          },
+        }
+      }
+
+      const lastProductProcess = await tx.mbomProcess.findFirst({
         where: { productId: lot.productId, useYn: 'Y' },
         orderBy: { sequence: 'desc' },
         select: { id: true, sequence: true },
       })
-      const isLastProcess = !!last && last.sequence === proc.sequence
+      const maxTargetSequence = Math.max(...processRows.map((p) => p.sequence))
+      const isLastProcess = !!lastProductProcess && lastProductProcess.sequence === maxTargetSequence
+      const currentProcessId = processRows[processRows.length - 1]!.processId
+      const auditWorkerId = processRows[0]!.workerId
+
       /** EBOM 백플러시 기준 수량: 양품·불량 모두 자재를 소모한 것으로 본다 */
       const materialBasisQty = body.good_qty + body.defect_qty
       const matLotStatuses: MaterialLotStatus[] = [MaterialLotStatus.AVAILABLE, MaterialLotStatus.HOLD]
 
-      // 2b) 마지막 공정: EBOM 기준 백플러시 — 자재 LOT(FIFO)으로 lot_material_usage 반영 후, 부족분은 LOT·자재LOT 없는 재고에서 차감
+      // 2b) 마지막 공정 실적 시 EBOM 백플러시만 (MBOM 투입자재와 분리)
       if (isLastProcess && materialBasisQty > 0) {
         const ebomLines = await tx.ebom.findMany({
           where: { parentProductId: lot.productId, useYn: 'Y' },
@@ -237,21 +299,6 @@ processResultsRouter.post('/process-results', async (req, res) => {
           const perUnit = line.qty.mul(mult)
           const prev = perFgByMat.get(line.childProductId) ?? new Prisma.Decimal(0)
           perFgByMat.set(line.childProductId, prev.add(perUnit))
-        }
-
-        const backflushBomLabel = ebomLines.length > 0 ? 'EBOM' : 'MBOM'
-        if (perFgByMat.size === 0) {
-          const mbomLines = await tx.mbomProcessMaterial.findMany({
-            where: { process: { productId: lot.productId, useYn: 'Y' } },
-            select: { materialProductId: true, qty: true, lossRate: true },
-          })
-          for (const line of mbomLines) {
-            const loss = line.lossRate == null ? new Prisma.Decimal(0) : line.lossRate
-            const mult = new Prisma.Decimal(1).add(loss)
-            const perUnit = line.qty.mul(mult)
-            const prev = perFgByMat.get(line.materialProductId) ?? new Prisma.Decimal(0)
-            perFgByMat.set(line.materialProductId, prev.add(perUnit))
-          }
         }
 
         const materialIds = Array.from(perFgByMat.keys())
@@ -298,7 +345,7 @@ processResultsRouter.post('/process-results', async (req, res) => {
               materialLotId: ml.id,
               usedQty: new Prisma.Decimal(take),
               woId: lot.woId,
-              createdBy: body.worker_id,
+              createdBy: auditWorkerId,
               applyWorkOrderMaterial: false,
               skipLotHistory: true,
             })
@@ -336,7 +383,7 @@ processResultsRouter.post('/process-results', async (req, res) => {
                 payload: {
                   ok: false,
                   error: 'INSUFFICIENT_RAW_STOCK',
-                  message: `자재 품목 ID ${materialProductId}의 자재 LOT·LOT 미지정 재고가 부족합니다. (마지막 공정 ${backflushBomLabel} 백플러시·양품+불량 ${materialBasisQty} 기준, 필요 ${remaining}개 남음)`,
+                  message: `자재 품목 ID ${materialProductId}의 자재 LOT·LOT 미지정 재고가 부족합니다. (EBOM 백플러시·양품+불량 ${materialBasisQty} 기준, 필요 ${remaining}개 남음)`,
                   material_product_id: materialProductId,
                 },
               }
@@ -366,7 +413,7 @@ processResultsRouter.post('/process-results', async (req, res) => {
                 refId: body.lot_id,
                 beforeQty: before,
                 afterQty: after,
-                createdBy: body.worker_id,
+                createdBy: auditWorkerId,
               },
             })
             remaining -= take
@@ -389,30 +436,53 @@ processResultsRouter.post('/process-results', async (req, res) => {
             data: {
               productionLotId: body.lot_id,
               eventType: LotHistoryEventType.MOVE,
-              eventDesc: `품목 ${materialNameById.get(materialProductId) ?? `품목#${materialProductId}`} ${needInt}개 출고 (백플러시)`,
+              eventDesc: `품목 ${materialNameById.get(materialProductId) ?? `품목#${materialProductId}`} ${needInt}개 출고 (EBOM 백플러시)`,
             },
           })
         }
       }
 
-      // 3) 공정 결과 기록
-      const processResult = await tx.processResult.create({
-        data: {
-          productionLotId: body.lot_id,
-          processId: body.process_id,
-          processSequence: proc.sequence,
-          workerId: body.worker_id,
-          workCenterId: body.work_center_id,
-          inputQty: body.input_qty,
-          goodQty: body.good_qty,
-          defectQty: body.defect_qty,
-          startTime: body.start_time ? new Date(body.start_time) : null,
-          endTime: body.end_time ? new Date(body.end_time) : null,
-        },
-        select: { id: true },
-      })
+      const recordedAt = new Date()
+      const defects = body.defects ?? []
+      const processResultIds: number[] = []
 
-      // 4) LOT 상태 업데이트 (캐시 + 낙관적 락도 같이)
+      for (let i = 0; i < processRows.length; i++) {
+        const procRow = processRows[i]!
+        const processResult = await tx.processResult.create({
+          data: {
+            productionLotId: body.lot_id,
+            processId: procRow.processId,
+            processSequence: procRow.sequence,
+            workerId: procRow.workerId,
+            workCenterId: body.work_center_id,
+            inputQty: body.input_qty,
+            goodQty: body.good_qty,
+            defectQty: body.defect_qty,
+            startTime: body.start_time ? new Date(body.start_time) : null,
+            endTime: body.end_time ? new Date(body.end_time) : null,
+            createdAt: recordedAt,
+          },
+          select: { id: true },
+        })
+        processResultIds.push(processResult.id)
+
+        if (defects.length > 0 && i === 0) {
+          await tx.defectHistory.createMany({
+            data: defects.map((d) => ({
+              productionLotId: body.lot_id,
+              processId: procRow.processId,
+              defectTypeId: d.type_id,
+              qty: d.qty,
+              workerId: procRow.workerId,
+              workCenterId: body.work_center_id,
+              detectedAt: recordedAt,
+              processResultId: processResult.id,
+              remark: d.remark,
+            })),
+          })
+        }
+      }
+
       const nextGoodTotal = lot.goodQty + body.good_qty
       const nextDefectTotal = lot.defectQty + body.defect_qty
       const remainingWork = lot.lotQty - nextGoodTotal - nextDefectTotal
@@ -422,7 +492,7 @@ processResultsRouter.post('/process-results', async (req, res) => {
       await tx.productionLot.update({
         where: { id: body.lot_id },
         data: {
-          currentProcessId: body.process_id,
+          currentProcessId,
           goodQty: { increment: body.good_qty },
           defectQty: { increment: body.defect_qty },
           status: nextLotStatus,
@@ -430,25 +500,6 @@ processResultsRouter.post('/process-results', async (req, res) => {
         },
       })
 
-      // 5) 불량 상세 기록
-      const defects = body.defects ?? []
-      if (defects.length > 0) {
-        await tx.defectHistory.createMany({
-          data: defects.map((d) => ({
-            productionLotId: body.lot_id,
-            processId: body.process_id,
-            defectTypeId: d.type_id,
-            qty: d.qty,
-            workerId: body.worker_id,
-            workCenterId: body.work_center_id,
-            detectedAt: new Date(),
-            processResultId: processResult.id,
-            remark: d.remark,
-          })),
-        })
-      }
-
-      // 6) 마지막 공정이면 재고 IN + 트랜잭션 기록
       if (isLastProcess && body.good_qty > 0) {
         // 품목 기준 전량 합계를 맞추기 위해 같은 품목 재고 행을 먼저 잠근다.
         await tx.$queryRaw`
@@ -498,7 +549,7 @@ processResultsRouter.post('/process-results', async (req, res) => {
             refId: body.lot_id,
             beforeQty,
             afterQty,
-            createdBy: body.worker_id,
+            createdBy: auditWorkerId,
           },
         })
       }
@@ -508,7 +559,9 @@ processResultsRouter.post('/process-results', async (req, res) => {
         status: 201 as const,
         payload: {
           ok: true,
-          process_result_id: processResult.id,
+          process_result_id: processResultIds[0],
+          process_result_ids: processResultIds,
+          process_ids: processRows.map((p) => p.processId),
           lot_id: body.lot_id,
           is_last_process: isLastProcess,
         },

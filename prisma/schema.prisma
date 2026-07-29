@@ -391,8 +391,11 @@ model Worker {
   results     ProcessResult[]
   defects     DefectHistory[]
   workerProcesses       WorkerProcess[]
-  workOrderAssignments  WorkOrderWorker[]
-  productWorkTimes      WorkerProductWorkTime[]
+  workOrderAssignments        WorkOrderWorker[]
+  workOrderProcessAssignments WorkOrderProcessWorker[]
+  productWorkTimes            WorkerProductWorkTime[]
+  processWorkTimes      WorkerProcessWorkTime[]
+  processWorkTimeEntries WorkerProcessWorkTimeEntry[]
 
   @@map("workers")
 }
@@ -422,9 +425,12 @@ model MbomProcess {
   routingsTo        ProcessRouting[] @relation("RouteTo")
   processStatuses   ProcessStatus[]
   productionHourly  ProductionHourly[]
-  outsourcing       Outsourcing[]
+  outsourcing              Outsourcing[]
+  workOrderProcessWorkers  WorkOrderProcessWorker[]
   visionLogs        VisionRawLog[]
   workerProcesses   WorkerProcess[]
+  workerProcessWorkTimes WorkerProcessWorkTime[]
+  workerProcessWorkTimeEntries WorkerProcessWorkTimeEntry[]
 
   @@index([productId, sequence])
   @@map("mbom_process")
@@ -507,10 +513,27 @@ model WorkOrder {
   creator        User?            @relation("WoCreatedBy", fields: [createdBy], references: [id])
   materials         WorkOrderMaterial[]
   lots              ProductionLot[]
-  assignedWorkers   WorkOrderWorker[]
+  assignedWorkers        WorkOrderWorker[]
+  assignedProcessWorkers WorkOrderProcessWorker[]
 
   @@index([productId])
   @@map("work_order")
+}
+
+/// 작업지시·MBOM 공정별 배정 작업자 (M:N)
+model WorkOrderProcessWorker {
+  woId      Int @map("wo_id")
+  processId Int @map("process_id")
+  workerId  Int @map("worker_id")
+
+  workOrder WorkOrder   @relation(fields: [woId], references: [id], onDelete: Cascade)
+  process   MbomProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+  worker    Worker      @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@id([woId, processId, workerId])
+  @@index([processId])
+  @@index([workerId])
+  @@map("work_order_process_worker")
 }
 
 /// 작업지시에 배정된 작업자 (다대다)
@@ -570,6 +593,7 @@ model ProductionLot {
   outsourcing      Outsourcing[]
   shipmentDetails  ShipmentDetail[]
   visionLogs       VisionRawLog[]
+  workerProcessWorkTimeEntries WorkerProcessWorkTimeEntry[]
 
   @@index([productId])
   @@index([woId])
@@ -929,6 +953,45 @@ model WorkerProductWorkTime {
   @@id([workerId, productId])
   @@index([productId])
   @@map("worker_product_work_time")
+}
+
+/// 작업자·MBOM 공정별 관리자 수동 입력 작업시간(분)
+model WorkerProcessWorkTime {
+  workerId    Int      @map("worker_id")
+  processId   Int      @map("process_id")
+  workMinutes Int      @default(0) @map("work_minutes")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  worker      Worker      @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  process     MbomProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+
+  @@id([workerId, processId])
+  @@index([processId])
+  @@map("worker_process_work_time")
+}
+
+/// 작업자·공정별 LOT 단위 작업시간 상세 (합계는 worker_process_work_time에 반영)
+model WorkerProcessWorkTimeEntry {
+  id              Int      @id @default(autoincrement())
+  workerId        Int      @map("worker_id")
+  processId       Int      @map("process_id")
+  productionLotId Int?     @map("production_lot_id")
+  workDate        DateTime @map("work_date") @db.Date
+  inputQty        Int      @default(0) @map("input_qty")
+  goodQty         Int      @default(0) @map("good_qty")
+  defectQty       Int      @default(0) @map("defect_qty")
+  workMinutes     Int      @default(0) @map("work_minutes")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  worker        Worker         @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  process       MbomProcess    @relation(fields: [processId], references: [id], onDelete: Cascade)
+  productionLot ProductionLot? @relation(fields: [productionLotId], references: [id], onDelete: Cascade)
+
+  @@unique([workerId, processId, productionLotId])
+  @@index([workerId, processId, workDate])
+  @@map("worker_process_work_time_entry")
 }
 
 model ProductionHourly {

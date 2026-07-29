@@ -411,14 +411,19 @@
   display: flex;
   flex-direction: column;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #0e1018;
+  border: 1px solid var(--wr-border-strong);
+  background: var(--wr-surface);
+  color: var(--wr-text);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
   overflow: hidden;
 }
 
-[data-theme='light'] .mesWrModalDialog {
-  background: #ffffff;
+[data-theme='light'] .mesWorkersPage .mesWrModalDialog {
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
+}
+
+[data-theme='light'] .mesWorkersPage .mesWrModalRoot .mesModalBackdrop {
+  background: rgba(15, 23, 42, 0.35);
 }
 
 .mesWrModalHead {
@@ -427,8 +432,8 @@
   justify-content: space-between;
   gap: 16px;
   padding: 18px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: #12151e;
+  border-bottom: 1px solid var(--wr-border);
+  background: var(--wr-surface2);
 }
 
 .mesWrModalHeadTitle {
@@ -447,7 +452,7 @@
   justify-content: center;
   background: rgba(232, 194, 74, 0.12);
   border: 1px solid rgba(232, 194, 74, 0.35);
-  color: #e8c24a;
+  color: var(--wr-accent);
   flex-shrink: 0;
 }
 
@@ -460,13 +465,13 @@
   margin: 0;
   font-size: 20px;
   font-weight: 800;
-  color: #eef1f6;
+  color: var(--wr-text);
 }
 
 .mesWrModalSub {
   margin: 4px 0 0;
   font-size: 13px;
-  color: #9aa3b2;
+  color: var(--wr-muted);
 }
 
 .mesWrModalHeadBadges {
@@ -483,14 +488,15 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  background: var(--wr-surface);
 }
 
 .mesWrModalStrip {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-radius: 10px;
-  background: #181c28;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--wr-surface2);
+  border: 1px solid var(--wr-border);
   overflow: hidden;
 }
 
@@ -503,19 +509,19 @@
 }
 
 .mesWrModalStripItem:not(:last-child) {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid var(--wr-border);
 }
 
 .mesWrModalStripLabel {
   font-size: 13px;
-  color: #9aa3b2;
+  color: var(--wr-muted);
   font-weight: 600;
 }
 
 .mesWrModalStripVal {
   font-size: 15px;
   font-weight: 800;
-  color: #eef1f6;
+  color: var(--wr-text);
 }
 
 .mesWrModalGrid {
@@ -534,9 +540,9 @@
 }
 
 .mesWrModalCard {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--wr-border);
   border-radius: 10px;
-  background: #181c28;
+  background: var(--wr-surface2);
   padding: 18px 20px;
 }
 
@@ -544,7 +550,7 @@
   margin: 0 0 16px;
   font-size: 14px;
   font-weight: 700;
-  color: #eef1f6;
+  color: var(--wr-text);
 }
 
 .mesWrModalFieldGrid {
@@ -566,7 +572,7 @@
 .mesWrModalFieldLabel {
   font-size: 13px;
   font-weight: 600;
-  color: #9aa3b2;
+  color: var(--wr-muted);
 }
 
 .mesWrModalInput {
@@ -574,12 +580,16 @@
   box-sizing: border-box;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: #0a0d14;
-  color: #eef1f6;
+  border: 1px solid var(--wr-border-strong);
+  background: var(--wr-bg);
+  color: var(--wr-text);
   font-size: 14px;
   font-family: inherit;
   min-height: 42px;
+}
+
+[data-theme='light'] .mesWorkersPage .mesWrModalInput {
+  background: #ffffff;
 }
 
 .mesWrModalInfoList {
@@ -592,7 +602,7 @@
   grid-template-columns: 80px minmax(0, 1fr);
   gap: 12px;
   padding: 11px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--wr-border);
   font-size: 13px;
 }
 
@@ -601,12 +611,12 @@
 }
 
 .mesWrModalInfoRow span {
-  color: #9aa3b2;
+  color: var(--wr-muted);
   font-weight: 600;
 }
 
 .mesWrModalInfoRow strong {
-  color: #eef1f6;
+  color: var(--wr-text);
   font-weight: 700;
   word-break: break-word;
 }
@@ -616,8 +626,8 @@
   justify-content: flex-end;
   gap: 10px;
   padding: 16px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #12151e;
+  border-top: 1px solid var(--wr-border);
+  background: var(--wr-surface2);
 }
 
 .mesWrModalBtn {
@@ -638,9 +648,9 @@
 }
 
 .mesWrModalBtn--cancel {
-  background: #181c28;
-  color: #eef1f6;
-  border-color: rgba(255, 255, 255, 0.14);
+  background: var(--wr-surface);
+  color: var(--wr-text);
+  border-color: var(--wr-border-strong);
 }
 
 .mesWrModalBtn--save {
@@ -662,7 +672,8 @@
 }
 
 .mesWorkersPage .mesWrStatsFilter {
-  align-items: center;
+  align-items: flex-end;
+  flex-wrap: wrap;
   margin-bottom: 0;
 }
 
@@ -684,8 +695,19 @@
   gap: 14px;
 }
 
+.mesWorkersPage .mesWrStatsProcessRow {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
 @media (max-width: 960px) {
   .mesWorkersPage .mesWrStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mesWorkersPage .mesWrStatsProcessRow {
     grid-template-columns: 1fr;
   }
 }
@@ -705,11 +727,32 @@
 }
 
 .mesWorkersPage .mesWrStatsCardTitle {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-size: 14px;
   font-weight: 800;
   color: var(--wr-text);
   letter-spacing: -0.01em;
+}
+
+.mesWorkersPage .mesWrStatsCardFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--wr-border);
+}
+
+.mesWorkersPage .mesWrStatsCardFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+.mesWorkersPage .mesWrStatsCardSelect {
+  width: 100%;
 }
 
 .mesWorkersPage .mesWrStatsBest {
@@ -737,10 +780,22 @@
 
 .mesWorkersPage .mesWrBarRow {
   display: grid;
-  grid-template-columns: 22px minmax(64px, 24%) 1fr auto;
+  grid-template-columns: 22px minmax(4.5rem, 30%) 1fr auto;
   gap: 10px;
   align-items: center;
   min-width: 0;
+}
+
+.mesWorkersPage .mesWrBarRow--plain {
+  grid-template-columns: minmax(5.5rem, 34%) 1fr auto;
+}
+
+.mesWorkersPage .mesWrBarLabel--full {
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+  word-break: keep-all;
+  line-height: 1.35;
 }
 
 .mesWorkersPage .mesWrBarRow--best .mesWrBarLabel,
@@ -861,4 +916,41 @@
   border-radius: var(--wr-radius);
   background: var(--wr-surface);
   border: 1px solid var(--wr-border);
+}
+
+.mesWorkersPage .mesWrStatsCard--span2 {
+  grid-column: 1 / -1;
+}
+
+.mesWorkersPage .mesWrProcessChartStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: min(52vh, 420px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.mesWorkersPage .mesWrProcessChartGroup {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--wr-border);
+}
+
+.mesWorkersPage .mesWrProcessChartGroup:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.mesWorkersPage .mesWrProcessChartHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+  margin-bottom: 8px;
+}
+
+.mesWorkersPage .mesWrProcessChartTitle {
+  font-size: 13px;
+  font-weight: 600;
 }
