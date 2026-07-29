@@ -8,7 +8,7 @@
 | **대상 공정** | 화장품 용기 조립/가공 (다단계 공정, LOT 단위 추적) |
 | **사용자** | 생산관리(사무실), 라인 작업자(현장), 라인장(전광판) |
 | **형태** | 모노레포 — React SPA + Express REST API + MySQL |
-| **현재 버전** | **V1.3.0** |
+| **현재 버전** | **V1.3.1** |
 
 ---
 
@@ -44,7 +44,7 @@
 ### 계획·지시·LOT
 
 - **생산 계획** — 기간·수량·품목 단위 계획 등록
-- **작업 지시** — 계획 연결, 작업장·작업자 배정, 지시 수량 관리
+- **작업 지시** — 계획 연결, 작업장·**공정별 작업자(M:N)** 배정, 지시 수량 관리
 - **생산 LOT** — 작업지시를 LOT 단위로 분할·추적 (잔여 배정 수량 관리)
 - **자재 LOT** — 입고 자재 LOT·잔량 등록 및 재고 반영(IN)
 - **LOT 이력·자재 투입** — LOT 생명주기 및 투입 이력 조회
@@ -72,6 +72,15 @@
 - **감사 로그·시스템 로그·비전 로그** — 운영·설비 연동 이력
 - **역할·사용자·공지** — 계정 및 공지 관리
 - **밝은/어두운 모드** — 사이드메뉴 상단에서 테마 전환 (설정 localStorage 저장)
+
+### 작업자·생산 효율 (V1.3.1)
+
+- **작업자** (`/workers`) — 품목·공정별 실적, **작업시간(분)** 입력, 표준 대비 **작업효율** 표시
+- **작업시간 상세** — 공정 실적을 **생산 LOT** 단위로 집계(계획·지시·LOT 번호 표시), LOT별 작업시간만 수동 입력
+- **통계 탭** — 품목/공정/작업자 필터, 개당 작업시간·효율 차트
+- **공정별 작업 배정** — 작업지시·통합운영에서 드래그/클릭으로 공정마다 작업자 다중 배정 (`WorkOrderProcessWorker`)
+- **최단 완료 자동 배정** — 작업자 실적·MBOM 표준시간 기반, **작업자 묶음** 설정 후 파이프라인 라인 완료시간 최소화 (`POST /api/process-worker-assignments/optimize`)
+- **현장 입력** — 로그인 계정이 아닌 **작업지시에 배정된 작업자 전원**에게 동일 실적 반영
 
 ### ERP (V1.1)
 
@@ -352,7 +361,8 @@ pm2 restart mesnew-api
 |--------|-----------------|
 | `products` | `GET/POST/PATCH/DELETE /api/products` |
 | `customers` | `/api/customers` |
-| `workCenters`, `workers` | `/api/work-centers`, `/api/workers` |
+| `workCenters`, `workers` | `/api/workers`, `/api/workers/:id/product-summary`, `process-work-time-entries`, `stats/comparison` |
+| `processWorkerAssign` | `POST /api/process-worker-assignments/optimize` — 공정 묶음·지시수량 기준 최단 완료 배정 |
 | `defectTypes` | `/api/defect-types` |
 | `mbomProcesses` | `/api/mbom-processes`, `/api/eboms` |
 | `productionLots` | `/api/lots` |
@@ -381,7 +391,7 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 |--------|-----------|
 | 기준정보 | `Product`, `Customer`, `WorkCenter`, `Worker`, `Location`, `Role`, `User` |
 | BOM·공정 | `Ebom`, `MbomProcess`, `MbomProcessMaterial`, `ProcessRouting` |
-| 계획·실행 | `ProductionPlan`, `WorkOrder`, `WorkOrderWorker`, `ProductionLot`, `MaterialLot` |
+| 계획·실행 | `ProductionPlan`, `WorkOrder`, `WorkOrderWorker`, `WorkOrderProcessWorker`, `ProductionLot`, `MaterialLot` |
 | 실적·품질 | `ProcessResult`, `DefectType`, `DefectHistory`, `LotMaterialUsage`, `LotHistory` |
 | 재고 | `Inventory`, `InventoryTransaction`, `InventorySnapshot` |
 | 물류 | `Shipment`, `ShipmentDetail`, `Outsourcing`, `OutsourcingResult` |
@@ -411,7 +421,7 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 
 ## 개발 현황
 
-- **V1.3.0** 기준: MES 핵심 + ERP(연차·일정·**업무일지·지출결의서**) + 급여(마스터·근무·자동계산·명세표·**2026 간이세액표**·Excel) + **목록 UI 통일·생산 LOT 바코드** 반영.
+- **V1.3.1** 기준: 위 **작업자·공정별 배정·자동 배정·LOT 작업시간** 반영. **V1.3.0** — ERP·급여·목록 UI·LOT 바코드 등.
 - 인증은 로그인 화면 + `X-Sys-User` 헤더 방식이며, JWT/세션 쿠키는 추후 보완 가능합니다.
 - 스키마 반영: `npm run prisma:push` (또는 `prisma migrate deploy`). Prisma Client 변경 후 **`npm run prisma:generate`** 및 API 재시작 필요.
 - 비전 로그(`VisionRawLog`) 등 설비 연동 필드는 수집·조회 위주로 구현되어 있습니다.
@@ -419,6 +429,17 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 ---
 
 ## 버전 이력
+
+### V1.3.1 (2026-07-29)
+
+**공정별 작업 배정 · 생산 효율**
+
+- DB: `WorkOrderProcessWorker`, `WorkerProcessWorkTimeEntry.productionLotId`
+- 작업지시 **공정별 작업자** M:N UI (`WorkOrderProcessWorkerAssign`, 통합운영·작업지시 모달)
+- `process_result` 현장 등록 시 **배정 작업자 전원** 동일 수량 반영 (`processResults.ts`)
+- 작업자 **LOT별 작업시간** API·모달, 공정별 효율(초/개·%)
+- **최단 완료 자동 배정**: 묶음 설정 모달 → 최적화 API → 결과 확인 모달
+- 운영 데이터 초기화: `scripts/run-wipe-mes-ops-data.mjs`
 
 ### V1.3.0 (2026-07-21)
 
