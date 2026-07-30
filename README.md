@@ -8,7 +8,7 @@
 | **대상 공정** | 화장품 용기 조립/가공 (다단계 공정, LOT 단위 추적) |
 | **사용자** | 생산관리(사무실), 라인 작업자(현장), 라인장(전광판) |
 | **형태** | 모노레포 — React SPA + Express REST API + MySQL |
-| **현재 버전** | **V1.3.1** |
+| **현재 버전** | **V1.3.2** |
 
 ---
 
@@ -46,7 +46,7 @@
 - **생산 계획** — 기간·수량·품목 단위 계획 등록
 - **작업 지시** — 계획 연결, 작업장·**공정별 작업자(M:N)** 배정, 지시 수량 관리
 - **생산 LOT** — 작업지시를 LOT 단위로 분할·추적 (잔여 배정 수량 관리)
-- **자재 LOT** — 입고 자재 LOT·잔량 등록 및 재고 반영(IN)
+- **자재 LOT** — 입고 자재 LOT·잔량 등록, **CODE128 바코드**·썸네일·인쇄, 재고 반영(IN)
 - **LOT 이력·자재 투입** — LOT 생명주기 및 투입 이력 조회
 
 ### 생산 실행·품질
@@ -73,14 +73,15 @@
 - **역할·사용자·공지** — 계정 및 공지 관리
 - **밝은/어두운 모드** — 사이드메뉴 상단에서 테마 전환 (설정 localStorage 저장)
 
-### 작업자·생산 효율 (V1.3.1)
+### 작업자·생산 효율 (V1.3.1 ~ V1.3.2)
 
 - **작업자** (`/workers`) — 품목·공정별 실적, **작업시간(분)** 입력, 표준 대비 **작업효율** 표시
-- **작업시간 상세** — 공정 실적을 **생산 LOT** 단위로 집계(계획·지시·LOT 번호 표시), LOT별 작업시간만 수동 입력
-- **통계 탭** — 품목/공정/작업자 필터, 개당 작업시간·효율 차트
+- **작업시간 상세** — 공정 실적을 **생산 LOT** 단위로 집계(계획·지시·LOT 번호 표시), LOT별 작업시간·**기여도(%)** 입력
+- **통계 탭** — 품목/공정/작업자 필터, 개당 작업시간·효율 차트 (**전체 공정** 선택 시 작업자별 공정 합산 비교)
 - **공정별 작업 배정** — 작업지시·통합운영에서 드래그/클릭으로 공정마다 작업자 다중 배정 (`WorkOrderProcessWorker`)
 - **MBOM 공정** — 공정별 **배치 가능 인원(최소~최대)** 설정, 카드에 `인원 n~m명` 표시
-- **최단 완료 자동 배정** — 묶음별 MBOM 인원 제약 반영(묶음 내 병렬 인원·스테이지 시간), 묶음 모달에 필요 인원·공정별 범위 표시
+- **최단 완료 자동 배정** — 묶음별 MBOM 인원 제약 반영, 결과 모달에 **지시 수량·완료 예상·예상 효율(%)** 표시
+- **기여도 반영** — 동일 공정 다인 작업 시 기여도에 따라 효율·실적 집계 (`contributionPct`)
 - **현장 입력** — 로그인 계정이 아닌 **작업지시에 배정된 작업자 전원**에게 동일 실적 반영
 
 ### ERP (V1.1)
@@ -370,7 +371,7 @@ pm2 restart mesnew-api
 | `inventoryItems` | `/api/inventories`, `/api/inventory-transactions` |
 | `processResults` | `/api/process-results`, `/api/defect-histories` |
 | `extendedMasters` | `/api/locations`, `/api/roles`, `/api/users`, `/api/notices` |
-| `extendedOps` | `/api/production-plans`, `/api/work-orders`, `/api/material-lots`, `/api/shipments`, `/api/outsourcing`, `/api/barcodes`, `/api/lot-histories` … |
+| `extendedOps` | `/api/production-plans`, `/api/work-orders`, `/api/material-lots` (바코드 이미지 포함), `/api/shipments`, `/api/outsourcing`, `/api/barcodes`, `/api/lot-histories` … |
 | `auth` | `POST /api/auth/login` — 로그인 |
 | `annualLeave` | `/api/annual-leave/*` — 연차 잔여·신청·승인·캘린더 |
 | `erpSchedules` | `/api/erp-schedules` — ERP 일정 CRUD·상태 변경 |
@@ -422,7 +423,7 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 
 ## 개발 현황
 
-- **V1.3.1** 기준: 위 **작업자·공정별 배정·자동 배정·LOT 작업시간** 반영. **V1.3.0** — ERP·급여·목록 UI·LOT 바코드 등.
+- **V1.3.2** 기준: **자재 LOT 바코드**, **자동 배정 예상 효율**, **작업자 통계(전체 공정 합산)**, **기여도**, ERP 고아 데이터 방어. **V1.3.1** — 공정별 배정·자동 배정·LOT 작업시간. **V1.3.0** — ERP·급여·목록 UI·생산 LOT 바코드 등.
 - 인증은 로그인 화면 + `X-Sys-User` 헤더 방식이며, JWT/세션 쿠키는 추후 보완 가능합니다.
 - 스키마 반영: `npm run prisma:push` (또는 `prisma migrate deploy`). Prisma Client 변경 후 **`npm run prisma:generate`** 및 API 재시작 필요.
 - 비전 로그(`VisionRawLog`) 등 설비 연동 필드는 수집·조회 위주로 구현되어 있습니다.
@@ -430,6 +431,18 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 ---
 
 ## 버전 이력
+
+### V1.3.2 (2026-07-30)
+
+**자재 LOT 바코드 · 자동 배정 · 통계 · 기여도**
+
+- DB: `MaterialLot.barcode`, `WorkerProcessWorkTimeEntry.contributionPct`
+- **자재 LOT** 목록 바코드 썸네일·이미지 API (`/api/material-lots/:id/barcode-image`), 백필: `scripts/backfill-material-lot-barcodes.ts`
+- **자동 배정 결과** 모달: 지시 수량·완료 예상·**예상 효율(%)** (파이프라인 메이크스팬 기준)
+- **작업자 통계**: 전체 공정 선택 시 작업자별 공정 합산(초/개·효율), 불필요 차트(시간당 양품·비교 요약) 제거
+- **기여도(%)** 입력 시 효율·실적 집계 반영 (`workerContribution.ts`)
+- **지출결의서·연차**: 삭제된 사용자 고아 데이터 조회 오류 방어, 정리 스크립트 `scripts/cleanup-orphan-requests.ts`
+- 자동 배정 검증: `scripts/verify-worker-optimize.ts`
 
 ### V1.3.1 (2026-07-29)
 
