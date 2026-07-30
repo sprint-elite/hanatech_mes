@@ -12,9 +12,9 @@ export type AssignConfirmRow = {
 type Props = {
   open: boolean
   variant: 'ops' | 'wo'
-  groupPreview: string
   orderQty: number
   makespanLabel: string
+  estimatedEfficiencyPct: number | null
   assignments: AssignConfirmRow[]
   applying: boolean
   onCancel: () => void
@@ -24,15 +24,33 @@ type Props = {
 export function ProcessWorkerAssignConfirmModal({
   open,
   variant,
-  groupPreview,
   orderQty,
   makespanLabel,
+  estimatedEfficiencyPct,
   assignments,
   applying,
   onCancel,
   onApply,
 }: Props) {
   if (!open) return null
+
+  const rows = (() => {
+    const byProc = new Map<
+      number,
+      { processCode: string; processName: string; workers: AssignConfirmRow[] }
+    >()
+    for (const a of assignments) {
+      const cur = byProc.get(a.processId)
+      if (cur) cur.workers.push(a)
+      else
+        byProc.set(a.processId, {
+          processCode: a.processCode,
+          processName: a.processName,
+          workers: [a],
+        })
+    }
+    return [...byProc.values()]
+  })()
 
   const isOps = variant === 'ops'
   const rootClass = isOps ? 'mesOpsPlanModalRoot mesModalRootNested' : 'mesModalRoot mesModalRootNested'
@@ -71,16 +89,18 @@ export function ProcessWorkerAssignConfirmModal({
         <div className={`mesWoAssignConfirmBody ${isOps ? 'mesOpsPlanModalBody' : 'mesModalBody'}`}>
           <div className="mesOpsPlanModalStrip mesWoAssignConfirmStrip">
             <div className="mesOpsPlanModalStripItem">
-              <span className="mesOpsPlanModalStripLabel">묶음</span>
-              <span className="mesOpsPlanModalStripVal">{groupPreview || '—'}</span>
-            </div>
-            <div className="mesOpsPlanModalStripItem">
               <span className="mesOpsPlanModalStripLabel">지시 수량</span>
               <span className="mesOpsPlanModalStripVal">{orderQty.toLocaleString()}개</span>
             </div>
             <div className="mesOpsPlanModalStripItem">
               <span className="mesOpsPlanModalStripLabel">완료 예상</span>
               <span className="mesOpsPlanModalStripVal mesWoAssignConfirmMakespan">{makespanLabel}</span>
+            </div>
+            <div className="mesOpsPlanModalStripItem">
+              <span className="mesOpsPlanModalStripLabel">예상 효율</span>
+              <span className="mesOpsPlanModalStripVal mesWoAssignConfirmEfficiency">
+                {estimatedEfficiencyPct != null ? `${estimatedEfficiencyPct}%` : '—'}
+              </span>
             </div>
           </div>
 
@@ -95,26 +115,37 @@ export function ProcessWorkerAssignConfirmModal({
                 </tr>
               </thead>
               <tbody>
-                {assignments.map((a) => (
-                  <tr key={a.processId}>
+                {rows.map((row) => (
+                  <tr key={row.workers[0]?.processId ?? row.processCode}>
                     <td>
                       <div className="mesWoAssignConfirmProc">
-                        <span className="mono mesWoAssignConfirmCode">{a.processCode}</span>
-                        <span className="mesWoAssignConfirmProcName">{a.processName}</span>
+                        <span className="mono mesWoAssignConfirmCode">{row.processCode}</span>
+                        <span className="mesWoAssignConfirmProcName">{row.processName}</span>
                       </div>
                     </td>
                     <td>
-                      <span className="mono">{a.workerCode}</span> {a.workerName}
+                      {row.workers.map((a) => (
+                        <div key={a.workerId} className="mesWoAssignConfirmWorkerLine">
+                          <span className="mono">{a.workerCode}</span> {a.workerName}
+                        </div>
+                      ))}
                     </td>
                     <td>
-                      <span
-                        className={`mesWoAssignConfirmSrc mesWoAssignConfirmSrc--${a.dataSource}`}
-                      >
-                        {a.dataSource === 'history' ? '실적' : '표준'}
-                      </span>
+                      {row.workers.map((a) => (
+                        <span
+                          key={a.workerId}
+                          className={`mesWoAssignConfirmSrc mesWoAssignConfirmSrc--${a.dataSource}`}
+                        >
+                          {a.dataSource === 'history' ? '실적' : '표준'}
+                        </span>
+                      ))}
                     </td>
                     <td className="mesWoAssignConfirmTdNum">
-                      {a.efficiencyPct != null ? `${a.efficiencyPct}%` : '—'}
+                      {row.workers.map((a) => (
+                        <div key={a.workerId}>
+                          {a.efficiencyPct != null ? `${a.efficiencyPct}%` : '—'}
+                        </div>
+                      ))}
                     </td>
                   </tr>
                 ))}

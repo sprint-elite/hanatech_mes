@@ -6,6 +6,7 @@ import '../material-lots-page.css'
 type Row = {
   id: number
   lotNo: string
+  barcode: string | null
   productId: number
   supplier: string | null
   receivedQty: string
@@ -40,6 +41,7 @@ function matchesFilters(row: Row, filters: Filters): boolean {
   if (q) {
     const hay = [
       row.lotNo,
+      row.barcode ?? '',
       row.product?.productCode ?? '',
       row.product?.productName ?? '',
       row.supplier ?? '',
@@ -148,6 +150,29 @@ function IconInbox() {
   )
 }
 
+function MatLotBarcodePreviewImage({ lotId, alt }: { lotId: number; alt: string }) {
+  return (
+    <img
+      src={`/api/material-lots/${lotId}/barcode-image?view=screen`}
+      alt={alt}
+      className="mesBarcodePreviewImg"
+    />
+  )
+}
+
+function printMatLotBarcode(lotId: number, label: string) {
+  const url = `/api/material-lots/${lotId}/barcode-image?view=print`
+  const w = window.open(url, '_blank', 'noopener,noreferrer')
+  if (!w) return
+  w.addEventListener('load', () => {
+    try {
+      w.print()
+    } catch {
+      /* ignore */
+    }
+  })
+}
+
 export function MaterialLotsPage() {
   const [items, setItems] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
@@ -170,6 +195,11 @@ export function MaterialLotsPage() {
   const [invLocId, setInvLocId] = useState('')
   const [invSaving, setInvSaving] = useState(false)
   const [invPanelOpen, setInvPanelOpen] = useState(false)
+  const [barcodePreview, setBarcodePreview] = useState<Row | null>(null)
+
+  const closeBarcodePreview = useCallback(() => {
+    setBarcodePreview(null)
+  }, [])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -269,16 +299,17 @@ export function MaterialLotsPage() {
   }, [resetInvForm])
 
   useEffect(() => {
-    if (!lotPanelOpen && !invPanelOpen) return
+    if (!lotPanelOpen && !invPanelOpen && !barcodePreview) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        if (barcodePreview) closeBarcodePreview()
         if (lotPanelOpen) closeLotPanel()
         if (invPanelOpen) closeInvPanel()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [lotPanelOpen, invPanelOpen, closeLotPanel, closeInvPanel])
+  }, [lotPanelOpen, invPanelOpen, barcodePreview, closeLotPanel, closeInvPanel, closeBarcodePreview])
 
   const add = async () => {
     setSaving(true)
@@ -401,7 +432,7 @@ export function MaterialLotsPage() {
             </span>
             <input
               className="mesMatLotInput mesMatLotInput--search"
-              placeholder="LOT / 품번 / 품명 / 공급사 검색"
+              placeholder="LOT / 바코드 / 품번 / 품명 / 공급사 검색"
               value={draftFilters.q}
               onChange={(ev) => setDraftFilters((f) => ({ ...f, q: ev.target.value }))}
               onKeyDown={(ev) => {
@@ -646,6 +677,7 @@ export function MaterialLotsPage() {
             <thead>
               <tr>
                 <th>LOT</th>
+                <th className="mesMatLotColBarcode">바코드</th>
                 <th>품목</th>
                 <th>입고수량</th>
                 <th>잔량</th>
@@ -657,13 +689,13 @@ export function MaterialLotsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="mesMatLotEmpty">
+                  <td colSpan={8} className="mesMatLotEmpty">
                     로딩 중…
                   </td>
                 </tr>
               ) : filteredItems.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="mesMatLotEmpty">
+                  <td colSpan={8} className="mesMatLotEmpty">
                     {items.length === 0 ? (
                       <>
                         데이터가 없습니다. <strong>신규 등록</strong>으로 추가하세요.
@@ -677,6 +709,25 @@ export function MaterialLotsPage() {
                 pageItems.map((r) => (
                   <tr key={r.id}>
                     <td className="mono">{r.lotNo}</td>
+                    <td>
+                      {r.barcode || r.lotNo ? (
+                        <button
+                          type="button"
+                          className="mesBarcodeCell mesBarcodeOpenBtn"
+                          onClick={() => setBarcodePreview(r)}
+                          aria-label={`바코드 ${r.barcode ?? r.lotNo}`}
+                        >
+                          <img
+                            src={`/api/material-lots/${r.id}/barcode-image`}
+                            alt=""
+                            className="mesBarcodeThumb"
+                          />
+                          <span className="mono small muted">{r.barcode ?? r.lotNo}</span>
+                        </button>
+                      ) : (
+                        '—'
+                      )}
+                    </td>
                     <td>{r.product ? `${r.product.productCode} · ${r.product.productName}` : `품목#${r.productId}`}</td>
                     <td className="mono">{r.receivedQty}</td>
                     <td className="mono">{r.remainQty}</td>
@@ -768,6 +819,66 @@ export function MaterialLotsPage() {
           </div>
         </footer>
       </div>
+
+      {barcodePreview ? (
+        <div className="mesModalRoot" role="presentation">
+          <button
+            type="button"
+            className="mesModalBackdrop"
+            aria-label="닫기"
+            onClick={closeBarcodePreview}
+          />
+          <div
+            className="mesModalDialog mesBarcodePreviewDialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mes-matlot-barcode-title"
+          >
+            <div className="mesModalHead">
+              <div>
+                <h2 className="mesModalTitle" id="mes-matlot-barcode-title">
+                  자재 LOT 바코드
+                </h2>
+                <div className="mesModalMeta muted">
+                  {barcodePreview.lotNo} · {barcodePreview.product?.productCode ?? `품목#${barcodePreview.productId}`}
+                </div>
+              </div>
+            </div>
+            <div className="mesModalBody mesBarcodePreviewBody">
+              <p className="muted small mesBarcodePreviewHint">스캔 값은 LOT 번호와 동일합니다.</p>
+              <div className="mesBarcodePreviewFrame">
+                <MatLotBarcodePreviewImage
+                  lotId={barcodePreview.id}
+                  alt={`자재 LOT 바코드 ${barcodePreview.barcode ?? barcodePreview.lotNo}`}
+                />
+              </div>
+              <div className="mesBarcodePreviewValue mono">{barcodePreview.barcode ?? barcodePreview.lotNo}</div>
+            </div>
+            <div className="mesModalFoot mesBarcodePreviewFoot">
+              <button
+                type="button"
+                className="mesBtnSecondary mesBarcodePrintBtn"
+                onClick={() =>
+                  printMatLotBarcode(barcodePreview.id, barcodePreview.barcode ?? barcodePreview.lotNo)
+                }
+              >
+                인쇄
+              </button>
+              <a
+                className="mesBtnSm mesBarcodeOpenLink"
+                href={`/api/material-lots/${barcodePreview.id}/barcode-image?view=print`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                새 탭
+              </a>
+              <button type="button" className="mesBtnPrimary" onClick={closeBarcodePreview}>
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

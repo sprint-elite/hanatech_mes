@@ -10,6 +10,8 @@ export type MbomProcessFormState = {
   workCenterId: string
   standardTimeSec: string
   baseQty: string
+  minWorkers: string
+  maxWorkers: string
   remark: string
   isOutsourcing: 'Y' | 'N'
   useYn: 'Y' | 'N'
@@ -204,6 +206,30 @@ export function MbomProcessFormModal({
                   placeholder="예: 100"
                   value={form.baseQty}
                   onChange={(e) => setForm((f) => ({ ...f, baseQty: e.target.value }))}
+                />
+              </label>
+              <label className="mesMbModalField">
+                <span className="mesMbModalFieldLabel">배치 인원 (최소)</span>
+                <input
+                  className="mesMbModalInput mono"
+                  type="number"
+                  min="1"
+                  max="99"
+                  step="1"
+                  value={form.minWorkers}
+                  onChange={(e) => setForm((f) => ({ ...f, minWorkers: e.target.value }))}
+                />
+              </label>
+              <label className="mesMbModalField">
+                <span className="mesMbModalFieldLabel">배치 인원 (최대)</span>
+                <input
+                  className="mesMbModalInput mono"
+                  type="number"
+                  min="1"
+                  max="99"
+                  step="1"
+                  value={form.maxWorkers}
+                  onChange={(e) => setForm((f) => ({ ...f, maxWorkers: e.target.value }))}
                 />
               </label>
               <label className="mesMbModalField mesMbModalField--full">

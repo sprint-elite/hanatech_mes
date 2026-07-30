@@ -6,6 +6,8 @@ import {
   formatMakespanKo,
   optimizeProcessWorkerAssignmentGrouped,
 } from '../lib/processWorkerOptimize'
+import { minWorkersRequiredForGroups } from '../lib/processWorkerLimits'
+import { effectiveGoodQtyForProcess, groupWorkTimeEntriesByWorkerProcess } from '../lib/workerContribution'
 
 const optimizeBody = z.object({
   productId: z.number().int().positive(),
@@ -41,7 +43,7 @@ processWorkerAssignRouter.post('/process-worker-assignments/optimize', async (re
   const { productId, orderQty, activeOnly, minGoodQty, processGroups } = parsed.data
 
   try {
-    const [processes, workers, results, processWorkTimes] = await Promise.all([
+    const [processes, workers, results, processWorkTimes, workTimeEntries] = await Promise.all([
       prisma.mbomProcess.findMany({
         where: { productId, useYn: 'Y' },
         orderBy: [{ sequence: 'asc' }, { id: 'asc' }],
@@ -52,6 +54,8 @@ processWorkerAssignRouter.post('/process-worker-assignments/optimize', async (re
           processName: true,
           standardTime: true,
           baseQty: true,
+          minWorkers: true,
+          maxWorkers: true,
         },
       }),
       prisma.worker.findMany({
@@ -73,6 +77,17 @@ processWorkerAssignRouter.post('/process-worker-assignments/optimize', async (re
         where: { process: { productId } },
         select: { workerId: true, processId: true, workMinutes: true },
       }),
+      prisma.workerProcessWorkTimeEntry.findMany({
+        where: { process: { productId } },
+        select: {
+          workerId: true,
+          processId: true,
+          goodQty: true,
+          inputQty: true,
+          workMinutes: true,
+          contributionPct: true,
+        },
+      }),
     ])
 
     const processAgg = new Map<string, { goodQty: number; inputQty: number }>()
@@ -90,10 +105,13 @@ processWorkerAssignRouter.post('/process-worker-assignments/optimize', async (re
       workMinMap.set(`${wt.workerId}:${wt.processId}`, wt.workMinutes)
     }
 
+    const entriesByWorkerProcess = groupWorkTimeEntriesByWorkerProcess(workTimeEntries)
+
     const historySec = new Map<string, number>()
     for (const [k, a] of processAgg) {
       const wm = workMinMap.get(k) ?? 0
-      const qtyBasis = a.goodQty >= minGoodQty ? a.goodQty : a.inputQty >= minGoodQty ? a.inputQty : 0
+      const entryList = entriesByWorkerProcess.get(k) ?? []
+      const qtyBasis = effectiveGoodQtyForProcess(a.goodQty, a.inputQty, entryList)
       if (wm > 0 && qtyBasis >= minGoodQty) {
         const sec = Math.round(((wm * 60) / qtyBasis) * 10000) / 10000
         historySec.set(k, sec)
@@ -109,6 +127,10 @@ processWorkerAssignRouter.post('/process-worker-assignments/optimize', async (re
       standardSecByProcess.set(p.id, std)
     }
 
+    const workerLimitsByProcess = new Map(
+      processes.map((p) => [p.id, { minWorkers: p.minWorkers, maxWorkers: p.maxWorkers }]),
+    )
+
     const orderedIds = processes.map((p) => p.id)
     if (!validateProcessGroups(orderedIds, processGroups)) {
       return res.status(400).json({
@@ -118,11 +140,28 @@ processWorkerAssignRouter.post('/process-worker-assignments/optimize', async (re
       })
     }
 
+    const minRequired = minWorkersRequiredForGroups(processGroups, workerLimitsByProcess)
+    if (typeof minRequired === 'object' && minRequired !== null && 'error' in minRequired) {
+      return res.status(400).json({
+        ok: false,
+        error: 'INFEASIBLE_GROUP',
+        message: '묶음 안 공정들의 최소·최대 배치 인원이 맞지 않습니다. MBOM 공정 인원 설정을 확인하세요.',
+      })
+    }
+    if (workers.length < minRequired) {
+      return res.status(400).json({
+        ok: false,
+        error: 'NOT_ENOUGH_WORKERS',
+        message: `최소 ${minRequired}명의 작업자가 필요합니다. (MBOM 공정별 최소 인원 합계)`,
+      })
+    }
+
     const outcome = optimizeProcessWorkerAssignmentGrouped(
       processGroups,
       workers.map((w) => ({ id: w.id })),
       historySec,
       standardSecByProcess,
+      workerLimitsByProcess,
       orderQty,
     )
 
@@ -130,10 +169,10 @@ processWorkerAssignRouter.post('/process-worker-assignments/optimize', async (re
       const messages: Record<string, string> = {
         NO_PROCESSES: '이 품목에 MBOM 공정이 없습니다.',
         NO_WORKERS: '배정 가능한 작업자가 없습니다.',
-        NOT_ENOUGH_WORKERS: `작업자 묶음 ${processGroups.length}개에 서로 다른 작업자가 필요합니다. 활성 작업자를 더 등록하거나 묶음 수를 줄이세요.`,
-        INVALID_GROUPS: '작업자 묶음 설정이 올바르지 않습니다.',
+        NOT_ENOUGH_WORKERS: '작업자 수가 부족합니다. MBOM 최소 인원·묶음 설정을 확인하세요.',
+        INFEASIBLE_GROUP: '묶음 안 공정들의 배치 가능 인원 범위가 겹치지 않습니다.',
       }
-      return res.status(400).json({ ok: false, error: outcome.error, message: messages[outcome.error] ?? messages.INVALID_GROUPS })
+      return res.status(400).json({ ok: false, error: outcome.error, message: messages[outcome.error] ?? outcome.error })
     }
 
     const workerById = new Map(workers.map((w) => [w.id, w]))
@@ -143,9 +182,11 @@ processWorkerAssignRouter.post('/process-worker-assignments/optimize', async (re
       ok: true,
       orderQty,
       groupCount: outcome.groupCount,
+      totalWorkersUsed: outcome.totalWorkersUsed,
       groupPreview: processGroups.map((g) => g.map((id) => processById.get(id)?.sequence ?? id).join('·')).join(' / '),
       estimatedMakespanSeconds: outcome.estimatedMakespanSeconds,
       estimatedMakespanLabel: formatMakespanKo(outcome.estimatedMakespanSeconds),
+      estimatedEfficiencyPct: outcome.estimatedEfficiencyPct,
       modelNote:
         '묶음별 라인(파이프라인): 묶음 내 공정 시간 합 + (수량−1)×가장 긴 묶음 시간',
       assignments: outcome.assignments.map((a) => {

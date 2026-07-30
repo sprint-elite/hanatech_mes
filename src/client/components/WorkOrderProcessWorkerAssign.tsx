@@ -13,6 +13,8 @@ type MbomProcessRef = {
   processCode: string
   processName: string
   sequence: number
+  minWorkers?: number
+  maxWorkers?: number
 }
 
 export type WorkerPickRef = { id: number; workerCode: string; workerName: string; status: string }
@@ -118,8 +120,8 @@ export function WorkOrderProcessWorkerAssign({
   const [optimizeErr, setOptimizeErr] = useState<string | null>(null)
   const [groupOptOpen, setGroupOptOpen] = useState(false)
   const [assignConfirm, setAssignConfirm] = useState<{
-    groupPreview: string
     makespanLabel: string
+    estimatedEfficiencyPct: number | null
     assignments: AssignConfirmRow[]
   } | null>(null)
   const legacySeedApplied = useRef(false)
@@ -278,7 +280,7 @@ export function WorkOrderProcessWorkerAssign({
           message?: string
           estimatedMakespanLabel?: string
           estimatedMakespanSeconds?: number
-          groupPreview?: string
+          estimatedEfficiencyPct?: number | null
           assignments?: Array<{
             processId: number
             workerId: number
@@ -304,8 +306,8 @@ export function WorkOrderProcessWorkerAssign({
         }
         setGroupOptOpen(false)
         setAssignConfirm({
-          groupPreview: res.groupPreview ?? '',
           makespanLabel: res.estimatedMakespanLabel ?? formatMakespanKo(res.estimatedMakespanSeconds ?? 0),
+          estimatedEfficiencyPct: res.estimatedEfficiencyPct ?? null,
           assignments: res.assignments,
         })
       } catch (e) {
@@ -328,8 +330,14 @@ export function WorkOrderProcessWorkerAssign({
     for (const p of processes) {
       if (next[p.id] === undefined) next[p.id] = []
     }
+    const byProcess = new Map<number, number[]>()
     for (const a of assignConfirm.assignments) {
-      next[a.processId] = [a.workerId]
+      const list = byProcess.get(a.processId) ?? []
+      if (!list.includes(a.workerId)) list.push(a.workerId)
+      byProcess.set(a.processId, list)
+    }
+    for (const [pid, ids] of byProcess) {
+      next[pid] = ids
     }
     onChange(next)
     setAssignConfirm(null)
@@ -410,9 +418,9 @@ export function WorkOrderProcessWorkerAssign({
       <ProcessWorkerAssignConfirmModal
         open={assignConfirm != null}
         variant={variant}
-        groupPreview={assignConfirm?.groupPreview ?? ''}
         orderQty={qty}
         makespanLabel={assignConfirm?.makespanLabel ?? '—'}
+        estimatedEfficiencyPct={assignConfirm?.estimatedEfficiencyPct ?? null}
         assignments={assignConfirm?.assignments ?? []}
         applying={false}
         onCancel={() => setAssignConfirm(null)}

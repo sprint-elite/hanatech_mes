@@ -14,6 +14,13 @@ import {
 import { prisma } from '../db/prisma'
 import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
+import {
+  renderCode128PngWithMeta,
+  CODE128_PRINT,
+  CODE128_SCREEN,
+  CODE128_THUMB,
+} from '../lib/barcode/image'
+import { syncMaterialLotBarcode } from '../lib/barcode/materialLot'
 
 const woListInclude = {
   product: { select: { productCode: true, productName: true } },
@@ -451,19 +458,57 @@ extendedOpsRouter.post('/material-lots', async (req, res) => {
   const rq = String(b.receivedQty)
   const rem = b.remainQty != null ? String(b.remainQty) : rq
   try {
-    const item = await prisma.materialLot.create({
-      data: {
-        lotNo: b.lotNo,
-        productId: b.productId,
-        supplier: b.supplier ?? undefined,
-        receivedQty: rq,
-        remainQty: rem,
-        receivedDate: new Date(b.receivedDate),
-        status: b.status ?? MaterialLotStatus.AVAILABLE,
-      },
-      include: { product: { select: { productCode: true, productName: true } } },
+    const item = await prisma.$transaction(async (tx) => {
+      const lot = await tx.materialLot.create({
+        data: {
+          lotNo: b.lotNo,
+          productId: b.productId,
+          supplier: b.supplier ?? undefined,
+          receivedQty: rq,
+          remainQty: rem,
+          receivedDate: new Date(b.receivedDate),
+          status: b.status ?? MaterialLotStatus.AVAILABLE,
+        },
+        include: { product: { select: { productCode: true, productName: true } } },
+      })
+      await syncMaterialLotBarcode(tx, lot.id, lot.lotNo)
+      return tx.materialLot.findUnique({
+        where: { id: lot.id },
+        include: { product: { select: { productCode: true, productName: true } } },
+      })
     })
     return res.status(201).json({ ok: true, item })
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
+extendedOpsRouter.get('/material-lots/:id/barcode-image', async (req, res) => {
+  const id = parsePositiveIntParam(req.params.id)
+  if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
+  const view = typeof req.query.view === 'string' ? req.query.view : ''
+  const legacyLarge = req.query.large === '1' || req.query.large === 'true'
+  const spec =
+    view === 'print'
+      ? CODE128_PRINT
+      : view === 'screen' || legacyLarge
+        ? CODE128_SCREEN
+        : CODE128_THUMB
+  try {
+    const lot = await prisma.materialLot.findUnique({
+      where: { id },
+      select: { barcode: true, lotNo: true },
+    })
+    if (!lot) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
+    const text = lot.barcode ?? lot.lotNo
+    const img = await renderCode128PngWithMeta({ text, ...spec })
+    res.setHeader('Content-Type', 'image/png')
+    res.setHeader('Cache-Control', 'private, max-age=3600')
+    res.setHeader('X-Barcode-Width-Mm', String(img.widthMm))
+    res.setHeader('X-Barcode-Height-Mm', String(img.heightMm))
+    res.setHeader('X-Barcode-Width-Px', String(img.widthPx))
+    res.setHeader('X-Barcode-Height-Px', String(img.heightPx))
+    return res.send(img.buffer)
   } catch (e) {
     return prismaFail(res, e)
   }

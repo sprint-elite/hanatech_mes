@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { InventoryTxRefType, InventoryTxType, MaterialLotStatus, Prisma, ShipmentStatus } from '@prisma/client'
 import { prisma } from '../db/prisma'
 import { issueMaterialInTx } from '../lib/issueMaterialInTx'
+import { syncMaterialLotBarcode } from '../lib/barcode/materialLot'
 import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
 
@@ -278,8 +279,9 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
                 receivedDate: new Date(),
                 status: MaterialLotStatus.AVAILABLE,
               },
-              select: { id: true },
+              select: { id: true, lotNo: true },
             })
+            await syncMaterialLotBarcode(tx, created.id, created.lotNo)
             resolvedMaterialLotId = created.id
           } else {
             resolvedMaterialLotId = found.id

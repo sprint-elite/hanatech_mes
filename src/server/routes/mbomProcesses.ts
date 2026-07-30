@@ -18,11 +18,21 @@ const createBody = z.object({
   standardTime: positiveSeconds.optional().nullable(),
   baseQty: z.number().int().positive().optional().nullable(),
   remark: z.string().trim().max(500).optional().nullable(),
+  minWorkers: z.number().int().min(1).max(99).optional(),
+  maxWorkers: z.number().int().min(1).max(99).optional(),
   isOutsourcing: useYn.optional(),
   useYn: useYn.optional(),
 })
 
-const updateBody = createBody.partial()
+const updateBody = createBody
+  .partial()
+  .refine(
+    (b) =>
+      b.minWorkers === undefined ||
+      b.maxWorkers === undefined ||
+      (b.minWorkers != null && b.maxWorkers != null && b.minWorkers <= b.maxWorkers),
+    { message: 'minWorkers must be <= maxWorkers' },
+  )
 
 const listSelect = {
   id: true,
@@ -34,6 +44,8 @@ const listSelect = {
   standardTime: true,
   baseQty: true,
   remark: true,
+  minWorkers: true,
+  maxWorkers: true,
   isOutsourcing: true,
   useYn: true,
   product: { select: { productCode: true, productName: true } },
@@ -66,6 +78,8 @@ async function listForProduct(productId: number) {
       processCode: true,
       processName: true,
       sequence: true,
+      minWorkers: true,
+      maxWorkers: true,
       workCenter: { select: { centerCode: true, centerName: true } },
     },
   })
@@ -136,6 +150,9 @@ mbomProcessesRouter.post('/mbom-processes', async (req, res) => {
     return res.status(400).json({ ok: false, error: 'VALIDATION_ERROR', details: parsed.error.flatten() })
   }
   const b = parsed.data
+  if (b.minWorkers != null && b.maxWorkers != null && b.minWorkers > b.maxWorkers) {
+    return res.status(400).json({ ok: false, error: 'VALIDATION_ERROR', message: '최소 인원은 최대 인원보다 클 수 없습니다.' })
+  }
   try {
     const item = await prisma.mbomProcess.create({
       data: {
@@ -147,6 +164,8 @@ mbomProcessesRouter.post('/mbom-processes', async (req, res) => {
         standardTime: toStandardTimeInput(b.standardTime),
         baseQty: b.baseQty ?? undefined,
         remark: b.remark ?? undefined,
+        minWorkers: b.minWorkers ?? 1,
+        maxWorkers: b.maxWorkers ?? b.minWorkers ?? 1,
         isOutsourcing: b.isOutsourcing ?? 'N',
         useYn: b.useYn ?? 'Y',
       },
@@ -168,6 +187,22 @@ mbomProcessesRouter.patch('/mbom-processes/:id', async (req, res) => {
   const b = parsed.data
   if (Object.keys(b).length === 0) return res.status(400).json({ ok: false, error: 'EMPTY_BODY' })
   try {
+    if (b.minWorkers !== undefined || b.maxWorkers !== undefined) {
+      const cur = await prisma.mbomProcess.findUnique({
+        where: { id },
+        select: { minWorkers: true, maxWorkers: true },
+      })
+      if (!cur) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
+      const minW = b.minWorkers ?? cur.minWorkers
+      const maxW = b.maxWorkers ?? cur.maxWorkers
+      if (minW > maxW) {
+        return res.status(400).json({
+          ok: false,
+          error: 'VALIDATION_ERROR',
+          message: '최소 인원은 최대 인원보다 클 수 없습니다.',
+        })
+      }
+    }
     const data = {
       ...(b.productId !== undefined ? { productId: b.productId } : {}),
       ...(b.processCode !== undefined ? { processCode: b.processCode } : {}),
@@ -177,6 +212,8 @@ mbomProcessesRouter.patch('/mbom-processes/:id', async (req, res) => {
       ...(b.standardTime !== undefined ? { standardTime: toStandardTimeInput(b.standardTime) } : {}),
       ...(b.baseQty !== undefined ? { baseQty: b.baseQty } : {}),
       ...(b.remark !== undefined ? { remark: b.remark } : {}),
+      ...(b.minWorkers !== undefined ? { minWorkers: b.minWorkers } : {}),
+      ...(b.maxWorkers !== undefined ? { maxWorkers: b.maxWorkers } : {}),
       ...(b.isOutsourcing !== undefined ? { isOutsourcing: b.isOutsourcing } : {}),
       ...(b.useYn !== undefined ? { useYn: b.useYn } : {}),
     }

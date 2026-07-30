@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   defaultMergeWithNext,
   formatGroupsPreview,
+  groupWorkerCountBoundsForIds,
   mergeFlagsToProcessGroups,
+  minWorkersRequiredForGroupList,
   type ProcessGroupProc,
 } from '../lib/processWorkerGroups'
 
@@ -50,12 +52,18 @@ export function ProcessWorkerGroupOptimizeModal({
   const flags =
     mergeWithNext.length === Math.max(0, syncLen - 1) ? mergeWithNext : defaultMergeWithNext(syncLen)
 
-  const { groups, groupPreview } = useMemo(() => {
+  const { groups, groupPreview, minWorkersLabel, groupBoundsByIndex } = useMemo(() => {
     const orderedIds = ordered.map((p) => p.id)
+    const byId = new Map(ordered.map((p) => [p.id, p]))
     const g = mergeFlagsToProcessGroups(orderedIds, flags)
+    const minReq = minWorkersRequiredForGroupList(g, byId)
+    const boundsByIdx = g.map((grp) => groupWorkerCountBoundsForIds(grp, byId))
     return {
       groups: g,
       groupPreview: formatGroupsPreview(ordered, g),
+      minWorkersLabel:
+        typeof minReq === 'number' ? `${minReq}명 이상` : '범위 불일치',
+      groupBoundsByIndex: boundsByIdx,
     }
   }, [ordered, flags])
 
@@ -120,7 +128,7 @@ export function ProcessWorkerGroupOptimizeModal({
             </div>
             <div className="mesOpsPlanModalStripItem">
               <span className="mesOpsPlanModalStripLabel">필요 작업자</span>
-              <span className="mesOpsPlanModalStripVal">{groups.length}명</span>
+              <span className="mesOpsPlanModalStripVal">{minWorkersLabel}</span>
             </div>
             <div className="mesOpsPlanModalStripItem">
               <span className="mesOpsPlanModalStripLabel">묶음</span>
@@ -156,6 +164,14 @@ export function ProcessWorkerGroupOptimizeModal({
               const tone = processGroupIndex(i, flags) % 6
               const mergedWithNext = i < flags.length && flags[i]
               const showJoin = i < ordered.length - 1
+              const gIdx = processGroupIndex(i, flags)
+              const bounds = groupBoundsByIndex[gIdx]
+              const workerHint =
+                bounds && typeof bounds === 'object' && 'lo' in bounds
+                  ? `인원 ${bounds.lo}~${bounds.hi}명`
+                  : bounds
+                    ? '인원 범위 불일치'
+                    : null
               return (
                 <div key={proc.id} className="mesWoGroupOptFlowBlock">
                   <div className="mesWoGroupOptStep" data-tone={tone}>
@@ -165,6 +181,9 @@ export function ProcessWorkerGroupOptimizeModal({
                       <div className="mesWoGroupOptStepText">
                         <span className="mesWoGroupOptStepCode mono">{proc.processCode}</span>
                         <span className="mesWoGroupOptStepName">{proc.processName}</span>
+                        {workerHint ? (
+                          <span className="mesWoGroupOptStepWorkers muted small">{workerHint}</span>
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -200,7 +219,7 @@ export function ProcessWorkerGroupOptimizeModal({
           <button
             type="button"
             className={isOps ? 'mesOpsPlanModalBtn mesOpsPlanModalBtn--save' : 'mesBtnPrimary'}
-            disabled={saving || groups.length === 0}
+            disabled={saving || groups.length === 0 || minWorkersLabel === '범위 불일치'}
             onClick={() => onSubmit(groups)}
           >
             {saving ? '계산 중…' : '최단 완료 배정 계산'}

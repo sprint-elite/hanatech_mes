@@ -3,6 +3,38 @@ export type ProcessGroupProc = {
   sequence: number
   processCode: string
   processName: string
+  minWorkers?: number
+  maxWorkers?: number
+}
+
+export function groupWorkerCountBoundsForIds(
+  processIds: number[],
+  byId: Map<number, ProcessGroupProc>,
+): { lo: number; hi: number } | { error: 'INFEASIBLE' } {
+  let lo = 1
+  let hi = 99
+  for (const pid of processIds) {
+    const p = byId.get(pid)
+    const minW = p?.minWorkers ?? 1
+    const maxW = p?.maxWorkers ?? 1
+    lo = Math.max(lo, minW)
+    hi = Math.min(hi, maxW)
+  }
+  if (lo > hi) return { error: 'INFEASIBLE' }
+  return { lo, hi }
+}
+
+export function minWorkersRequiredForGroupList(
+  groups: number[][],
+  byId: Map<number, ProcessGroupProc>,
+): number | { error: 'INFEASIBLE' } {
+  let sum = 0
+  for (const g of groups) {
+    const b = groupWorkerCountBoundsForIds(g, byId)
+    if (typeof b === 'object' && b !== null && 'error' in b) return { error: 'INFEASIBLE' }
+    sum += b.lo
+  }
+  return sum
 }
 
 /** 인접 공정끼리만 묶음. mergeWithNext[i]=true 이면 i번째와 i+1번째 공정이 같은 작업자 */

@@ -404,6 +404,11 @@
   font-size: 12px;
 }
 
+.mesMatLotPage .mesMatLotColBarcode {
+  width: 140px;
+  min-width: 120px;
+}
+
 .mesMatLotPage .mesMatLotThActions,
 .mesMatLotPage .mesMatLotTdActions {
   text-align: center;

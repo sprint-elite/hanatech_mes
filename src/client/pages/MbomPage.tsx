@@ -19,6 +19,8 @@ type Row = {
   standardTime: number | null
   baseQty: number | null
   remark: string | null
+  minWorkers: number
+  maxWorkers: number
   isOutsourcing: 'Y' | 'N'
   useYn: 'Y' | 'N'
   product: { productCode: string; productName: string }
@@ -36,6 +38,8 @@ const emptyForm = (): MbomProcessFormState => ({
   standardTimeSec: '',
   baseQty: '',
   remark: '',
+  minWorkers: '1',
+  maxWorkers: '1',
   isOutsourcing: 'N',
   useYn: 'Y',
 })
@@ -139,6 +143,9 @@ function ProcessTags({ r }: { r: Row }) {
         <span className="mesMbTag mesMbTag--use-n">작업장 없음</span>
       )}
       {r.isOutsourcing === 'Y' ? <span className="mesMbTag mesMbTag--out">외주</span> : null}
+      <span className="mesMbTag mesMbTag--workers">
+        인원 {r.minWorkers ?? 1}~{r.maxWorkers ?? 1}명
+      </span>
       <span className={r.useYn === 'Y' ? 'mesMbTag mesMbTag--use-y' : 'mesMbTag mesMbTag--use-n'}>
         사용 {r.useYn}
       </span>
@@ -323,6 +330,8 @@ export function MbomPage() {
       standardTimeSec: r.standardTime != null ? String(r.standardTime) : '',
       baseQty: r.baseQty != null ? String(r.baseQty) : '',
       remark: r.remark ?? '',
+      minWorkers: String(r.minWorkers ?? 1),
+      maxWorkers: String(r.maxWorkers ?? 1),
       isOutsourcing: r.isOutsourcing,
       useYn: r.useYn,
     })
@@ -355,6 +364,20 @@ export function MbomPage() {
       setErr('표준 생산시간과 기준 생산수량은 함께 입력해야 합니다.')
       return
     }
+    const minW = Number(form.minWorkers.trim())
+    const maxW = Number(form.maxWorkers.trim())
+    if (!Number.isInteger(minW) || minW < 1 || minW > 99) {
+      setErr('최소 배치 인원은 1~99 정수입니다.')
+      return
+    }
+    if (!Number.isInteger(maxW) || maxW < 1 || maxW > 99) {
+      setErr('최대 배치 인원은 1~99 정수입니다.')
+      return
+    }
+    if (minW > maxW) {
+      setErr('최소 인원은 최대 인원보다 클 수 없습니다.')
+      return
+    }
     setSaving(true)
     setErr(null)
     try {
@@ -373,6 +396,8 @@ export function MbomPage() {
         standardTime,
         baseQty,
         remark: form.remark.trim() === '' ? null : form.remark.trim(),
+        minWorkers: minW,
+        maxWorkers: maxW,
         isOutsourcing: form.isOutsourcing,
         useYn: form.useYn,
       }

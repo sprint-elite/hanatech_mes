@@ -16,6 +16,7 @@
   --mb-out: #a78bfa;
   --mb-radius: 12px;
   --mb-radius-sm: 8px;
+  --mb-input-bg: #0a0d14;
   max-width: 100%;
 }
 
@@ -28,6 +29,7 @@
   --mb-text: #141820;
   --mb-muted: #5f6775;
   --mb-accent: #c9a227;
+  --mb-input-bg: #ffffff;
 }
 
 .mesMbomPage .mesMbHead {
@@ -492,6 +494,12 @@
   border-color: rgba(167, 139, 250, 0.35);
 }
 
+.mesMbomPage .mesMbTag--workers {
+  color: #c9a227;
+  background: rgba(201, 162, 39, 0.12);
+  border-color: rgba(201, 162, 39, 0.35);
+}
+
 .mesMbomPage .mesMbTag--use-y {
   color: var(--mb-ok);
   background: rgba(61, 186, 114, 0.12);
@@ -639,15 +647,15 @@
   display: flex;
   flex-direction: column;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #0e1018;
+  border: 1px solid var(--mb-border-strong);
+  background: var(--mb-surface);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
   overflow: hidden;
+  color: var(--mb-text);
 }
 
 [data-theme='light'] .mesMbModalDialog {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
 }
 
 .mesMbModalHead {
@@ -656,7 +664,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 18px 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--mb-border);
 }
 
 .mesMbModalHeadTitle {
@@ -686,13 +694,13 @@
   margin: 0;
   font-size: 18px;
   font-weight: 800;
-  color: #eef1f6;
+  color: var(--mb-text);
 }
 
 .mesMbModalSub {
   margin: 4px 0 0;
   font-size: 12px;
-  color: #9aa3b2;
+  color: var(--mb-muted);
   line-height: 1.4;
 }
 
@@ -703,9 +711,9 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--mb-border-strong);
   background: transparent;
-  color: #9aa3b2;
+  color: var(--mb-muted);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -729,13 +737,8 @@
   gap: 12px;
   padding: 14px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-[data-theme='light'] .mesMbModalSection {
-  background: rgba(0, 0, 0, 0.02);
-  border-color: rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--mb-border);
+  background: var(--mb-surface2);
 }
 
 .mesMbModalSectionTitle {
@@ -745,7 +748,7 @@
   margin: 0;
   font-size: 14px;
   font-weight: 800;
-  color: #eef1f6;
+  color: var(--mb-text);
 }
 
 .mesMbModalSectionIcon {
@@ -767,7 +770,7 @@
 .mesMbModalSectionHint {
   margin: -4px 0 0;
   font-size: 12px;
-  color: #9aa3b2;
+  color: var(--mb-muted);
   line-height: 1.45;
 }
 
@@ -806,7 +809,7 @@
 .mesMbModalFieldLabel {
   font-size: 13px;
   font-weight: 600;
-  color: #9aa3b2;
+  color: var(--mb-text);
 }
 
 .mesMbModalInput {
@@ -814,12 +817,23 @@
   box-sizing: border-box;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: #0a0d14;
-  color: #eef1f6;
+  border: 1px solid var(--mb-border-strong);
+  background: var(--mb-input-bg);
+  color: var(--mb-text);
   font-size: 14px;
   font-family: inherit;
   min-height: 42px;
+}
+
+.mesMbModalInput::placeholder {
+  color: var(--mb-muted);
+  opacity: 0.85;
+}
+
+.mesMbModalInput:focus {
+  outline: none;
+  border-color: rgba(232, 194, 74, 0.55);
+  box-shadow: 0 0 0 2px rgba(232, 194, 74, 0.12);
 }
 
 .mesMbModalFoot {
@@ -827,8 +841,8 @@
   justify-content: flex-end;
   gap: 10px;
   padding: 16px 22px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #12151e;
+  border-top: 1px solid var(--mb-border);
+  background: var(--mb-surface2);
 }
 
 .mesMbModalBtn {
@@ -849,9 +863,9 @@
 }
 
 .mesMbModalBtn--cancel {
-  background: #181c28;
-  color: #eef1f6;
-  border-color: rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: var(--mb-text);
+  border-color: var(--mb-border-strong);
 }
 
 .mesMbModalBtn--save {

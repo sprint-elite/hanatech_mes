@@ -27,6 +27,7 @@ type ProductProcessSummaryRow = {
   inputQty: number
   goodQty: number
   defectQty: number
+  efficiencyGoodQty?: number
   workMinutes: number
 }
 
@@ -100,8 +101,11 @@ function fmtWorkEfficiency(
   inputQty: number,
   standardTime: number | null,
   baseQty: number | null,
+  efficiencyGoodQty?: number,
 ): string {
-  const qty = qtyBasisForEfficiency(goodQty, inputQty)
+  const rawQty = qtyBasisForEfficiency(goodQty, inputQty)
+  const qty =
+    efficiencyGoodQty != null && efficiencyGoodQty > 0 ? efficiencyGoodQty : rawQty
   if (workMinutes <= 0 || qty <= 0) return '—'
   const secPerUnit = (workMinutes * 60) / qty
   const secLabel = `${fmtSeconds(secPerUnit)}초/개`
@@ -129,6 +133,7 @@ type WorkTimeEntryDraft = {
   goodQty: string
   defectQty: string
   workMinutes: string
+  contributionPct: string
 }
 
 function workTimeRowKey(row: WorkTimeEntryDraft): string {
@@ -137,6 +142,14 @@ function workTimeRowKey(row: WorkTimeEntryDraft): string {
 
 function digitsOnly(value: string): string {
   return value.replace(/\D/g, '')
+}
+
+function contributionInput(value: string): string {
+  const d = digitsOnly(value)
+  if (d === '') return ''
+  const n = Number(d)
+  if (!Number.isFinite(n)) return ''
+  return String(Math.min(100, Math.max(1, n)))
 }
 
 function IconSearch() {
@@ -588,7 +601,7 @@ function CompareBarChart({
 }: {
   title: string
   rows: WorkerAggRow[]
-  valueKey: 'contributionPct' | 'defectPct' | 'perHour'
+  valueKey: 'contributionPct' | 'defectPct'
   format: (v: number, r: WorkerAggRow) => string
   barVariant: 'good' | 'defect' | 'eff'
   sort: 'asc' | 'desc'
@@ -596,13 +609,12 @@ function CompareBarChart({
 }) {
   const data = rows
     .filter((r) => {
-      if (valueKey === 'perHour') return r.perHour != null && r.perHour > 0
       if (valueKey === 'contributionPct') return r.goodQty > 0
       return r.inputQty > 0
     })
     .sort((a, b) => {
-      const av = valueKey === 'perHour' ? (a.perHour ?? 0) : a[valueKey]
-      const bv = valueKey === 'perHour' ? (b.perHour ?? 0) : b[valueKey]
+      const av = a[valueKey]
+      const bv = b[valueKey]
       return sort === 'asc' ? av - bv : bv - av
     })
     .slice(0, 10)
@@ -616,10 +628,7 @@ function CompareBarChart({
     )
   }
 
-  const max = Math.max(
-    1,
-    ...data.map((r) => (valueKey === 'perHour' ? (r.perHour ?? 0) : r[valueKey])),
-  )
+  const max = Math.max(1, ...data.map((r) => r[valueKey]))
   const best = data[0]
 
   return (
@@ -627,12 +636,12 @@ function CompareBarChart({
       <h3 className="mesWrStatsCardTitle">{title}</h3>
       {best ? (
         <p className="mesWrStatsBest">
-          {bestLabel}: <strong>{best.workerName}</strong> ({format(valueKey === 'perHour' ? (best.perHour ?? 0) : best[valueKey], best)})
+          {bestLabel}: <strong>{best.workerName}</strong> ({format(best[valueKey], best)})
         </p>
       ) : null}
       <div className="mesWrBarChart">
         {data.map((r, i) => {
-          const val = valueKey === 'perHour' ? (r.perHour ?? 0) : r[valueKey]
+          const val = r[valueKey]
           const pct = Math.round((val / max) * 100)
           return (
             <div
@@ -701,6 +710,86 @@ function workerOptionsFromCells(
     .sort((a, b) => a.name.localeCompare(b.name, 'ko'))
 }
 
+function aggregateProcessCellsByWorker(
+  cells: StatsProcessCell[],
+  requireSecPerUnit: boolean,
+  requiredProcessIds?: Set<number>,
+): StatsProcessCell[] {
+  const byWorker = new Map<number, StatsProcessCell[]>()
+  for (const c of cells) {
+    if (requireSecPerUnit && (c.secPerUnit == null || c.secPerUnit <= 0)) continue
+    const list = byWorker.get(c.workerId) ?? []
+    list.push(c)
+    byWorker.set(c.workerId, list)
+  }
+
+  const entries = [...byWorker.entries()].filter(([_, rows]) => {
+    if (!requiredProcessIds || requiredProcessIds.size === 0) return true
+    const workerProcessIds = new Set(rows.map((r) => r.processId))
+    return [...requiredProcessIds].every((id) => workerProcessIds.has(id))
+  })
+
+  return entries.map(([workerId, rows]) => {
+    let workMinutes = 0
+    let inputQty = 0
+    let goodQty = 0
+    let defectQty = 0
+    let secPerUnitSum = 0
+    let standardSecSum = 0
+    let hasSec = true
+    let hasStd = true
+
+    for (const r of rows) {
+      workMinutes += r.workMinutes
+      inputQty += r.inputQty
+      goodQty += r.goodQty
+      defectQty += r.defectQty
+      if (r.secPerUnit != null && r.secPerUnit > 0) secPerUnitSum += r.secPerUnit
+      else hasSec = false
+      if (r.standardSecPerUnit != null && r.standardSecPerUnit > 0) standardSecSum += r.standardSecPerUnit
+      else hasStd = false
+    }
+
+    const secPerUnit =
+      hasSec && secPerUnitSum > 0 ? Math.round(secPerUnitSum * 10000) / 10000 : null
+    const standardSecPerUnit =
+      hasStd && standardSecSum > 0 ? Math.round(standardSecSum * 10000) / 10000 : null
+    const efficiencyPct =
+      secPerUnit != null && standardSecPerUnit != null && secPerUnit > 0
+        ? Math.round((standardSecPerUnit / secPerUnit) * 1000) / 10
+        : null
+
+    return {
+      workerId,
+      workerName: rows[0]!.workerName,
+      productId: rows[0]!.productId,
+      processId: 0,
+      processCode: 'ALL',
+      processName: '전체 공정',
+      sequence: 0,
+      inputQty,
+      goodQty,
+      defectQty,
+      workMinutes,
+      secPerUnit,
+      standardSecPerUnit,
+      efficiencyPct,
+    }
+  })
+}
+
+function totalStandardSecForProduct(processCells: StatsProcessCell[], productId: number): number | null {
+  const byProcess = new Map<number, number>()
+  for (const c of processCells) {
+    if (c.productId !== productId) continue
+    if (c.standardSecPerUnit != null && c.standardSecPerUnit > 0) {
+      byProcess.set(c.processId, c.standardSecPerUnit)
+    }
+  }
+  if (byProcess.size === 0) return null
+  return Math.round([...byProcess.values()].reduce((s, v) => s + v, 0) * 10000) / 10000
+}
+
 function buildProcessGroups(
   processCells: StatsProcessCell[],
   filters: ProcessChartFilters,
@@ -710,8 +799,28 @@ function buildProcessGroups(
   if (productId == null || !Number.isFinite(productId)) return []
 
   let scoped = processCells.filter((c) => c.productId === productId)
-  if (filters.processId) scoped = scoped.filter((c) => c.processId === Number(filters.processId))
   if (filters.workerId) scoped = scoped.filter((c) => c.workerId === Number(filters.workerId))
+
+  if (!filters.processId) {
+    const requiredProcessIds = new Set(
+      processCells.filter((c) => c.productId === productId).map((c) => c.processId),
+    )
+    const rows = aggregateProcessCellsByWorker(scoped, requireSecPerUnit, requiredProcessIds)
+    if (rows.length === 0) return []
+    const processCount = new Set(scoped.map((c) => c.processId)).size
+    return [
+      {
+        processId: 0,
+        sequence: 0,
+        processName: processCount > 0 ? `전체 공정 (${processCount}단계)` : '전체 공정',
+        processCode: 'ALL',
+        standardSecPerUnit: totalStandardSecForProduct(processCells, productId),
+        rows,
+      },
+    ]
+  }
+
+  scoped = scoped.filter((c) => c.processId === Number(filters.processId))
 
   const byProcess = new Map<number, StatsProcessCell[]>()
   for (const c of scoped) {
@@ -876,7 +985,11 @@ function ProcessEfficiencyCharts({
           productList={productList}
           processCells={processCells}
         />
-        <p className="mesWrStatsBest muted small">작업시간(분)×60 ÷ 양품(없으면 투입) · 작업자 비교</p>
+        <p className="mesWrStatsBest muted small">
+          {secFilters.processId
+            ? '작업시간(분)×60 ÷ 양품(없으면 투입) · 작업자 비교'
+            : '공정별 개당 작업시간 합산 · 표준 합계 대비 작업자 비교'}
+        </p>
         {!secFilters.productId ? (
           <div className="mesWrStatsEmpty">생산품을 선택하세요.</div>
         ) : secGroups.length === 0 ? (
@@ -945,6 +1058,9 @@ function ProcessEfficiencyCharts({
             {effRows[0] ? (
               <p className="mesWrStatsBest">
                 최고 효율: <strong>{effRows[0].workerName}</strong> ({effRows[0].efficiencyPct}%)
+                {!effFilters.processId ? (
+                  <span className="muted"> · 공정 합산 기준</span>
+                ) : null}
               </p>
             ) : null}
             <div className="mesWrBarChart">
@@ -953,7 +1069,7 @@ function ProcessEfficiencyCharts({
                 const pct = Math.min(100, Math.round(val))
                 return (
                   <div
-                    key={`${r.processId}-${r.workerId}`}
+                    key={effFilters.processId ? `${r.processId}-${r.workerId}` : r.workerId}
                     className={`mesWrBarRow${i === 0 ? ' mesWrBarRow--best' : ''}`}
                   >
                     <span className="mesWrBarRank">{i + 1}</span>
@@ -1078,48 +1194,6 @@ function WorkerStatsPanel({
             sort="asc"
             bestLabel="최저 불량률"
           />
-          <CompareBarChart
-            title={`시간당 양품 (효율)${selectedName ? ` · ${selectedName}` : ''}`}
-            rows={aggRows}
-            valueKey="perHour"
-            format={(v) => `${v}개/h`}
-            barVariant="eff"
-            sort="desc"
-            bestLabel="최고 효율"
-          />
-          <section className="mesWrStatsCard mesWrStatsCard--table">
-            <h3 className="mesWrStatsCardTitle">비교 요약</h3>
-            <div className="mesWrStatsTableWrap">
-              <table className="mesWrStatsTable">
-                <thead>
-                  <tr>
-                    <th>작업자</th>
-                    <th>투입</th>
-                    <th>양품</th>
-                    <th>불량</th>
-                    <th>기여도</th>
-                    <th>불량률</th>
-                    <th>시간당 양품</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...aggRows]
-                    .sort((a, b) => b.contributionPct - a.contributionPct || a.defectPct - b.defectPct)
-                    .map((r, i) => (
-                      <tr key={r.workerId} className={i === 0 ? 'mesWrStatsTableRow--top' : undefined}>
-                        <td>{r.workerName}</td>
-                        <td className="mono">{r.inputQty.toLocaleString()}</td>
-                        <td className="mono">{r.goodQty.toLocaleString()}</td>
-                        <td className="mono">{r.defectQty.toLocaleString()}</td>
-                        <td className="mono">{r.contributionPct}%</td>
-                        <td className="mono">{r.defectPct}%</td>
-                        <td className="mono">{r.perHour != null ? `${r.perHour}/h` : '—'}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
           <div className="mesWrStatsProcessRow">
             <ProcessEfficiencyCharts
               products={products}
@@ -1168,7 +1242,8 @@ function WorkTimeEntryModal({
               작업시간 입력 · {process.processName}
             </h2>
             <p className="mesModalMeta muted">
-              {workerName} · 투입·양품·불량은 공정 실적(LOT별) 자동 집계, 작업시간(분)만 입력. 합계{' '}
+              {workerName} · 투입·양품·불량은 공정 실적(LOT별) 자동 집계. 작업시간(분)·기여도(%)만 입력합니다.
+              기여도는 다인 작업 시 효율 계산에 반영됩니다(예: 2명 50:50 → 각 50). 합계{' '}
               {totalMinutes.toLocaleString()}분
             </p>
           </div>
@@ -1198,12 +1273,13 @@ function WorkTimeEntryModal({
                       <th>양품</th>
                       <th>불량</th>
                       <th>작업시간 (분)</th>
+                      <th>기여도 (%)</th>
                     </tr>
                   </thead>
                   <tbody>
                     {rows.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="muted">
+                        <td colSpan={9} className="muted">
                           해당 공정에 실적이 있는 LOT가 없습니다. 현장 실적 입력 후 다시 열어 주세요.
                         </td>
                       </tr>
@@ -1226,6 +1302,20 @@ function WorkTimeEntryModal({
                               onChange={(ev) => {
                                 const next = [...rows]
                                 next[idx] = { ...row, workMinutes: digitsOnly(ev.target.value) }
+                                onChangeRows(next)
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              className="mesInput mesWorkerMinutesInput"
+                              inputMode="numeric"
+                              aria-label={`${row.lotNo || row.workDate} 기여도(%)`}
+                              value={row.contributionPct}
+                              placeholder="100"
+                              onChange={(ev) => {
+                                const next = [...rows]
+                                next[idx] = { ...row, contributionPct: contributionInput(ev.target.value) }
                                 onChangeRows(next)
                               }}
                             />
@@ -1392,6 +1482,26 @@ export function WorkersPage() {
     setPage(1)
   }
 
+  const applyProductSummary = (items: ProductSummaryRow[]) => {
+    const rows = items.map((r) => ({
+      ...r,
+      processes: r.processes ?? [],
+    }))
+    setSummaryRows(rows)
+    const draft: Record<number, string> = {}
+    for (const r of rows) {
+      for (const p of r.processes ?? []) {
+        draft[p.processId] = String(p.workMinutes)
+      }
+    }
+    setWorkMinutesDraft(draft)
+    setProcessModalProduct((cur) => {
+      if (!cur) return cur
+      const next = rows.find((r) => r.productId === cur.productId)
+      return next ?? cur
+    })
+  }
+
   const openDetail = async (worker: Row) => {
     setDetailWorker(worker)
     setSummaryLoading(true)
@@ -1400,19 +1510,7 @@ export function WorkersPage() {
       const data = await apiJson<{ ok: boolean; items: ProductSummaryRow[] }>(
         `/api/workers/${worker.id}/product-summary`,
       )
-      setSummaryRows(
-        data.items.map((r) => ({
-          ...r,
-          processes: r.processes ?? [],
-        })),
-      )
-      const draft: Record<number, string> = {}
-      for (const r of data.items) {
-        for (const p of r.processes ?? []) {
-          draft[p.processId] = String(p.workMinutes)
-        }
-      }
-      setWorkMinutesDraft(draft)
+      applyProductSummary(data.items)
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
       setSummaryRows([])
@@ -1449,6 +1547,7 @@ export function WorkersPage() {
           goodQty: number
           defectQty: number
           workMinutes: number
+          contributionPct: number
         }>
       }>(`/api/workers/${detailWorker.id}/process-work-time-entries?processId=${process.processId}`)
       const rows = data.items.map((e) => ({
@@ -1461,6 +1560,7 @@ export function WorkersPage() {
         goodQty: String(e.goodQty),
         defectQty: String(e.defectQty),
         workMinutes: String(e.workMinutes),
+        contributionPct: String(e.contributionPct ?? 100),
       }))
       setWorkTimeEntryRows(rows)
     } catch (e) {
@@ -1486,6 +1586,7 @@ export function WorkersPage() {
         productionLotId: r.productionLotId,
         workDate: r.workDate,
         workMinutes: Number(digitsOnly(r.workMinutes) || 0),
+        contributionPct: Number(contributionInput(r.contributionPct) || 100),
       }))
       const res = await apiJson<{ ok: boolean; workMinutes: number }>(
         `/api/workers/${detailWorker.id}/process-work-time-entries`,
@@ -1499,6 +1600,7 @@ export function WorkersPage() {
       )
       const pid = workTimeEntryTarget.process.processId
       setWorkMinutesDraft((d) => ({ ...d, [pid]: String(res.workMinutes ?? 0) }))
+      if (detailWorker) await openDetail(detailWorker)
       closeWorkTimeEntry()
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
@@ -1978,7 +2080,14 @@ export function WorkersPage() {
                                 </button>
                               </td>
                               <td className="small">
-                                {fmtWorkEfficiency(minutes, p.goodQty, p.inputQty, p.standardTime, p.baseQty)}
+                                {fmtWorkEfficiency(
+                                  minutes,
+                                  p.goodQty,
+                                  p.inputQty,
+                                  p.standardTime,
+                                  p.baseQty,
+                                  p.efficiencyGoodQty,
+                                )}
                               </td>
                             </tr>
                           )

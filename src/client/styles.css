@@ -3688,6 +3688,14 @@ body {
   color: #9a7b1a;
 }
 
+.mesWoAssignConfirmEfficiency {
+  color: var(--mes-accent, #d4a524);
+}
+
+[data-theme='light'] .mesWoAssignConfirmEfficiency {
+  color: #9a7b1a;
+}
+
 .mesWoAssignConfirmTableWrap {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;

@@ -185,7 +185,9 @@ annualLeaveRouter.get('/annual-leave/requests', async (req, res) => {
   const qRaw = typeof req.query.q === 'string' ? req.query.q.trim() : ''
 
   try {
-    const where: Record<string, unknown> = {}
+    const where: Record<string, unknown> = {
+      user: { is: {} },
+    }
     if (!canViewAllLeave(user.roleName)) {
       where.userId = user.id
     }
@@ -236,6 +238,7 @@ annualLeaveRouter.get('/annual-leave/calendar', async (req, res) => {
       status: { in: ['PENDING', 'APPROVED', 'REJECTED'] },
       startDate: { lte: end },
       endDate: { gte: start },
+      user: { is: {} },
     }
     if (!canViewAllLeave(user.roleName)) {
       where.userId = user.id

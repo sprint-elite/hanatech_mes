@@ -412,6 +412,8 @@ model MbomProcess {
   setupTime         Int?      @map("setup_time")
   capacityPerHour   Int?      @map("capacity_per_hour")
   remark            String?   @db.VarChar(500)
+  minWorkers        Int       @default(1) @map("min_workers")
+  maxWorkers        Int       @default(1) @map("max_workers")
   isOutsourcing     UseYn     @default(N) @map("is_outsourcing")
   useYn             UseYn     @default(Y) @map("use_yn")
   createdAt         DateTime  @default(now()) @map("created_at")
@@ -603,6 +605,7 @@ model ProductionLot {
 model MaterialLot {
   id           Int               @id @default(autoincrement())
   lotNo        String            @unique @map("lot_no")
+  barcode      String?           @unique @map("barcode")
   productId    Int               @map("product_id")
   supplier     String?
   receivedQty  Decimal           @map("received_qty") @db.Decimal(14, 4)
@@ -982,6 +985,8 @@ model WorkerProcessWorkTimeEntry {
   goodQty         Int      @default(0) @map("good_qty")
   defectQty       Int      @default(0) @map("defect_qty")
   workMinutes     Int      @default(0) @map("work_minutes")
+  /// 효율 계산 시 양품 실적에 곱하는 기여 비율(1~100). 다인 공정 시 중복 집계 방지.
+  contributionPct Int      @default(100) @map("contribution_pct")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 

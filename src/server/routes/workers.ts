@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { prisma } from '../db/prisma'
 import { dedupeProcessResultsForProductTotals } from '../lib/processResultAgg'
+import { effectiveGoodQtyForProcess, groupWorkTimeEntriesByWorkerProcess } from '../lib/workerContribution'
 import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
 
@@ -125,7 +126,8 @@ workersRouter.get('/workers', async (_req, res) => {
 
 workersRouter.get('/workers/stats/comparison', async (_req, res) => {
   try {
-    const [products, workers, results, productWorkTimes, processWorkTimes, mbomProcesses] = await Promise.all([
+    const [products, workers, results, productWorkTimes, processWorkTimes, workTimeEntries, mbomProcesses] =
+      await Promise.all([
       prisma.product.findMany({
         where: { itemType: { not: 'RAW' } },
         orderBy: [{ productName: 'asc' }],
@@ -154,6 +156,16 @@ workersRouter.get('/workers/stats/comparison', async (_req, res) => {
       }),
       prisma.workerProcessWorkTime.findMany({
         select: { workerId: true, processId: true, workMinutes: true },
+      }),
+      prisma.workerProcessWorkTimeEntry.findMany({
+        select: {
+          workerId: true,
+          processId: true,
+          goodQty: true,
+          inputQty: true,
+          workMinutes: true,
+          contributionPct: true,
+        },
       }),
       prisma.mbomProcess.findMany({
         where: { useYn: 'Y' },
@@ -291,6 +303,8 @@ workersRouter.get('/workers/stats/comparison', async (_req, res) => {
       processWtByWorkerProcess.set(`${wt.workerId}:${wt.processId}`, wt.workMinutes)
     }
 
+    const entriesByWorkerProcess = groupWorkTimeEntriesByWorkerProcess(workTimeEntries)
+
     const processCells: {
       workerId: number
       workerName: string
@@ -318,7 +332,8 @@ workersRouter.get('/workers/stats/comparison', async (_req, res) => {
       if (a.inputQty <= 0 && a.goodQty <= 0 && a.defectQty <= 0) continue
 
       const workMinutes = processWtByWorkerProcess.get(k) ?? 0
-      const qtyBasis = a.goodQty > 0 ? a.goodQty : a.inputQty > 0 ? a.inputQty : 0
+      const entryList = entriesByWorkerProcess.get(k) ?? []
+      const qtyBasis = effectiveGoodQtyForProcess(a.goodQty, a.inputQty, entryList)
       const secPerUnit =
         workMinutes > 0 && qtyBasis > 0 ? Math.round(((workMinutes * 60) / qtyBasis) * 10000) / 10000 : null
       const standardSecPerUnit =
@@ -467,7 +482,7 @@ workersRouter.get('/workers/:id/product-summary', async (req, res) => {
     })
     if (!worker) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
 
-    const [products, mbomProcesses, results, productWorkTimes, processWorkTimes] = await Promise.all([
+    const [products, mbomProcesses, results, productWorkTimes, processWorkTimes, workTimeEntries] = await Promise.all([
       prisma.product.findMany({
         where: { itemType: { not: 'RAW' } },
         orderBy: [{ itemType: 'asc' }, { productName: 'asc' }],
@@ -507,6 +522,16 @@ workersRouter.get('/workers/:id/product-summary', async (req, res) => {
         where: { workerId: id },
         select: { processId: true, workMinutes: true },
       }),
+      prisma.workerProcessWorkTimeEntry.findMany({
+        where: { workerId: id },
+        select: {
+          processId: true,
+          goodQty: true,
+          inputQty: true,
+          workMinutes: true,
+          contributionPct: true,
+        },
+      }),
     ])
 
     const productAgg = new Map<number, { inputQty: number; goodQty: number; defectQty: number }>()
@@ -531,6 +556,12 @@ workersRouter.get('/workers/:id/product-summary', async (req, res) => {
 
     const legacyWtMap = new Map(productWorkTimes.map((w) => [w.productId, w.workMinutes]))
     const processWtMap = new Map(processWorkTimes.map((w) => [w.processId, w.workMinutes]))
+    const entriesByProcess = new Map<number, typeof workTimeEntries>()
+    for (const e of workTimeEntries) {
+      const list = entriesByProcess.get(e.processId) ?? []
+      list.push(e)
+      entriesByProcess.set(e.processId, list)
+    }
 
     const processesByProduct = new Map<number, typeof mbomProcesses>()
     for (const mp of mbomProcesses) {
@@ -551,6 +582,8 @@ workersRouter.get('/workers/:id/product-summary', async (req, res) => {
         if (wm === 0 && procs.length === 1 && legacy > 0) {
           wm = legacy
         }
+        const entryList = entriesByProcess.get(mp.id) ?? []
+        const efficiencyGoodQty = effectiveGoodQtyForProcess(pa.goodQty, pa.inputQty, entryList)
         return {
           processId: mp.id,
           processCode: mp.processCode,
@@ -561,6 +594,7 @@ workersRouter.get('/workers/:id/product-summary', async (req, res) => {
           inputQty: pa.inputQty,
           goodQty: pa.goodQty,
           defectQty: pa.defectQty,
+          efficiencyGoodQty,
           workMinutes: wm,
         }
       })
@@ -629,6 +663,7 @@ const processWorkTimeEntriesBody = z.object({
       productionLotId: z.number().int().positive().nullable().optional(),
       workDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
       workMinutes: z.number().int().nonnegative(),
+      contributionPct: z.number().int().min(1).max(100).optional(),
     }),
   ),
 })
@@ -648,33 +683,32 @@ workersRouter.get('/workers/:id/process-work-time-entries', async (req, res) => 
       lotRowsForWorkerProcess(id, processId),
       prisma.workerProcessWorkTimeEntry.findMany({
         where: { workerId: id, processId },
-        select: { productionLotId: true, workDate: true, workMinutes: true },
+        select: { productionLotId: true, workDate: true, workMinutes: true, contributionPct: true },
       }),
     ])
 
     const minutesByKey = new Map(
       savedEntries.map((e) => [
         lotEntryKey(e.productionLotId, kstYmd(e.workDate)),
-        e.workMinutes,
+        { workMinutes: e.workMinutes, contributionPct: e.contributionPct },
       ]),
     )
 
-    const allKeys = new Set([...lotQty.keys(), ...minutesByKey.keys()])
-    const items = [...allKeys]
-      .map((key) => {
-        const q = lotQty.get(key)
-        const workDate = q?.workDate ?? key.replace(/^date:/, '')
-        const productionLotId = q?.productionLotId ?? (key.startsWith('lot:') ? Number(key.slice(4)) : null)
+    const items = [...lotQty.entries()]
+      .filter(([, q]) => q.inputQty > 0 || q.goodQty > 0 || q.defectQty > 0)
+      .map(([key, q]) => {
+        const saved = minutesByKey.get(key)
         return {
-          productionLotId,
-          workDate,
-          planNo: q?.planNo ?? null,
-          woNo: q?.woNo ?? null,
-          lotNo: q?.lotNo ?? null,
-          inputQty: q?.inputQty ?? 0,
-          goodQty: q?.goodQty ?? 0,
-          defectQty: q?.defectQty ?? 0,
-          workMinutes: minutesByKey.get(key) ?? 0,
+          productionLotId: q.productionLotId,
+          workDate: q.workDate,
+          planNo: q.planNo,
+          woNo: q.woNo,
+          lotNo: q.lotNo,
+          inputQty: q.inputQty,
+          goodQty: q.goodQty,
+          defectQty: q.defectQty,
+          workMinutes: saved?.workMinutes ?? 0,
+          contributionPct: saved?.contributionPct ?? 100,
         }
       })
       .sort((a, b) => b.workDate.localeCompare(a.workDate) || (a.lotNo ?? '').localeCompare(b.lotNo ?? ''))
@@ -723,7 +757,8 @@ workersRouter.put('/workers/:id/process-work-time-entries', async (req, res) => 
           goodQty: q?.goodQty ?? 0,
           defectQty: q?.defectQty ?? 0,
           workMinutes: e.workMinutes,
-          keep: e.workMinutes > 0 || Boolean(q),
+          contributionPct: e.contributionPct ?? 100,
+          keep: Boolean(q),
         }
       })
       .filter((e): e is NonNullable<typeof e> => e != null && e.keep)
@@ -744,6 +779,7 @@ workersRouter.put('/workers/:id/process-work-time-entries', async (req, res) => 
             goodQty: e.goodQty,
             defectQty: e.defectQty,
             workMinutes: e.workMinutes,
+            contributionPct: e.contributionPct,
           })),
         })
       }

@@ -79,7 +79,8 @@
 - **작업시간 상세** — 공정 실적을 **생산 LOT** 단위로 집계(계획·지시·LOT 번호 표시), LOT별 작업시간만 수동 입력
 - **통계 탭** — 품목/공정/작업자 필터, 개당 작업시간·효율 차트
 - **공정별 작업 배정** — 작업지시·통합운영에서 드래그/클릭으로 공정마다 작업자 다중 배정 (`WorkOrderProcessWorker`)
-- **최단 완료 자동 배정** — 작업자 실적·MBOM 표준시간 기반, **작업자 묶음** 설정 후 파이프라인 라인 완료시간 최소화 (`POST /api/process-worker-assignments/optimize`)
+- **MBOM 공정** — 공정별 **배치 가능 인원(최소~최대)** 설정, 카드에 `인원 n~m명` 표시
+- **최단 완료 자동 배정** — 묶음별 MBOM 인원 제약 반영(묶음 내 병렬 인원·스테이지 시간), 묶음 모달에 필요 인원·공정별 범위 표시
 - **현장 입력** — 로그인 계정이 아닌 **작업지시에 배정된 작업자 전원**에게 동일 실적 반영
 
 ### ERP (V1.1)
@@ -434,6 +435,7 @@ Prisma 스키마(`prisma/schema.prisma`)에 MES 전 도메인이 정의되어 �
 
 **공정별 작업 배정 · 생산 효율**
 
+- DB: `MbomProcess.min_workers` / `max_workers` (기본 1)
 - DB: `WorkOrderProcessWorker`, `WorkerProcessWorkTimeEntry.productionLotId`
 - 작업지시 **공정별 작업자** M:N UI (`WorkOrderProcessWorkerAssign`, 통합운영·작업지시 모달)
 - `process_result` 현장 등록 시 **배정 작업자 전원** 동일 수량 반영 (`processResults.ts`)

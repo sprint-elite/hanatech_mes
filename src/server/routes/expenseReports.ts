@@ -137,7 +137,9 @@ expenseReportsRouter.get('/expense-reports', async (req, res) => {
   const qRaw = typeof req.query.q === 'string' ? req.query.q.trim() : ''
 
   try {
-    const where: Record<string, unknown> = {}
+    const where: Record<string, unknown> = {
+      user: { is: {} },
+    }
     if (!canViewAllLeave(user.roleName)) {
       where.userId = user.id
     }
