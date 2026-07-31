@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  WorkerInputI18nProvider,
+  WorkerInputLanguageBar,
+  useWorkerInputI18n,
+} from '../i18n/WorkerInputI18n'
 import { ApiError, apiJson } from '../lib/api'
 import { getStoredUser, isGuestRole, setStoredUser, type MesAuthUser } from '../lib/auth'
 import './worker-input.css'
@@ -44,8 +49,6 @@ type DefectTypeRow = {
 
 type DefectLine = { typeId: number; qty: number }
 
-const STEPS = ['LOT 선택', '실적 입력', '불량 상세', '확인'] as const
-
 function formatApiErr(e: unknown): string {
   if (e instanceof ApiError) {
     const b = e.body as Record<string, unknown> | undefined
@@ -55,36 +58,27 @@ function formatApiErr(e: unknown): string {
   return e instanceof Error ? e.message : 'unknown error'
 }
 
-const workersLabel = (lot: LotRow) => {
-  const list = lot.workOrder?.assignedWorkers ?? []
-  if (list.length === 0) return '배정 없음'
-  return list.map((a) => a.worker.workerName).join(', ')
-}
-
-const lineLabel = (lot: LotRow) => {
-  if (lot.workCenter) return lot.workCenter.centerName
-  return '라인 미지정'
-}
-
-type WorkerBrief = { id: number; workerCode: string; workerName: string }
-
 function QtyStepper({
   label,
   value,
   onChange,
   tone,
+  decreaseAria,
+  increaseAria,
 }: {
   label: string
   value: number
   onChange: (n: number) => void
   tone?: 'good' | 'defect'
+  decreaseAria: string
+  increaseAria: string
 }) {
   const cls = tone ? `wi__qtyInput wi__qtyInput--${tone}` : 'wi__qtyInput'
   return (
     <div className="wi__qtyBlock">
       <div className="wi__qtyLabel">{label}</div>
       <div className="wi__qtyControl">
-        <button type="button" className="wi__qtyBtn" aria-label={`${label} 감소`} onClick={() => onChange(Math.max(0, value - 1))}>
+        <button type="button" className="wi__qtyBtn" aria-label={decreaseAria} onClick={() => onChange(Math.max(0, value - 1))}>
           −
         </button>
         <input
@@ -96,7 +90,7 @@ function QtyStepper({
             onChange(Number.isFinite(n) ? n : 0)
           }}
         />
-        <button type="button" className="wi__qtyBtn" aria-label={`${label} 증가`} onClick={() => onChange(value + 1)}>
+        <button type="button" className="wi__qtyBtn" aria-label={increaseAria} onClick={() => onChange(value + 1)}>
           +
         </button>
       </div>
@@ -104,8 +98,9 @@ function QtyStepper({
   )
 }
 
-export function WorkerInputPage() {
+function WorkerInputPageInner() {
   const navigate = useNavigate()
+  const { t, steps } = useWorkerInputI18n()
   const authUser = getStoredUser()
   const guestUser = isGuestRole(authUser?.roleName) ? authUser : null
   const [step, setStep] = useState(0)
@@ -124,6 +119,23 @@ export function WorkerInputPage() {
   const [defectQty, setDefectQty] = useState(0)
   const [defectLines, setDefectLines] = useState<DefectLine[]>([])
 
+  const workersLabel = useCallback(
+    (lot: LotRow) => {
+      const list = lot.workOrder?.assignedWorkers ?? []
+      if (list.length === 0) return t('noAssignment')
+      return list.map((a) => a.worker.workerName).join(', ')
+    },
+    [t],
+  )
+
+  const lineLabel = useCallback(
+    (lot: LotRow) => {
+      if (lot.workCenter) return lot.workCenter.centerName
+      return t('lineUnassigned')
+    },
+    [t],
+  )
+
   const selectedLot = useMemo(() => lots.find((l) => l.id === selectedLotId) ?? null, [lots, selectedLotId])
 
   const assignableWorkersOnLot = useMemo(() => {
@@ -131,16 +143,13 @@ export function WorkerInputPage() {
     const map = new Map<number, { id: number; workerCode: string; workerName: string }>()
     for (const r of rows) {
       if (r.worker) map.set(r.worker.id, r.worker)
-      else map.set(r.workerId, { id: r.workerId, workerCode: String(r.workerId), workerName: `작업자#${r.workerId}` })
+      else map.set(r.workerId, { id: r.workerId, workerCode: String(r.workerId), workerName: t('workerHash', { id: r.workerId }) })
     }
     return [...map.values()].sort((a, b) => a.workerCode.localeCompare(b.workerCode, 'ko'))
-  }, [selectedLot])
+  }, [selectedLot, t])
 
   const activeLots = useMemo(
-    () =>
-      lots.filter(
-        (l) => l.status === 'IN_PROGRESS' && l.workOrder?.status !== 'HOLD',
-      ),
+    () => lots.filter((l) => l.status === 'IN_PROGRESS' && l.workOrder?.status !== 'HOLD'),
     [lots],
   )
 
@@ -148,19 +157,13 @@ export function WorkerInputPage() {
     const q = search.trim().toLowerCase()
     if (!q) return activeLots
     return activeLots.filter((l) => {
-      const hay = [
-        l.lotNo,
-        l.product?.productName,
-        l.workOrder?.woNo,
-        lineLabel(l),
-        workersLabel(l),
-      ]
+      const hay = [l.lotNo, l.product?.productName, l.workOrder?.woNo, lineLabel(l), workersLabel(l)]
         .filter(Boolean)
         .join(' ')
         .toLowerCase()
       return hay.includes(q)
     })
-  }, [activeLots, search])
+  }, [activeLots, search, lineLabel, workersLabel])
 
   const remainingQty = selectedLot ? Math.max(0, selectedLot.lotQty - selectedLot.goodQty - selectedLot.defectQty) : 0
 
@@ -176,26 +179,13 @@ export function WorkerInputPage() {
 
   const assignmentSummaryLabel = useMemo(() => {
     if (!hasWoAssignments) return null
-    const names = [...new Set(woProcessAssignments.map((a) => a.worker?.workerName ?? `작업자#${a.workerId}`))]
-    return `배정 ${names.length}명 · 공정 ${woProcessAssignments.length}건 (${names.join(', ')})`
-  }, [hasWoAssignments, woProcessAssignments])
-
-  const targetProcessIds = useMemo(
-    () => woProcessAssignments.map((a) => a.processId),
-    [woProcessAssignments],
-  )
-
-  const targetProcessLabel = useMemo(() => {
-    if (woProcessAssignments.length === 0) return null
-    return woProcessAssignments
-      .map((a) => {
-        const seq = a.process?.sequence ?? '?'
-        const name = a.process?.processName ?? `공정#${a.processId}`
-        const who = a.worker?.workerName ?? `작업자#${a.workerId}`
-        return `${seq}. ${name} (${who})`
-      })
-      .join(' · ')
-  }, [woProcessAssignments])
+    const names = [...new Set(woProcessAssignments.map((a) => a.worker?.workerName ?? t('workerHash', { id: a.workerId })))]
+    return t('assignSummary', {
+      workers: names.length,
+      processes: woProcessAssignments.length,
+      names: names.join(', '),
+    })
+  }, [hasWoAssignments, woProcessAssignments, t])
 
   const defectLineSum = useMemo(() => defectLines.reduce((s, d) => s + d.qty, 0), [defectLines])
 
@@ -295,34 +285,46 @@ export function WorkerInputPage() {
     setDefectQty(0)
   }
 
-  const validateStep = (s: number): string | null => {
-    if (s === 0) {
-      if (!selectedLotId) return '생산 LOT를 선택하세요.'
-      if (selectedLot?.workOrder?.status === 'HOLD') return '보류 중인 작업지시입니다. 보류 해제 후 입력하세요.'
-      if (!hasWoAssignments && assignableWorkersOnLot.length === 0) {
-        return '작업지시에 공정별 작업자 배정이 없습니다. 관리자에게 배정을 요청하세요.'
+  const validateStep = useCallback(
+    (s: number): string | null => {
+      if (s === 0) {
+        if (!selectedLotId) return t('errSelectLot')
+        if (selectedLot?.workOrder?.status === 'HOLD') return t('errHold')
+        if (!hasWoAssignments && assignableWorkersOnLot.length === 0) return t('errNoWorkerAssign')
+        return null
+      }
+      if (s === 1) {
+        if (!hasWoAssignments) return t('errNoWorkerAssign')
+        if (autoProcessId == null) return t('errNoProcess')
+        if (inputQty <= 0) return t('errInputQty')
+        if (goodQty + defectQty > inputQty) return t('errQtyOver')
+        if (goodQty + defectQty <= 0) return t('errQtyZero')
+        return null
+      }
+      if (s === 2) {
+        if (defectQty <= 0) return null
+        if (defectTypes.length === 0) return t('errNoDefectTypeReg')
+        if (defectLines.some((d) => d.qty > 0 && !d.typeId)) return t('errSelectDefectType')
+        if (defectLineSum !== defectQty) return t('errDefectSum', { sum: defectLineSum, defect: defectQty })
+        return null
       }
       return null
-    }
-    if (s === 1) {
-      if (!hasWoAssignments) {
-        return '작업지시에 공정별 작업자 배정이 없습니다. 관리자에게 배정을 요청하세요.'
-      }
-      if (autoProcessId == null) return '이 품목에 등록된 공정이 없습니다. 관리자에게 MBOM 공정 등록을 요청하세요.'
-      if (inputQty <= 0) return '투입 수량을 입력하세요.'
-      if (goodQty + defectQty > inputQty) return '양품 + 불량은 투입 수량 이하여야 합니다.'
-      if (goodQty + defectQty <= 0) return '양품 또는 불량 수량을 입력하세요.'
-      return null
-    }
-    if (s === 2) {
-      if (defectQty <= 0) return null
-      if (defectTypes.length === 0) return '등록된 불량유형이 없습니다. 관리자에게 불량유형 등록을 요청하세요.'
-      if (defectLines.some((d) => d.qty > 0 && !d.typeId)) return '불량 유형을 선택하세요.'
-      if (defectLineSum !== defectQty) return `유형별 합계(${defectLineSum})가 불량 수량(${defectQty})과 일치해야 합니다.`
-      return null
-    }
-    return null
-  }
+    },
+    [
+      assignableWorkersOnLot.length,
+      autoProcessId,
+      defectLineSum,
+      defectLines,
+      defectQty,
+      defectTypes.length,
+      goodQty,
+      hasWoAssignments,
+      inputQty,
+      selectedLot?.workOrder?.status,
+      selectedLotId,
+      t,
+    ],
+  )
 
   const goNext = () => {
     const v = validateStep(step)
@@ -335,7 +337,7 @@ export function WorkerInputPage() {
       setStep(3)
       return
     }
-    setStep((s) => Math.min(s + 1, STEPS.length - 1))
+    setStep((s) => Math.min(s + 1, steps.length - 1))
   }
 
   const goBack = () => {
@@ -405,37 +407,49 @@ export function WorkerInputPage() {
 
   const defectTypeLabel = (typeId: number) => {
     const dt = defectTypes.find((t) => t.id === typeId)
-    if (!dt) return `유형 #${typeId}`
+    if (!dt) return t('defectTypeHash', { id: typeId })
     return `${dt.defectName} (${dt.defectCode})`
   }
+
+  const qtyDec = (label: string) => `${label} ${t('decrease')}`
+  const qtyInc = (label: string) => `${label} ${t('increase')}`
+
+  const headerBlock = (
+    <>
+      <p className="wi__brand">HANA-TECH MES</p>
+      <h1 className="wi__title">{t('pageTitle')}</h1>
+      <WorkerInputLanguageBar />
+      {guestUser ? (
+        <div className="wi__authBar">
+          <span className="wi__authName">{guestUser.userName}</span>
+          <button type="button" className="wi__btn wi__btn--ghost wi__btn--sm" onClick={() => void logoutGuest()}>
+            {t('logout')}
+          </button>
+        </div>
+      ) : null}
+    </>
+  )
 
   if (success) {
     return (
       <div className="wi">
-        <header className="wi__header">
-          <p className="wi__brand">HANA-TECH MES</p>
-          <h1 className="wi__title">현장 실적 입력</h1>
-          {guestUser ? (
-            <div className="wi__authBar">
-              <span className="wi__authName">{guestUser.userName}</span>
-              <button type="button" className="wi__btn wi__btn--ghost wi__btn--sm" onClick={() => void logoutGuest()}>
-                로그아웃
-              </button>
-            </div>
-          ) : null}
-        </header>
+        <header className="wi__header">{headerBlock}</header>
         <main className="wi__main">
           <div className="wi__success">
             <div className="wi__successIcon" aria-hidden>
               ✓
             </div>
-            <h2 className="wi__successTitle">실적이 저장되었습니다</h2>
+            <h2 className="wi__successTitle">{t('savedTitle')}</h2>
             <p className="wi__successDesc">
-              투입 {inputQty.toLocaleString()} · 양품 {goodQty.toLocaleString()} · 불량 {defectQty.toLocaleString()}
-              {defectQty > 0 ? ' (불량 이력 반영)' : ''}
+              {t('savedDesc', {
+                input: inputQty.toLocaleString(),
+                good: goodQty.toLocaleString(),
+                defect: defectQty.toLocaleString(),
+              })}
+              {defectQty > 0 ? t('savedDefectNote') : ''}
             </p>
             <button type="button" className="wi__btn wi__btn--primary" style={{ width: '100%', maxWidth: 320 }} onClick={resetAll}>
-              다음 실적 등록
+              {t('nextEntry')}
             </button>
           </div>
         </main>
@@ -446,18 +460,9 @@ export function WorkerInputPage() {
   return (
     <div className="wi">
       <header className="wi__header">
-        <p className="wi__brand">HANA-TECH MES</p>
-        <h1 className="wi__title">현장 실적 입력</h1>
-        {guestUser ? (
-          <div className="wi__authBar">
-            <span className="wi__authName">{guestUser.userName}</span>
-            <button type="button" className="wi__btn wi__btn--ghost wi__btn--sm" onClick={() => void logoutGuest()}>
-              로그아웃
-            </button>
-          </div>
-        ) : null}
+        {headerBlock}
         <div className="wi__steps" aria-hidden>
-          {STEPS.map((_, i) => (
+          {steps.map((_, i) => (
             <div key={i} className={`wi__step${i <= step ? ' wi__step--active' : ''}${i < step ? ' wi__step--done' : ''}`} />
           ))}
         </div>
@@ -471,24 +476,24 @@ export function WorkerInputPage() {
         ) : null}
 
         {loading ? (
-          <div className="wi__loading">데이터 불러오는 중…</div>
+          <div className="wi__loading">{t('loading')}</div>
         ) : step === 0 ? (
           <>
-            <h2 className="wi__sectionTitle">생산 LOT 선택</h2>
+            <h2 className="wi__sectionTitle">{t('selectLotTitle')}</h2>
             <input
               className="wi__search"
               type="search"
-              placeholder="LOT / 품목 / 라인 / 작업자 검색"
+              placeholder={t('searchPlaceholder')}
               value={search}
               onChange={(ev) => setSearch(ev.target.value)}
             />
             <div className="wi__lotList">
               {filteredLots.length === 0 ? (
-                <div className="wi__empty">진행 중인 LOT가 없습니다.</div>
+                <div className="wi__empty">{t('noActiveLots')}</div>
               ) : (
                 filteredLots.map((l) => {
                   const selected = selectedLotId === l.id
-                  const productName = l.product?.productName ?? `품목 #${l.productId}`
+                  const productName = l.product?.productName ?? t('productHash', { id: l.productId })
                   const done = l.goodQty + l.defectQty
                   const total = l.lotQty
                   const pct = total > 0 ? Math.min(100, Math.round((done / total) * 100)) : 0
@@ -503,7 +508,7 @@ export function WorkerInputPage() {
                       }}
                     >
                       <div className="wi__lotCardHead">
-                        <span className="wi__badge wi__badge--progress">진행</span>
+                        <span className="wi__badge wi__badge--progress">{t('inProgress')}</span>
                         <span className="wi__lotTitle">{productName}</span>
                       </div>
                       <div className="wi__lotSub">
@@ -513,7 +518,10 @@ export function WorkerInputPage() {
                         <span className="wi__lotSubSep">·</span>
                         <span className="wi__lotSubNo">{l.lotNo}</span>
                       </div>
-                      <div className="wi__lotProgress" aria-label={`진행 ${done}/${total}, ${pct}%`}>
+                      <div
+                        className="wi__lotProgress"
+                        aria-label={t('progressAria', { done, total, pct })}
+                      >
                         <div className="wi__lotProgressFill" style={{ width: `${pct}%` }} />
                         <span className="wi__lotProgressText">
                           {done.toLocaleString()}/{total.toLocaleString()} ({pct}%)
@@ -524,35 +532,29 @@ export function WorkerInputPage() {
                 })
               )}
             </div>
-            {selectedLot && assignmentSummaryLabel ? (
-              <p className="wi__hint" style={{ marginTop: 12 }}>
-                실적 반영: <strong>{assignmentSummaryLabel}</strong>
-                {targetProcessLabel ? <> · {targetProcessLabel}</> : null}
-              </p>
-            ) : null}
           </>
         ) : null}
 
         {step >= 1 && selectedLot ? (
           <div className="wi__infoCard">
             <div className="wi__infoRow">
-              <span>라인</span>
+              <span>{t('line')}</span>
               <span>{lineLabel(selectedLot)}</span>
             </div>
             <div className="wi__infoRow">
-              <span>작업자</span>
+              <span>{t('worker')}</span>
               <span>{assignmentSummaryLabel ?? workersLabel(selectedLot)}</span>
             </div>
             <div className="wi__infoRow">
-              <span>LOT</span>
+              <span>{t('lot')}</span>
               <span>{selectedLot.lotNo}</span>
             </div>
             <div className="wi__infoRow">
-              <span>품목</span>
+              <span>{t('product')}</span>
               <span>{selectedLot.product?.productName ?? `#${selectedLot.productId}`}</span>
             </div>
             <div className="wi__infoRow">
-              <span>잔여 수량</span>
+              <span>{t('remainingQty')}</span>
               <span>{remainingQty.toLocaleString()}</span>
             </div>
           </div>
@@ -560,50 +562,66 @@ export function WorkerInputPage() {
 
         {step === 1 ? (
           <>
-            <h2 className="wi__sectionTitle">실적 수량 입력</h2>
+            <h2 className="wi__sectionTitle">{t('qtyInputTitle')}</h2>
             {selectedLot?.workOrder?.status === 'HOLD' ? (
               <div className="wi__banner wi__banner--warn">
-                이 LOT의 작업지시가 보류(HOLD) 상태입니다.
-                {selectedLot.workOrder.holdReason ? ` 사유: ${selectedLot.workOrder.holdReason}` : ''}
-              </div>
-            ) : null}
-
-            {targetProcessLabel ? (
-              <div className="wi__banner" style={{ marginBottom: 14 }}>
-                실적이 기록될 공정: {targetProcessLabel}
+                {t('holdBanner')}
+                {selectedLot.workOrder.holdReason ? t('holdReason', { reason: selectedLot.workOrder.holdReason }) : ''}
               </div>
             ) : null}
 
             {remainingQty > 0 ? (
               <button type="button" className="wi__btn wi__btn--ghost" style={{ width: '100%', marginBottom: 14 }} onClick={fillRemaining}>
-                잔여 수량 한 번에 입력 ({remainingQty.toLocaleString()})
+                {t('fillRemaining', { qty: remainingQty.toLocaleString() })}
               </button>
             ) : null}
 
             <div className="wi__qtyGrid">
-              <QtyStepper label="투입" value={inputQty} onChange={setInputQty} />
-              <QtyStepper label="양품" value={goodQty} onChange={setGoodQty} tone="good" />
-              <QtyStepper label="불량" value={defectQty} onChange={setDefectQty} tone="defect" />
+              <QtyStepper
+                label={t('input')}
+                value={inputQty}
+                onChange={setInputQty}
+                decreaseAria={qtyDec(t('input'))}
+                increaseAria={qtyInc(t('input'))}
+              />
+              <QtyStepper
+                label={t('good')}
+                value={goodQty}
+                onChange={setGoodQty}
+                tone="good"
+                decreaseAria={qtyDec(t('good'))}
+                increaseAria={qtyInc(t('good'))}
+              />
+              <QtyStepper
+                label={t('defect')}
+                value={defectQty}
+                onChange={setDefectQty}
+                tone="defect"
+                decreaseAria={qtyDec(t('defect'))}
+                increaseAria={qtyInc(t('defect'))}
+              />
             </div>
           </>
         ) : null}
 
         {step === 2 ? (
           <>
-            <h2 className="wi__sectionTitle">불량 유형별 수량</h2>
+            <h2 className="wi__sectionTitle">{t('defectDetailTitle')}</h2>
             <p className={`wi__hint${defectLineSum !== defectQty ? ' wi__hint--warn' : ''}`}>
-              불량 {defectQty.toLocaleString()}개 · 합계 {defectLineSum.toLocaleString()}
-              {defectLineSum !== defectQty ? ` (${defectQty - defectLineSum > 0 ? `${defectQty - defectLineSum}개 부족` : `${defectLineSum - defectQty}개 초과`})` : ' ✓'}
+              {t('defectTotal', { defect: defectQty.toLocaleString(), sum: defectLineSum.toLocaleString() })}
+              {defectLineSum !== defectQty
+                ? ` (${defectQty - defectLineSum > 0 ? t('defectShort', { n: defectQty - defectLineSum }) : t('defectOver', { n: defectLineSum - defectQty })})`
+                : ' ✓'}
             </p>
             {defectTypes.length === 0 ? (
-              <div className="wi__banner wi__banner--warn">이 품목에 등록된 불량유형이 없습니다.</div>
+              <div className="wi__banner wi__banner--warn">{t('noDefectTypes')}</div>
             ) : (
               <div className="wi__defectList">
                 {defectLines.map((line, idx) => (
                   <div key={idx} className="wi__defectRow">
                     <select
                       className="wi__defectSelect"
-                      aria-label="불량 유형"
+                      aria-label={t('defectTypeAria')}
                       value={line.typeId}
                       onChange={(ev) => updateDefectLine(idx, { typeId: Number(ev.target.value) })}
                     >
@@ -617,7 +635,7 @@ export function WorkerInputPage() {
                     <input
                       className="wi__defectQty"
                       inputMode="numeric"
-                      aria-label="불량 수량"
+                      aria-label={t('defectQtyAria')}
                       value={line.qty}
                       onChange={(ev) => {
                         const n = Number(ev.target.value.replace(/\D/g, ''))
@@ -628,7 +646,7 @@ export function WorkerInputPage() {
                       <button
                         type="button"
                         className="wi__defectRemove"
-                        aria-label="행 삭제"
+                        aria-label={t('removeRow')}
                         onClick={() => removeDefectLine(idx)}
                       >
                         ×
@@ -638,7 +656,7 @@ export function WorkerInputPage() {
                 ))}
                 {defectLines.length < defectTypes.length ? (
                   <button type="button" className="wi__defectAdd" onClick={addDefectLine}>
-                    + 유형 추가
+                    {t('addDefectType')}
                   </button>
                 ) : null}
               </div>
@@ -648,30 +666,30 @@ export function WorkerInputPage() {
 
         {step === 3 ? (
           <>
-            <h2 className="wi__sectionTitle">입력 내용 확인</h2>
+            <h2 className="wi__sectionTitle">{t('confirmTitle')}</h2>
             <div className="wi__summary">
               <div className="wi__summaryRow">
-                <span>라인</span>
+                <span>{t('line')}</span>
                 <span>{selectedLot ? lineLabel(selectedLot) : '—'}</span>
               </div>
               <div className="wi__summaryRow">
-                <span>작업자</span>
+                <span>{t('worker')}</span>
                 <span>{selectedLot ? workersLabel(selectedLot) : '—'}</span>
               </div>
               <div className="wi__summaryRow">
-                <span>LOT</span>
+                <span>{t('lot')}</span>
                 <span>{selectedLot?.lotNo}</span>
               </div>
               <div className="wi__summaryRow">
-                <span>투입</span>
+                <span>{t('input')}</span>
                 <span>{inputQty.toLocaleString()}</span>
               </div>
               <div className="wi__summaryRow">
-                <span>양품</span>
+                <span>{t('good')}</span>
                 <span>{goodQty.toLocaleString()}</span>
               </div>
               <div className="wi__summaryRow">
-                <span>불량</span>
+                <span>{t('defect')}</span>
                 <span>{defectQty.toLocaleString()}</span>
               </div>
               {defectQty > 0
@@ -685,11 +703,11 @@ export function WorkerInputPage() {
                     ))
                 : null}
               <div className="wi__summaryRow wi__summaryRow--total">
-                <span>합계 검증</span>
-                <span>{goodQty + defectQty <= inputQty ? 'OK' : '오류'}</span>
+                <span>{t('sumCheck')}</span>
+                <span>{goodQty + defectQty <= inputQty ? t('ok') : t('error')}</span>
               </div>
             </div>
-            <div className="wi__banner wi__banner--ok">저장 시 LOT 실적·불량 이력·재고에 반영됩니다.</div>
+            <div className="wi__banner wi__banner--ok">{t('saveNote')}</div>
           </>
         ) : null}
       </main>
@@ -698,20 +716,28 @@ export function WorkerInputPage() {
         <div className="wi__footerInner">
           {step > 0 ? (
             <button type="button" className="wi__btn wi__btn--ghost" onClick={goBack} disabled={submitting}>
-              이전
+              {t('back')}
             </button>
           ) : null}
-          {step < STEPS.length - 1 ? (
+          {step < steps.length - 1 ? (
             <button type="button" className="wi__btn wi__btn--primary" onClick={goNext} disabled={loading}>
-              다음
+              {t('next')}
             </button>
           ) : (
             <button type="button" className="wi__btn wi__btn--primary" disabled={submitting} onClick={() => void submit()}>
-              {submitting ? '저장 중…' : '실적 저장'}
+              {submitting ? t('saving') : t('save')}
             </button>
           )}
         </div>
       </footer>
     </div>
+  )
+}
+
+export function WorkerInputPage() {
+  return (
+    <WorkerInputI18nProvider>
+      <WorkerInputPageInner />
+    </WorkerInputI18nProvider>
   )
 }

@@ -16,11 +16,19 @@ import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
 import {
   renderCode128PngWithMeta,
+  CODE128_LABEL,
   CODE128_PRINT,
   CODE128_SCREEN,
   CODE128_THUMB,
 } from '../lib/barcode/image'
 import { syncMaterialLotBarcode } from '../lib/barcode/materialLot'
+
+function normalizeScannedLotToken(raw: string): string {
+  const v = raw.trim()
+  if (!v) return ''
+  const first = v.split(/[\s,\t|]+/)[0] ?? ''
+  return first.trim()
+}
 
 const woListInclude = {
   product: { select: { productCode: true, productName: true } },
@@ -483,17 +491,92 @@ extendedOpsRouter.post('/material-lots', async (req, res) => {
   }
 })
 
+extendedOpsRouter.get('/material-lots/lookup', async (req, res) => {
+  const rawQ = req.query.value
+  const raw = Array.isArray(rawQ) ? rawQ[0] : rawQ
+  const value = normalizeScannedLotToken(typeof raw === 'string' ? raw : '')
+  if (!value) return res.status(400).json({ ok: false, error: 'VALUE_REQUIRED' })
+
+  try {
+    const lot = await prisma.materialLot.findFirst({
+      where: { OR: [{ lotNo: value }, { barcode: value }] },
+      select: {
+        id: true,
+        lotNo: true,
+        barcode: true,
+        supplier: true,
+        receivedQty: true,
+        remainQty: true,
+        receivedDate: true,
+        status: true,
+        createdAt: true,
+        product: { select: { productCode: true, productName: true } },
+        usages: {
+          take: 50,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            usedQty: true,
+            createdAt: true,
+            productionLot: {
+              select: {
+                id: true,
+                lotNo: true,
+                status: true,
+                product: { select: { productCode: true, productName: true } },
+              },
+            },
+          },
+        },
+        inventory: {
+          take: 20,
+          orderBy: { id: 'desc' },
+          select: {
+            id: true,
+            qty: true,
+            reservedQty: true,
+            status: true,
+            updatedAt: true,
+            location: { select: { locationCode: true, locationName: true } },
+          },
+        },
+        inventoryTx: {
+          take: 30,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            transactionType: true,
+            qty: true,
+            remark: true,
+            createdAt: true,
+            fromLocation: { select: { locationCode: true, locationName: true } },
+            toLocation: { select: { locationCode: true, locationName: true } },
+            location: { select: { locationCode: true, locationName: true } },
+          },
+        },
+      },
+    })
+
+    if (!lot) return res.status(404).json({ ok: false, error: 'NOT_FOUND', message: '자재 LOT를 찾을 수 없습니다.' })
+    return res.json({ ok: true, lot })
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
 extendedOpsRouter.get('/material-lots/:id/barcode-image', async (req, res) => {
   const id = parsePositiveIntParam(req.params.id)
   if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
   const view = typeof req.query.view === 'string' ? req.query.view : ''
   const legacyLarge = req.query.large === '1' || req.query.large === 'true'
   const spec =
-    view === 'print'
-      ? CODE128_PRINT
-      : view === 'screen' || legacyLarge
-        ? CODE128_SCREEN
-        : CODE128_THUMB
+    view === 'label'
+      ? CODE128_LABEL
+      : view === 'print'
+        ? CODE128_PRINT
+        : view === 'screen' || legacyLarge
+          ? CODE128_SCREEN
+          : CODE128_THUMB
   try {
     const lot = await prisma.materialLot.findUnique({
       where: { id },

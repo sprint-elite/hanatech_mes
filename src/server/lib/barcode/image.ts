@@ -49,6 +49,14 @@ export const CODE128_PRINT = {
   textsize: 10,
 } as const
 
+/** Code 128 — 생산 LOT 라벨 (ZD421 203dpi) */
+export const CODE128_LABEL = {
+  dpi: 203,
+  scale: 3,
+  height: 18,
+  includetext: false,
+} as const
+
 function pxToMm(px: number, dpi: number): number {
   return Math.round((px / dpi) * 25.4 * 10) / 10
 }

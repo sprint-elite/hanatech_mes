@@ -4,7 +4,7 @@ import { LotStatus, Prisma } from '@prisma/client'
 import { prisma } from '../db/prisma'
 import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
-import { renderCode128PngWithMeta, CODE128_PRINT, CODE128_SCREEN, CODE128_THUMB } from '../lib/barcode/image'
+import { renderCode128PngWithMeta, CODE128_LABEL, CODE128_PRINT, CODE128_SCREEN, CODE128_THUMB } from '../lib/barcode/image'
 import { syncProductionLotBarcode } from '../lib/barcode/productionLot'
 
 function normalizeScannedLotToken(raw: string): string {
@@ -149,11 +149,13 @@ productionLotsRouter.get('/lots/:id/barcode-image', async (req, res) => {
   const view = typeof req.query.view === 'string' ? req.query.view : ''
   const legacyLarge = req.query.large === '1' || req.query.large === 'true'
   const spec =
-    view === 'print'
-      ? CODE128_PRINT
-      : view === 'screen' || legacyLarge
-        ? CODE128_SCREEN
-        : CODE128_THUMB
+    view === 'label'
+      ? CODE128_LABEL
+      : view === 'print'
+        ? CODE128_PRINT
+        : view === 'screen' || legacyLarge
+          ? CODE128_SCREEN
+          : CODE128_THUMB
   try {
     const lot = await prisma.productionLot.findUnique({
       where: { id },

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { apiJson } from '../lib/api'
+import { printMaterialLotLabel } from '../lib/printBarcode'
 import '../material-lots-page.css'
 
 type Row = {
@@ -160,16 +161,15 @@ function MatLotBarcodePreviewImage({ lotId, alt }: { lotId: number; alt: string 
   )
 }
 
-function printMatLotBarcode(lotId: number, label: string) {
-  const url = `/api/material-lots/${lotId}/barcode-image?view=print`
-  const w = window.open(url, '_blank', 'noopener,noreferrer')
-  if (!w) return
-  w.addEventListener('load', () => {
-    try {
-      w.print()
-    } catch {
-      /* ignore */
-    }
+function printMatLotBarcode(row: Row) {
+  return printMaterialLotLabel({
+    lotId: row.id,
+    lotNo: row.lotNo,
+    barcodeText: row.barcode ?? row.lotNo,
+    productName: row.product?.productName ?? `품목#${row.productId}`,
+    receivedDate: row.receivedDate,
+    receivedQty: row.receivedQty,
+    remainQty: row.remainQty,
   })
 }
 
@@ -714,7 +714,12 @@ export function MaterialLotsPage() {
                         <button
                           type="button"
                           className="mesBarcodeCell mesBarcodeOpenBtn"
-                          onClick={() => setBarcodePreview(r)}
+                          onClick={() => {
+                            void printMatLotBarcode(r).catch(() => {
+                              setBarcodePreview(r)
+                            })
+                          }}
+                          onDoubleClick={() => setBarcodePreview(r)}
                           aria-label={`바코드 ${r.barcode ?? r.lotNo}`}
                         >
                           <img
@@ -845,7 +850,7 @@ export function MaterialLotsPage() {
               </div>
             </div>
             <div className="mesModalBody mesBarcodePreviewBody">
-              <p className="muted small mesBarcodePreviewHint">스캔 값은 LOT 번호와 동일합니다.</p>
+              <p className="muted small mesBarcodePreviewHint">클릭: 라벨 인쇄 · 더블클릭: 미리보기</p>
               <div className="mesBarcodePreviewFrame">
                 <MatLotBarcodePreviewImage
                   lotId={barcodePreview.id}
@@ -858,20 +863,10 @@ export function MaterialLotsPage() {
               <button
                 type="button"
                 className="mesBtnSecondary mesBarcodePrintBtn"
-                onClick={() =>
-                  printMatLotBarcode(barcodePreview.id, barcodePreview.barcode ?? barcodePreview.lotNo)
-                }
+                onClick={() => void printMatLotBarcode(barcodePreview)}
               >
                 인쇄
               </button>
-              <a
-                className="mesBtnSm mesBarcodeOpenLink"
-                href={`/api/material-lots/${barcodePreview.id}/barcode-image?view=print`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                새 탭
-              </a>
               <button type="button" className="mesBtnPrimary" onClick={closeBarcodePreview}>
                 닫기
               </button>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { apiJson } from '../lib/api'
+import { printProductionLotLabel } from '../lib/printBarcode'
 import '../lots-page.css'
 
 type Product = { id: number; productCode: string; productName: string }
@@ -101,6 +102,15 @@ function workersLabel(wo: WorkOrderRef | Row['workOrder'] | null | undefined): s
   const list = wo.assignedWorkers
   if (!list?.length) return '배정 없음'
   return list.map((a) => a.worker.workerName || a.worker.workerCode).join(', ')
+}
+
+function workersLabelShort(wo: WorkOrderRef | Row['workOrder'] | null | undefined): string {
+  if (wo == null) return '—'
+  const list = wo.assignedWorkers
+  if (!list?.length) return '배정 없음'
+  const names = list.map((a) => a.worker.workerName || a.worker.workerCode)
+  if (names.length === 1) return names[0]!
+  return `${names[0]} 외 ${names.length - 1}인`
 }
 
 function woOptionLabel(wo: WorkOrderRef) {
@@ -240,59 +250,16 @@ function IconPrint() {
   )
 }
 
-function printLotBarcode(lotId: number, label: string) {
-  const url = `/api/lots/${lotId}/barcode-image?view=print`
-  const safeLabel = label.replace(/[<>&"']/g, '')
-  const iframe = document.createElement('iframe')
-  iframe.setAttribute('aria-hidden', 'true')
-  iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:none;'
-  document.body.appendChild(iframe)
-
-  const win = iframe.contentWindow
-  const doc = iframe.contentDocument ?? win?.document
-  if (!doc || !win) {
-    iframe.remove()
-    return
-  }
-
-  const cleanup = () => {
-    iframe.remove()
-  }
-
-  doc.open()
-  doc.write(`<!DOCTYPE html>
-<html lang="ko"><head><meta charset="UTF-8" /><title>LOT 바코드 ${safeLabel}</title>
-<style>
-  @page { margin: 10mm; size: auto; }
-  body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-  img { display: block; max-width: 100%; height: auto; }
-  .label { margin-top: 3mm; font: 11pt monospace; text-align: center; letter-spacing: 0.06em; }
-</style></head>
-<body>
-  <img id="bc" src="${url}" alt="${safeLabel}" />
-  <div class="label">${safeLabel}</div>
-</body></html>`)
-  doc.close()
-
-  const img = doc.getElementById('bc') as HTMLImageElement | null
-  const triggerPrint = () => {
-    win.focus()
-    win.print()
-  }
-
-  win.addEventListener('afterprint', cleanup, { once: true })
-  setTimeout(cleanup, 120_000)
-
-  if (!img) {
-    triggerPrint()
-    return
-  }
-  if (img.complete) {
-    setTimeout(triggerPrint, 150)
-    return
-  }
-  img.addEventListener('load', () => setTimeout(triggerPrint, 150), { once: true })
-  img.addEventListener('error', cleanup, { once: true })
+function printLotBarcode(row: Row) {
+  return printProductionLotLabel({
+    lotId: row.id,
+    lotNo: row.lotNo,
+    barcodeText: row.barcode ?? row.lotNo,
+    productCode: row.product.productCode,
+    productName: row.product.productName,
+    createdAt: row.createdAt,
+    lotQty: row.lotQty,
+  })
 }
 
 function normalizeScannedLotToken(raw: string): string {
@@ -828,8 +795,14 @@ export function LotsPage() {
                         <button
                           type="button"
                           className="mesBarcodeCell mesBarcodeOpenBtn"
-                          title="바코드 크게 보기 (스캔 테스트)"
+                          title="클릭: 인쇄 · 더블클릭: 미리보기"
                           onClick={(ev: MouseEvent) => {
+                            ev.stopPropagation()
+                            void printLotBarcode(row).catch(() => {
+                              setBarcodePreview(row)
+                            })
+                          }}
+                          onDoubleClick={(ev: MouseEvent) => {
                             ev.stopPropagation()
                             setBarcodePreview(row)
                           }}
@@ -860,7 +833,7 @@ export function LotsPage() {
                       <span className={lotStatusBadgeClass(row.status)}>{lotStatusLabel(row.status)}</span>
                     </td>
                     <td className="mesTdEllipsis" title={workersLabel(row.workOrder)}>
-                      {workersLabel(row.workOrder)}
+                      {workersLabelShort(row.workOrder)}
                     </td>
                     <td className="mesLotTdActions">
                       <button
@@ -1122,21 +1095,11 @@ export function LotsPage() {
               <button
                 type="button"
                 className="mesBtnSecondary mesBarcodePrintBtn"
-                onClick={() =>
-                  printLotBarcode(barcodePreview.id, barcodePreview.barcode ?? barcodePreview.lotNo)
-                }
+                onClick={() => void printLotBarcode(barcodePreview)}
               >
                 <IconPrint />
                 인쇄하기
               </button>
-              <a
-                className="mesBtnSm mesBarcodeOpenLink"
-                href={`/api/lots/${barcodePreview.id}/barcode-image?view=print`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                인쇄용 이미지 열기
-              </a>
               <button type="button" className="mesBtnPrimary" onClick={closeBarcodePreview}>
                 닫기
               </button>
