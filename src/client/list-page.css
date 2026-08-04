@@ -412,3 +412,60 @@
   color: var(--list-text);
   letter-spacing: -0.03em;
 }
+
+.mesUserSignatureRow .mesLabel {
+  flex: 1 1 100%;
+}
+
+.mesUserSignatureBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px dashed var(--list-border);
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.mesUserSignaturePreview {
+  max-width: 160px;
+  max-height: 64px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid var(--list-border);
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.mesUserSignatureEmpty {
+  font-size: 13px;
+}
+
+.mesUserSignatureActions {
+  display: flex;
+  gap: 8px;
+}
+
+.mesUserSignatureBtn {
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px 12px;
+}
+
+.mesLabel--wide {
+  flex: 1 1 100%;
+  min-width: 280px;
+}
+
+.mesUserAddressCell {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesPlBasisHint {
+  margin: 8px 0 0;
+  font-size: 13px;
+}

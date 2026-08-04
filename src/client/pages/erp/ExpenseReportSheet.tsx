@@ -5,10 +5,11 @@ import {
   type ExpenseLine,
   type ExpenseRow,
 } from './expenseReportTypes'
-import type { LeaveDecision } from './annualLeaveTypes'
+import { ApprovalSignature } from './ApprovalSignature'
 
 export type ApplicantInfo = {
   userName: string
+  signatureUrl: string | null
   dept: string
   position: string
 }
@@ -25,12 +26,6 @@ type EditProps = {
 }
 
 export type ExpenseReportSheetProps = ViewProps | EditProps
-
-function approvalSign(name: string | null, decision: LeaveDecision) {
-  if (decision === 'APPROVED' && name) return <span className="mesErInk">{name}</span>
-  if (decision === 'REJECTED') return <span className="mesErRejectMark">반려</span>
-  return null
-}
 
 const BASE_ROWS = 20
 
@@ -98,10 +93,22 @@ export function ExpenseReportSheet(props: ExpenseReportSheetProps) {
             <th className="mesErHead__lab">이름</th>
             <td className="mesErHead__val mesErHead__name">{userName}</td>
             <td rowSpan={3} className="mesErHead__sign">
-              {isEdit ? null : approvalSign(props.row.managerByName, props.row.managerDecision)}
+              {isEdit ? null : (
+                <ApprovalSignature
+                  name={props.row.managerByName}
+                  signatureUrl={props.row.managerSignatureUrl}
+                  decision={props.row.managerDecision}
+                />
+              )}
             </td>
             <td rowSpan={3} className="mesErHead__sign">
-              {isEdit ? null : approvalSign(props.row.ceoByName, props.row.ceoDecision)}
+              {isEdit ? null : (
+                <ApprovalSignature
+                  name={props.row.ceoByName}
+                  signatureUrl={props.row.ceoSignatureUrl}
+                  decision={props.row.ceoDecision}
+                />
+              )}
             </td>
           </tr>
           <tr>

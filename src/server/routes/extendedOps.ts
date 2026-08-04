@@ -22,6 +22,7 @@ import {
   CODE128_THUMB,
 } from '../lib/barcode/image'
 import { syncMaterialLotBarcode } from '../lib/barcode/materialLot'
+import { resolveInboundUnitPrice, syncProductMaterialUnitCost } from '../lib/inventoryUnitCost'
 
 function normalizeScannedLotToken(raw: string): string {
   const v = raw.trim()
@@ -454,6 +455,7 @@ const matLotBody = z.object({
   productId: z.number().int().positive(),
   supplier: z.string().optional().nullable(),
   receivedQty: z.union([z.number().positive(), z.string()]),
+  unitPrice: z.union([z.number().nonnegative(), z.string()]).optional().nullable(),
   remainQty: z.union([z.number().nonnegative(), z.string()]).optional(),
   receivedDate: z.string().min(8).max(32),
   status: z.nativeEnum(MaterialLotStatus).optional(),
@@ -465,14 +467,17 @@ extendedOpsRouter.post('/material-lots', async (req, res) => {
   const b = p.data
   const rq = String(b.receivedQty)
   const rem = b.remainQty != null ? String(b.remainQty) : rq
+  const userPrice = b.unitPrice != null && String(b.unitPrice).trim() !== '' ? Number(b.unitPrice) : null
   try {
     const item = await prisma.$transaction(async (tx) => {
+      const resolvedPrice = await resolveInboundUnitPrice(b.productId, userPrice, tx)
       const lot = await tx.materialLot.create({
         data: {
           lotNo: b.lotNo,
           productId: b.productId,
           supplier: b.supplier ?? undefined,
           receivedQty: rq,
+          unitPrice: resolvedPrice != null ? String(resolvedPrice) : undefined,
           remainQty: rem,
           receivedDate: new Date(b.receivedDate),
           status: b.status ?? MaterialLotStatus.AVAILABLE,
@@ -480,6 +485,7 @@ extendedOpsRouter.post('/material-lots', async (req, res) => {
         include: { product: { select: { productCode: true, productName: true } } },
       })
       await syncMaterialLotBarcode(tx, lot.id, lot.lotNo)
+      await syncProductMaterialUnitCost(b.productId, tx)
       return tx.materialLot.findUnique({
         where: { id: lot.id },
         include: { product: { select: { productCode: true, productName: true } } },

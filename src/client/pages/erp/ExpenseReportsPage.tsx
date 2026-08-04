@@ -421,7 +421,7 @@ export function ExpenseReportsPage() {
 
       {applyOpen && user ? (
         <ExpenseReportApplyModal
-          applicant={applicant ?? { userName: user.userName, dept: '', position: user.roleName }}
+          applicant={applicant ?? { userName: user.userName, signatureUrl: null, dept: '', position: user.roleName }}
           form={form}
           lineSlots={lineSlots}
           onChange={(patch) => setForm((f) => ({ ...f, ...patch }))}

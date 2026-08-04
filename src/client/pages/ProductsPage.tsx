@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react'
 
 import { apiJson } from '../lib/api'
+import { printProductLabel } from '../lib/printBarcode'
 import '../products-page.css'
 import { ProductFormModal } from '../ui/ProductFormModal'
 
@@ -141,6 +142,8 @@ type Product = {
 
   maxStock: number | null
 
+  materialUnitCost: string | null
+
   barcode: string | null
 
   specJson: unknown
@@ -229,6 +232,8 @@ type FormState = {
 
   maxStock: string
 
+  materialUnitCost: string
+
   barcode: string
 
   status: string
@@ -292,6 +297,8 @@ const emptyForm = (): FormState => ({
   safetyStock: '',
 
   maxStock: '',
+
+  materialUnitCost: '',
 
   barcode: '',
 
@@ -391,6 +398,41 @@ function parseOptionalDecimal(raw: string): number | null | undefined {
 
 
 
+function ProductBarcodePreviewImage({ productId, alt }: { productId: number; alt: string }) {
+  return (
+    <img
+      src={`/api/products/${productId}/barcode-image?view=screen`}
+      alt={alt}
+      className="mesBarcodePreviewImg"
+    />
+  )
+}
+
+async function printProdBarcode(p: Product) {
+  let currentStock: number | null = null
+  try {
+    const token = encodeURIComponent(p.barcode ?? p.productCode)
+    const data = await apiJson<{ ok: true; product: { stockSummary: { totalQty: number } } }>(
+      `/api/products/lookup?value=${token}`,
+    )
+    currentStock = data.product.stockSummary.totalQty
+  } catch {
+    currentStock = null
+  }
+
+  return printProductLabel({
+    productId: p.id,
+    productCode: p.productCode,
+    productName: p.productName,
+    barcodeText: p.barcode ?? p.productCode,
+    itemType: itemTypeLabel(p.itemType),
+    unit: p.unit,
+    currentStock,
+  })
+}
+
+
+
 export function ProductsPage() {
 
   const [items, setItems] = useState<Product[]>([])
@@ -436,6 +478,10 @@ export function ProductsPage() {
   const [panelOpen, setPanelOpen] = useState(false)
 
   const [saving, setSaving] = useState(false)
+
+  const [barcodePreview, setBarcodePreview] = useState<Product | null>(null)
+
+  const closeBarcodePreview = useCallback(() => setBarcodePreview(null), [])
 
 
 
@@ -587,6 +633,17 @@ export function ProductsPage() {
 
 
 
+  useEffect(() => {
+    if (!barcodePreview) return
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key === 'Escape') closeBarcodePreview()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [barcodePreview, closeBarcodePreview])
+
+
+
   const openNew = () => {
 
     setEditingId(null)
@@ -626,6 +683,8 @@ export function ProductsPage() {
       safetyStock: p.safetyStock != null ? String(p.safetyStock) : '',
 
       maxStock: p.maxStock != null ? String(p.maxStock) : '',
+
+      materialUnitCost: p.materialUnitCost ?? '',
 
       barcode: p.barcode ?? '',
 
@@ -1327,7 +1386,30 @@ export function ProductsPage() {
 
                     <td>{p.maxStock ?? '—'}</td>
 
-                    <td className="mono">{p.barcode ?? '—'}</td>
+                    <td className="mono" onClick={(ev) => ev.stopPropagation()}>
+                      {p.barcode || p.productCode ? (
+                        <button
+                          type="button"
+                          className="mesBarcodeCell mesBarcodeOpenBtn"
+                          onClick={() => {
+                            void printProdBarcode(p).catch(() => {
+                              setBarcodePreview(p)
+                            })
+                          }}
+                          onDoubleClick={() => setBarcodePreview(p)}
+                          aria-label={`바코드 ${p.barcode ?? p.productCode}`}
+                        >
+                          <img
+                            src={`/api/products/${p.id}/barcode-image`}
+                            alt=""
+                            className="mesBarcodeThumb"
+                          />
+                          <span className="mono small muted">{p.barcode ?? p.productCode}</span>
+                        </button>
+                      ) : (
+                        '—'
+                      )}
+                    </td>
 
                     <td>
 
@@ -1541,6 +1623,56 @@ export function ProductsPage() {
         onSave={() => void save()}
         onClose={closePanel}
       />
+
+      {barcodePreview ? (
+        <div className="mesModalRoot" role="presentation">
+          <button
+            type="button"
+            className="mesModalBackdrop"
+            aria-label="닫기"
+            onClick={closeBarcodePreview}
+          />
+          <div
+            className="mesModalDialog mesBarcodePreviewDialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mes-prod-barcode-title"
+          >
+            <div className="mesModalHead">
+              <div>
+                <h2 className="mesModalTitle" id="mes-prod-barcode-title">
+                  품목 바코드
+                </h2>
+                <div className="mesModalMeta muted">
+                  {barcodePreview.productCode} · {barcodePreview.productName}
+                </div>
+              </div>
+            </div>
+            <div className="mesModalBody mesBarcodePreviewBody">
+              <p className="muted small mesBarcodePreviewHint">클릭: 라벨 인쇄 · 더블클릭: 미리보기</p>
+              <div className="mesBarcodePreviewFrame">
+                <ProductBarcodePreviewImage
+                  productId={barcodePreview.id}
+                  alt={`품목 바코드 ${barcodePreview.barcode ?? barcodePreview.productCode}`}
+                />
+              </div>
+              <div className="mesBarcodePreviewValue mono">{barcodePreview.barcode ?? barcodePreview.productCode}</div>
+            </div>
+            <div className="mesModalFoot mesBarcodePreviewFoot">
+              <button
+                type="button"
+                className="mesBtnSecondary mesBarcodePrintBtn"
+                onClick={() => void printProdBarcode(barcodePreview)}
+              >
+                인쇄
+              </button>
+              <button type="button" className="mesBtnPrimary" onClick={closeBarcodePreview}>
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
     </div>
 

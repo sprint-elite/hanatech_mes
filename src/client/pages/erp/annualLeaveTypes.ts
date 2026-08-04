@@ -5,6 +5,7 @@ export type LeaveRow = {
   id: number
   userId: number
   userName: string
+  userSignatureUrl: string | null
   dept: string
   position: string
   startDate: string
@@ -17,7 +18,9 @@ export type LeaveRow = {
   managerDecision: LeaveDecision
   ceoDecision: LeaveDecision
   managerByName: string | null
+  managerSignatureUrl: string | null
   ceoByName: string | null
+  ceoSignatureUrl: string | null
   rejectReason: string | null
   createdAt: string
 }

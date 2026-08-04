@@ -4,6 +4,11 @@ import { InventoryTxRefType, InventoryTxType, MaterialLotStatus, Prisma, Shipmen
 import { prisma } from '../db/prisma'
 import { issueMaterialInTx } from '../lib/issueMaterialInTx'
 import { syncMaterialLotBarcode } from '../lib/barcode/materialLot'
+import {
+  mergeWeightedUnitPrice,
+  resolveInboundUnitPrice,
+  syncProductMaterialUnitCost,
+} from '../lib/inventoryUnitCost'
 import { prismaFail } from '../lib/prismaError'
 import { parsePositiveIntParam } from '../lib/params'
 
@@ -187,6 +192,7 @@ const stockMovementBody = z
     lotId: z.number().int().positive().optional().nullable(),
     materialLotId: z.number().int().positive().optional().nullable(),
     materialLotNo: z.string().trim().max(64).optional().nullable(),
+    unitPrice: z.number().finite().gte(0).optional().nullable(),
     remark: z.string().trim().max(200).optional().nullable(),
     createdBy: z.number().int().positive().optional().nullable(),
   })
@@ -223,6 +229,12 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
       const itemType = product.itemType.trim().toUpperCase()
       const isRaw = itemType === 'RAW'
       const qtyDec = new Prisma.Decimal(b.qty)
+      let resolvedInboundPrice: number | null = null
+      let inboundPriceDec: Prisma.Decimal | null = null
+      if (b.movementType === 'IN') {
+        resolvedInboundPrice = await resolveInboundUnitPrice(b.productId, b.unitPrice ?? null, tx)
+        inboundPriceDec = resolvedInboundPrice != null ? new Prisma.Decimal(resolvedInboundPrice) : null
+      }
 
       if (b.lotId != null) {
         const lot = await tx.productionLot.findUnique({
@@ -267,7 +279,7 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
           const found = await tx.materialLot.findFirst({
             where: { productId: b.productId, lotNo },
             orderBy: { id: 'asc' },
-            select: { id: true, receivedQty: true, remainQty: true },
+            select: { id: true, receivedQty: true, remainQty: true, unitPrice: true },
           })
           if (!found) {
             const created = await tx.materialLot.create({
@@ -275,6 +287,7 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
                 lotNo,
                 productId: b.productId,
                 receivedQty: qtyDec,
+                unitPrice: inboundPriceDec ?? undefined,
                 remainQty: qtyDec,
                 receivedDate: new Date(),
                 status: MaterialLotStatus.AVAILABLE,
@@ -285,11 +298,18 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
             resolvedMaterialLotId = created.id
           } else {
             resolvedMaterialLotId = found.id
+            const mergedPrice = mergeWeightedUnitPrice(
+              found.receivedQty,
+              found.unitPrice,
+              qtyDec,
+              inboundPriceDec ?? found.unitPrice,
+            )
             await tx.materialLot.update({
               where: { id: found.id },
               data: {
                 receivedQty: found.receivedQty.add(qtyDec),
                 remainQty: found.remainQty.add(qtyDec),
+                unitPrice: mergedPrice ?? undefined,
                 status: MaterialLotStatus.AVAILABLE,
               },
             })
@@ -297,14 +317,21 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
         } else if (resolvedMaterialLotId != null) {
           const lock = await tx.materialLot.findUnique({
             where: { id: resolvedMaterialLotId },
-            select: { receivedQty: true, remainQty: true },
+            select: { receivedQty: true, remainQty: true, unitPrice: true },
           })
           if (!lock) return { status: 404 as const, body: { ok: false, error: 'MATERIAL_LOT_NOT_FOUND' } }
+          const mergedPrice = mergeWeightedUnitPrice(
+            lock.receivedQty,
+            lock.unitPrice,
+            qtyDec,
+            inboundPriceDec ?? lock.unitPrice,
+          )
           await tx.materialLot.update({
             where: { id: resolvedMaterialLotId },
             data: {
               receivedQty: lock.receivedQty.add(qtyDec),
               remainQty: lock.remainQty.add(qtyDec),
+              unitPrice: mergedPrice ?? undefined,
               status: MaterialLotStatus.AVAILABLE,
             },
           })
@@ -525,6 +552,7 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
           locationId: inv?.locationId ?? b.locationId ?? undefined,
           transactionType: b.movementType === 'IN' ? InventoryTxType.IN : InventoryTxType.OUT,
           qty: b.qty,
+          unitPrice: b.movementType === 'IN' ? (inboundPriceDec ?? undefined) : undefined,
           refType: InventoryTxRefType.ADJUST,
           refId: b.lotId ?? resolvedMaterialLotId ?? b.productId,
           beforeQty,
@@ -533,6 +561,10 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
           createdBy: b.createdBy ?? undefined,
         },
       })
+
+      if (b.movementType === 'IN') {
+        await syncProductMaterialUnitCost(b.productId, tx)
+      }
 
       return {
         status: 201 as const,
@@ -547,6 +579,103 @@ mesTransactionsRouter.post('/transactions/stock-movements', async (req, res) => 
       }
     })
 
+    return res.status(result.status).json(result.body)
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
+async function recomputeMaterialLotUnitPriceFromInboundTxs(tx: Prisma.TransactionClient, materialLotId: number) {
+  const txs = await tx.inventoryTransaction.findMany({
+    where: { materialLotId, transactionType: InventoryTxType.IN },
+    select: { qty: true, unitPrice: true },
+  })
+  let totalValue = 0
+  let totalQty = 0
+  for (const row of txs) {
+    if (row.unitPrice == null) continue
+    const price = Number(row.unitPrice.toString())
+    if (!Number.isFinite(price) || price < 0) continue
+    totalValue += row.qty * price
+    totalQty += row.qty
+  }
+  const avg = totalQty > 0 ? Math.round((totalValue / totalQty) * 10000) / 10000 : null
+  await tx.materialLot.update({
+    where: { id: materialLotId },
+    data: { unitPrice: avg != null ? new Prisma.Decimal(avg) : null },
+  })
+}
+
+function canEditStockMovementUnitPrice(t: {
+  transactionType: InventoryTxType
+  refType: InventoryTxRefType | null
+}) {
+  if (t.transactionType === InventoryTxType.IN) return true
+  if (t.transactionType === InventoryTxType.OUT && t.refType === InventoryTxRefType.ADJUST) return true
+  return false
+}
+
+const patchUnitPriceBody = z.object({
+  unitPrice: z.number().finite().gte(0).nullable(),
+})
+
+mesTransactionsRouter.patch('/transactions/stock-movements/:id/unit-price', async (req, res) => {
+  const id = parsePositiveIntParam(req.params.id)
+  if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
+  const parsed = patchUnitPriceBody.safeParse(req.body)
+  if (!parsed.success) {
+    return res.status(400).json({ ok: false, error: 'VALIDATION_ERROR', details: parsed.error.flatten() })
+  }
+  const { unitPrice } = parsed.data
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const t = await tx.inventoryTransaction.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          productId: true,
+          materialLotId: true,
+          transactionType: true,
+          refType: true,
+        },
+      })
+      if (!t) return { status: 404 as const, body: { ok: false, error: 'NOT_FOUND' } }
+      if (!canEditStockMovementUnitPrice(t)) {
+        return {
+          status: 400 as const,
+          body: {
+            ok: false,
+            error: 'NOT_EDITABLE',
+            message: '입고 이력 또는 수동(ADJUST) 출고 이력만 단가를 수정할 수 있습니다.',
+          },
+        }
+      }
+
+      const priceDec = unitPrice != null ? new Prisma.Decimal(unitPrice) : null
+      const updated = await tx.inventoryTransaction.update({
+        where: { id },
+        data: { unitPrice: priceDec },
+        select: { id: true, productId: true, unitPrice: true, transactionType: true, materialLotId: true },
+      })
+
+      if (t.transactionType === InventoryTxType.IN) {
+        if (t.materialLotId != null) {
+          await recomputeMaterialLotUnitPriceFromInboundTxs(tx, t.materialLotId)
+        }
+        await syncProductMaterialUnitCost(t.productId, tx)
+      }
+
+      return {
+        status: 200 as const,
+        body: {
+          ok: true,
+          item: {
+            id: updated.id,
+            unitPrice: updated.unitPrice != null ? Number(updated.unitPrice.toString()) : null,
+          },
+        },
+      }
+    })
     return res.status(result.status).json(result.body)
   } catch (e) {
     return prismaFail(res, e)

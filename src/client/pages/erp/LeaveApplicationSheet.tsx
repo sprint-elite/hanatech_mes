@@ -1,5 +1,6 @@
-import type { LeaveDecision, LeaveRow } from './annualLeaveTypes'
+import type { LeaveRow } from './annualLeaveTypes'
 import { fmtKrDate } from './annualLeaveTypes'
+import { ApprovalSignature } from './ApprovalSignature'
 
 export type LeaveFormDraft = {
   startDate: string
@@ -12,6 +13,7 @@ export type LeaveFormDraft = {
 
 export type ApplicantInfo = {
   userName: string
+  signatureUrl: string | null
   dept: string
   position: string
 }
@@ -31,19 +33,6 @@ type EditProps = {
 
 export type LeaveApplicationSheetProps = ViewProps | EditProps
 
-function approvalSign(name: string | null, decision: LeaveDecision, fallback?: string) {
-  if (decision === 'APPROVED' && name) {
-    return <span className="mesAlDocSignName">{name}</span>
-  }
-  if (decision === 'REJECTED') {
-    return <span className="mesAlDocSignReject">반려</span>
-  }
-  if (fallback) {
-    return <span className="mesAlDocSignName">{fallback}</span>
-  }
-  return null
-}
-
 function displayDept(v: string) {
   return v === '—' || !v ? '' : v
 }
@@ -52,6 +41,7 @@ export function LeaveApplicationSheet(props: LeaveApplicationSheetProps) {
   const isEdit = props.mode === 'edit'
 
   const userName = isEdit ? props.applicant.userName : props.row.userName
+  const userSignatureUrl = isEdit ? props.applicant.signatureUrl : props.row.userSignatureUrl
   const dept = isEdit ? props.applicant.dept : props.row.dept
   const position = isEdit ? props.applicant.position : props.row.position
   const emergencyContact = isEdit ? props.form.emergencyContact : (props.row.emergencyContact ?? '')
@@ -92,15 +82,30 @@ export function LeaveApplicationSheet(props: LeaveApplicationSheetProps) {
           </tr>
           <tr>
             <td className="mesAlDocSignCell">
-              {isEdit
-                ? approvalSign(userName, 'APPROVED', userName)
-                : approvalSign(props.row.userName, 'APPROVED', props.row.userName)}
+              <ApprovalSignature
+                name={userName}
+                signatureUrl={userSignatureUrl}
+                decision="APPROVED"
+                showWhenPending
+              />
             </td>
             <td className="mesAlDocSignCell">
-              {isEdit ? null : approvalSign(props.row.managerByName, props.row.managerDecision)}
+              {isEdit ? null : (
+                <ApprovalSignature
+                  name={props.row.managerByName}
+                  signatureUrl={props.row.managerSignatureUrl}
+                  decision={props.row.managerDecision}
+                />
+              )}
             </td>
             <td className="mesAlDocSignCell">
-              {isEdit ? null : approvalSign(props.row.ceoByName, props.row.ceoDecision)}
+              {isEdit ? null : (
+                <ApprovalSignature
+                  name={props.row.ceoByName}
+                  signatureUrl={props.row.ceoSignatureUrl}
+                  decision={props.row.ceoDecision}
+                />
+              )}
             </td>
           </tr>
         </tbody>
@@ -217,7 +222,11 @@ export function LeaveApplicationSheet(props: LeaveApplicationSheetProps) {
         <p className="mesAlDocApplicantLine">
           신청자&nbsp;&nbsp;:&nbsp;&nbsp;{userName}
           <span className="mesAlDocApplicantSignWrap">
-            <span className="mesAlDocApplicantSign">{userName}</span>
+            {userSignatureUrl ? (
+              <img src={userSignatureUrl} alt="" className="mesAlDocApplicantSignImg" />
+            ) : (
+              <span className="mesAlDocApplicantSign">{userName}</span>
+            )}
             <span className="mesAlDocApplicantSeal" aria-hidden>(인)</span>
           </span>
         </p>

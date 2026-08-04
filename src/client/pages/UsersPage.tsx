@@ -12,15 +12,50 @@ type UserRow = {
   workerId: number | null
   email: string | null
   phone: string | null
+  dept: string | null
+  position: string | null
+  businessTeamAddress: string | null
+  hasSignature: boolean
   status: string
   lastLoginAt: string | null
   createdAt: string
   role?: { roleName: string }
 }
 
-type FormState = { loginId: string; userName: string; password: string; roleId: string; workerId: string; status: string }
+type FormState = {
+  loginId: string
+  userName: string
+  password: string
+  roleId: string
+  workerId: string
+  dept: string
+  position: string
+  businessTeamAddress: string
+  signatureDataUrl: string | null
+  status: string
+}
 
-const empty = (): FormState => ({ loginId: '', userName: '', password: '', roleId: '', workerId: '', status: 'ACTIVE' })
+const empty = (): FormState => ({
+  loginId: '',
+  userName: '',
+  password: '',
+  roleId: '',
+  workerId: '',
+  dept: '',
+  position: '',
+  businessTeamAddress: '',
+  signatureDataUrl: null,
+  status: 'ACTIVE',
+})
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(reader.error ?? new Error('파일 읽기 실패'))
+    reader.readAsDataURL(file)
+  })
+}
 
 export function UsersPage() {
   const [items, setItems] = useState<UserRow[]>([])
@@ -30,6 +65,8 @@ export function UsersPage() {
   const [err, setErr] = useState<string | null>(null)
   const [form, setForm] = useState<FormState>(empty())
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalErr, setModalErr] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
   const load = useCallback(async () => {
@@ -68,46 +105,93 @@ export function UsersPage() {
     return list
   }, [workers, form.workerId])
 
-  const resetForm = () => {
+  const closeModal = () => {
+    if (saving) return
+    setModalOpen(false)
     setEditingId(null)
     setForm(empty())
-    setErr(null)
+    setModalErr(null)
   }
 
-  const openEdit = (r: UserRow) => {
+  const openCreate = () => {
+    setEditingId(null)
+    setForm(empty())
+    setModalErr(null)
+    setModalOpen(true)
+  }
+
+  const openEdit = async (r: UserRow) => {
     setEditingId(r.id)
-    setForm({
-      loginId: r.loginId,
-      userName: r.userName,
-      password: '',
-      roleId: String(r.roleId),
-      workerId: r.workerId == null ? '' : String(r.workerId),
-      status: r.status,
-    })
-    setErr(null)
+    setModalErr(null)
+    setModalOpen(true)
+    try {
+      const data = await apiJson<{ ok: boolean; item: { signatureDataUrl: string | null } & UserRow }>(`/api/users/${r.id}`)
+      setForm({
+        loginId: r.loginId,
+        userName: r.userName,
+        password: '',
+        roleId: String(r.roleId),
+        workerId: r.workerId == null ? '' : String(r.workerId),
+        dept: r.dept ?? '',
+        position: r.position ?? '',
+        businessTeamAddress: data.item.businessTeamAddress ?? '',
+        signatureDataUrl: data.item.signatureDataUrl,
+        status: r.status,
+      })
+    } catch (e) {
+      setModalErr(e instanceof Error ? e.message : 'unknown error')
+      setForm({
+        loginId: r.loginId,
+        userName: r.userName,
+        password: '',
+        roleId: String(r.roleId),
+        workerId: r.workerId == null ? '' : String(r.workerId),
+        dept: r.dept ?? '',
+        position: r.position ?? '',
+        businessTeamAddress: r.businessTeamAddress ?? '',
+        signatureDataUrl: null,
+        status: r.status,
+      })
+    }
+  }
+
+  const onSignaturePick = async (file: File | null) => {
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setModalErr('이미지 파일만 업로드할 수 있습니다.')
+      return
+    }
+    if (file.size > 2_000_000) {
+      setModalErr('서명 이미지는 2MB 이하만 가능합니다.')
+      return
+    }
+    try {
+      const dataUrl = await readFileAsDataUrl(file)
+      setForm((f) => ({ ...f, signatureDataUrl: dataUrl }))
+      setModalErr(null)
+    } catch (e) {
+      setModalErr(e instanceof Error ? e.message : 'unknown error')
+    }
   }
 
   const save = async () => {
     setSaving(true)
-    setErr(null)
+    setModalErr(null)
     try {
       const roleId = Number(form.roleId)
       if (!Number.isFinite(roleId) || roleId <= 0) {
-        setErr('역할을 선택하세요.')
-        setSaving(false)
+        setModalErr('역할을 선택하세요.')
         return
       }
       const workerId = form.workerId === '' ? null : Number(form.workerId)
       if (form.workerId !== '' && !Number.isFinite(workerId)) {
-        setErr('작업자를 선택하세요.')
-        setSaving(false)
+        setModalErr('작업자를 선택하세요.')
         return
       }
 
       if (editingId == null) {
         if (form.password.length < 4) {
-          setErr('비밀번호는 4자 이상이어야 합니다.')
-          setSaving(false)
+          setModalErr('비밀번호는 4자 이상이어야 합니다.')
           return
         }
         await apiJson('/api/users', {
@@ -118,13 +202,16 @@ export function UsersPage() {
             password: form.password,
             roleId,
             workerId,
+            dept: form.dept.trim() || null,
+            position: form.position.trim() || null,
+            businessTeamAddress: form.businessTeamAddress.trim() || null,
+            signatureDataUrl: form.signatureDataUrl,
             status: form.status,
           }),
         })
       } else {
         if (form.password !== '' && form.password.length < 4) {
-          setErr('비밀번호를 바꿀 경우 4자 이상이어야 합니다.')
-          setSaving(false)
+          setModalErr('비밀번호를 바꿀 경우 4자 이상이어야 합니다.')
           return
         }
         await apiJson(`/api/users/${editingId}`, {
@@ -135,14 +222,18 @@ export function UsersPage() {
             ...(form.password !== '' ? { password: form.password } : {}),
             roleId,
             workerId,
+            dept: form.dept.trim() || null,
+            position: form.position.trim() || null,
+            businessTeamAddress: form.businessTeamAddress.trim() || null,
+            signatureDataUrl: form.signatureDataUrl,
             status: form.status,
           }),
         })
       }
       await load()
-      resetForm()
+      closeModal()
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'unknown error')
+      setModalErr(e instanceof Error ? e.message : 'unknown error')
     } finally {
       setSaving(false)
     }
@@ -153,7 +244,7 @@ export function UsersPage() {
     try {
       await apiJson(`/api/users/${id}`, { method: 'DELETE' })
       await load()
-      if (editingId === id) resetForm()
+      if (editingId === id) closeModal()
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
     }
@@ -171,77 +262,12 @@ export function UsersPage() {
           <button type="button" className="mesListBtn mesListBtn--secondary" onClick={() => void load()}>
             새로고침
           </button>
-          <button type="button" className="mesListBtn mesListBtn--primary" onClick={resetForm}>
+          <button type="button" className="mesListBtn mesListBtn--primary" onClick={openCreate}>
             새 사용자
           </button>
         </div>
       </header>
       {err ? <div className="error mesBanner mesListNotice">{err}</div> : null}
-      <section className="mesListFormCard">
-        <div className="mesCardTitle">{editingId == null ? '신규 등록' : `수정 (ID ${editingId})`}</div>
-        <div className="mesFieldRow">
-          <label className="mesLabel">
-            로그인 ID
-            <input className="mesInput mono" value={form.loginId} onChange={(ev) => setForm((f) => ({ ...f, loginId: ev.target.value }))} />
-          </label>
-          <label className="mesLabel">
-            이름
-            <input className="mesInput" value={form.userName} onChange={(ev) => setForm((f) => ({ ...f, userName: ev.target.value }))} />
-          </label>
-        </div>
-        <div className="mesFieldRow">
-          <label className="mesLabel">
-            비밀번호{editingId != null ? ' (변경 시에만 입력)' : ''}
-            <input
-              type="password"
-              className="mesInput"
-              value={form.password}
-              placeholder={editingId != null ? '비워두면 유지' : undefined}
-              onChange={(ev) => setForm((f) => ({ ...f, password: ev.target.value }))}
-            />
-          </label>
-          <label className="mesLabel">
-            역할
-            <select className="mesInput" value={form.roleId} onChange={(ev) => setForm((f) => ({ ...f, roleId: ev.target.value }))}>
-              <option value="">선택</option>
-              {roles.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.roleName}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="mesLabel">
-            작업자 (선택)
-            <select className="mesInput" value={form.workerId} onChange={(ev) => setForm((f) => ({ ...f, workerId: ev.target.value }))}>
-              <option value="">선택 안 함</option>
-              {workerOptions.map((w) => (
-                <option key={w.id} value={w.id}>
-                  {w.workerName}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="mesLabel">
-            상태
-            <select className="mesInput" value={form.status} onChange={(ev) => setForm((f) => ({ ...f, status: ev.target.value }))}>
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="INACTIVE">INACTIVE</option>
-              <option value="LOCKED">LOCKED</option>
-            </select>
-          </label>
-        </div>
-        <div className="mesFormActions">
-          <button type="button" className="mesBtnPrimary" disabled={saving} onClick={() => void save()}>
-            {saving ? '저장 중…' : editingId == null ? '등록' : '저장'}
-          </button>
-          {editingId != null ? (
-            <button type="button" className="mesBtnSecondary" disabled={saving} onClick={resetForm}>
-              취소
-            </button>
-          ) : null}
-        </div>
-      </section>
       <div className="mesListTableCard">
         <div className="mesTableWrap mesListTableViewport">
           <table className="mesTable">
@@ -251,6 +277,10 @@ export function UsersPage() {
                 <th>로그인</th>
                 <th>이름</th>
                 <th>역할</th>
+                <th>부서</th>
+                <th>직급</th>
+                <th>사업팀 주소</th>
+                <th>서명</th>
                 <th>작업자</th>
                 <th>상태</th>
                 <th className="mesThActions">작업</th>
@@ -259,13 +289,13 @@ export function UsersPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="muted">
+                  <td colSpan={11} className="muted">
                     로딩 중…
                   </td>
                 </tr>
               ) : items.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="muted">
+                  <td colSpan={11} className="muted">
                     데이터 없음
                   </td>
                 </tr>
@@ -276,10 +306,14 @@ export function UsersPage() {
                     <td className="mono">{r.loginId}</td>
                     <td>{r.userName}</td>
                     <td>{r.role?.roleName ?? r.roleId}</td>
+                    <td>{r.dept ?? '—'}</td>
+                    <td>{r.position ?? '—'}</td>
+                    <td className="mesUserAddressCell">{r.businessTeamAddress ?? '—'}</td>
+                    <td>{r.hasSignature ? '등록됨' : '—'}</td>
                     <td>{workerLabel(r.workerId)}</td>
                     <td>{r.status}</td>
                     <td className="mesTdActions">
-                      <button type="button" className="mesBtnSm" onClick={() => openEdit(r)}>
+                      <button type="button" className="mesBtnSm" onClick={() => void openEdit(r)}>
                         수정
                       </button>
                       <button type="button" className="mesBtnSm mesBtnDanger" onClick={() => void remove(r.id)}>
@@ -293,6 +327,122 @@ export function UsersPage() {
           </table>
         </div>
       </div>
+
+      {modalOpen ? (
+        <div className="mesModalRoot" role="presentation">
+          <button type="button" className="mesModalBackdrop" aria-label="닫기" onClick={closeModal} />
+          <div className="mesModalDialog mesModalDialogWide" role="dialog" aria-modal="true" aria-labelledby="users-modal-title">
+            <div className="mesModalHead">
+              <div>
+                <h2 className="mesModalTitle" id="users-modal-title">
+                  {editingId == null ? '사용자 등록' : `사용자 수정 (ID ${editingId})`}
+                </h2>
+              </div>
+            </div>
+            <div className="mesModalBody">
+              {modalErr ? <div className="error mesBanner">{modalErr}</div> : null}
+              <div className="mesFieldRow">
+                <label className="mesLabel">
+                  로그인 ID
+                  <input className="mesInput mono" value={form.loginId} onChange={(ev) => setForm((f) => ({ ...f, loginId: ev.target.value }))} />
+                </label>
+                <label className="mesLabel">
+                  이름
+                  <input className="mesInput" value={form.userName} onChange={(ev) => setForm((f) => ({ ...f, userName: ev.target.value }))} />
+                </label>
+                <label className="mesLabel">
+                  비밀번호{editingId != null ? ' (변경 시에만)' : ''}
+                  <input
+                    type="password"
+                    className="mesInput"
+                    value={form.password}
+                    placeholder={editingId != null ? '비워두면 유지' : undefined}
+                    onChange={(ev) => setForm((f) => ({ ...f, password: ev.target.value }))}
+                  />
+                </label>
+                <label className="mesLabel">
+                  역할
+                  <select className="mesInput" value={form.roleId} onChange={(ev) => setForm((f) => ({ ...f, roleId: ev.target.value }))}>
+                    <option value="">선택</option>
+                    {roles.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.roleName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="mesLabel">
+                  작업자 (선택)
+                  <select className="mesInput" value={form.workerId} onChange={(ev) => setForm((f) => ({ ...f, workerId: ev.target.value }))}>
+                    <option value="">선택 안 함</option>
+                    {workerOptions.map((w) => (
+                      <option key={w.id} value={w.id}>
+                        {w.workerName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="mesLabel">
+                  부서
+                  <input className="mesInput" value={form.dept} onChange={(ev) => setForm((f) => ({ ...f, dept: ev.target.value }))} />
+                </label>
+                <label className="mesLabel">
+                  직급
+                  <input className="mesInput" value={form.position} onChange={(ev) => setForm((f) => ({ ...f, position: ev.target.value }))} />
+                </label>
+                <label className="mesLabel mesLabel--wide">
+                  사업팀 주소
+                  <input
+                    className="mesInput"
+                    value={form.businessTeamAddress}
+                    placeholder="예: 서울특별시 강남구 ..."
+                    onChange={(ev) => setForm((f) => ({ ...f, businessTeamAddress: ev.target.value }))}
+                  />
+                </label>
+                <label className="mesLabel">
+                  상태
+                  <select className="mesInput" value={form.status} onChange={(ev) => setForm((f) => ({ ...f, status: ev.target.value }))}>
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="INACTIVE">INACTIVE</option>
+                    <option value="LOCKED">LOCKED</option>
+                  </select>
+                </label>
+              </div>
+              <div className="mesFieldRow mesUserSignatureRow">
+                <label className="mesLabel">
+                  서명 이미지
+                  <div className="mesUserSignatureBox">
+                    {form.signatureDataUrl ? (
+                      <img src={form.signatureDataUrl} alt="서명 미리보기" className="mesUserSignaturePreview" />
+                    ) : (
+                      <span className="muted mesUserSignatureEmpty">등록된 서명 없음</span>
+                    )}
+                    <div className="mesUserSignatureActions">
+                      <label className="mesBtnSecondary mesUserSignatureBtn">
+                        <input type="file" accept="image/*" hidden onChange={(e) => void onSignaturePick(e.target.files?.[0] ?? null)} />
+                        {form.signatureDataUrl ? '변경' : '업로드'}
+                      </label>
+                      {form.signatureDataUrl ? (
+                        <button type="button" className="mesBtnSecondary mesUserSignatureBtn" onClick={() => setForm((f) => ({ ...f, signatureDataUrl: null }))}>
+                          제거
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div className="mesModalFoot">
+              <button type="button" className="mesBtnSecondary" disabled={saving} onClick={closeModal}>
+                취소
+              </button>
+              <button type="button" className="mesBtnPrimary" disabled={saving} onClick={() => void save()}>
+                {saving ? '저장 중…' : editingId == null ? '등록' : '저장'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

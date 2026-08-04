@@ -12,6 +12,7 @@ export type ProductFormState = {
   spec: string
   safetyStock: string
   maxStock: string
+  materialUnitCost: string
   barcode: string
   status: string
   isProduction: 'Y' | 'N'
@@ -385,6 +386,15 @@ export function ProductFormModal({
                   placeholder="예: 1200"
                   value={form.purchasePrice}
                   onChange={(ev) => setForm((f) => ({ ...f, purchasePrice: ev.target.value }))}
+                />
+              </ProdField>
+              <ProdField label="자재 단가" field="MATERIAL_UNIT_COST">
+                <input
+                  className="mesProdModalInput"
+                  value={form.materialUnitCost}
+                  readOnly
+                  placeholder="입고 이력 기준 자동 계산"
+                  title="입고 시 단가가 반영되면 자동 계산됩니다"
                 />
               </ProdField>
               <ProdField label="MOQ" field="MOQ">

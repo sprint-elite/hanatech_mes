@@ -1,0 +1,705 @@
+/* 생산 손익 · 원가 기준 공통 UI */
+
+.mesPlToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius, 12px);
+  background: var(--list-surface, #12151e);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+}
+
+.mesPlToolbarProduct {
+  min-width: 220px;
+  flex: 1;
+  max-width: 360px;
+}
+
+.mesPlToolbarActions {
+  margin-left: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.mesPlGlobalCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius, 12px);
+  background: var(--list-surface, #12151e);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+}
+
+.mesPlGlobalStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 28px;
+}
+
+.mesPlGlobalStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mesPlGlobalStatLabel {
+  font-size: 12px;
+  color: var(--list-muted, #9aa3b2);
+}
+
+.mesPlGlobalStatValue {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.mesPlSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 1100px) {
+  .mesPlSummaryGrid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+
+.mesPlSummaryCard {
+  background: var(--list-surface, #12151e);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+  border-radius: var(--list-radius-sm, 8px);
+  padding: 18px 20px;
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mesPlSummaryLabel {
+  font-size: 13px;
+  color: var(--list-muted, #9aa3b2);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.mesPlSummaryValue {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+}
+
+.mesPlProfitPos {
+  color: var(--list-ok, #3dba72);
+}
+
+.mesPlProfitNeg {
+  color: var(--list-danger, #e85d5d);
+}
+
+.mesPlProfitZero {
+  color: inherit;
+}
+
+.mesPlWarnBanner {
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius-sm, 8px);
+  border: 1px solid rgba(232, 194, 74, 0.45);
+  background: rgba(232, 194, 74, 0.08);
+}
+
+.mesPlWarnList {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.mesPlLossBanner {
+  padding: 12px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius-sm, 8px);
+  border: 1px solid rgba(232, 93, 93, 0.35);
+  background: rgba(232, 93, 93, 0.08);
+}
+
+.mesPlTable th,
+.mesPlTable td {
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.mesPlTable tbody tr.mesPlRowClickable {
+  cursor: pointer;
+}
+
+.mesPlTable tbody tr.mesPlRowClickable:hover {
+  background: rgba(232, 194, 74, 0.06);
+}
+
+.mesPlRowLoss {
+  background: rgba(232, 93, 93, 0.06);
+}
+
+.mesPlTotalRow {
+  background: var(--list-surface2, #181c28);
+  font-weight: 600;
+}
+
+.mesPlWarnCell {
+  white-space: normal;
+  min-width: 120px;
+  max-width: 200px;
+  font-size: 12px;
+}
+
+.mesPlDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mesPlDetailItem {
+  padding: 12px 14px;
+  border-radius: var(--list-radius-sm, 8px);
+  background: var(--list-surface2, #181c28);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+}
+
+.mesPlDetailItemLabel {
+  font-size: 12px;
+  color: var(--list-muted, #9aa3b2);
+  margin-bottom: 4px;
+}
+
+.mesPlDetailItemValue {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mesPlFormulaBox {
+  padding: 14px 16px;
+  border-radius: var(--list-radius-sm, 8px);
+  background: var(--list-surface2, #181c28);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.mesPlFormulaBox code {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+}
+
+.mesPlModalSectionTitle {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mesPlModalSection + .mesPlModalSection {
+  margin-top: 18px;
+}
+
+.mesPlReadonlyMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: var(--list-radius-sm, 8px);
+  background: var(--list-surface2, #181c28);
+  font-size: 13px;
+}
+
+.mesPlReadonlyMeta span {
+  color: var(--list-muted, #9aa3b2);
+}
+
+.mesPlReadonlyMeta strong {
+  color: var(--list-text, #eef1f6);
+  font-weight: 600;
+}
+
+/* 차트 영역 */
+.mesPlChartRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 1000px) {
+  .mesPlChartRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesPlChartGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 1100px) {
+  .mesPlChartGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mesPlChartCard {
+  padding: 14px 16px;
+  border-radius: var(--list-radius, 12px);
+  background: var(--list-surface, #12151e);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+  min-width: 0;
+}
+
+.mesPlChartCard--trend {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mesPlChartCard--trend .mesPlLineChartScroll {
+  max-width: 100%;
+}
+
+.mesPlChartCard--pie {
+  display: flex;
+  flex-direction: column;
+}
+
+.mesPlPieChartWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 4px 0 12px;
+  min-height: 300px;
+}
+
+.mesPlPieChartSvg {
+  width: min(100%, 380px);
+  height: auto;
+  aspect-ratio: 380 / 320;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.mesPlPieConnector {
+  stroke: var(--list-border, rgba(255, 255, 255, 0.12));
+  stroke-width: 1;
+  fill: none;
+  pointer-events: none;
+}
+
+.mesPlPieSliceLabel {
+  pointer-events: none;
+}
+
+.mesPlPieSliceLabelName {
+  fill: var(--list-muted, #9aa3b2);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.mesPlPieSliceLabelAmount {
+  fill: var(--list-text, #eef1f6);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mesPlPieSliceLabelAmount--profit {
+  fill: var(--list-ok, #3dba72);
+}
+
+.mesPlPieSliceLabelAmount--loss {
+  fill: var(--list-danger, #e85d5d);
+}
+
+.mesPlPieSliceLabelPct {
+  fill: var(--list-muted, #9aa3b2);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.mesPlPieSlice--explode path {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+}
+
+.mesPlPieLossHatchLine {
+  stroke: rgba(232, 93, 93, 0.85);
+  stroke-width: 2.2;
+}
+
+.mesPlPieLossOverlayArc {
+  /* 손실 구간: 채우기 대신 빗금 패턴 (아래 자재비 색 유지) */
+  fill: url(#mesPlLossHatch);
+  stroke: rgba(232, 93, 93, 0.7);
+  stroke-width: 1.25;
+  pointer-events: none;
+}
+
+.mesPlPieConnector--loss {
+  stroke: rgba(232, 93, 93, 0.45);
+}
+
+.mesPlPieSliceLabelName--loss {
+  fill: var(--list-danger, #e85d5d);
+}
+
+.mesPlPieSliceLabelPct--loss {
+  fill: rgba(232, 93, 93, 0.85);
+}
+
+.mesPlChartTitle {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--list-text, #eef1f6);
+}
+
+.mesPlChartEmpty {
+  padding: 28px 8px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--list-muted, #9aa3b2);
+}
+
+.mesPlVBarChart {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: end;
+  height: 160px;
+  padding-top: 8px;
+}
+
+.mesPlVBarCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 100%;
+}
+
+.mesPlVBarValue {
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+  min-height: 28px;
+}
+
+.mesPlVBarTrack {
+  flex: 1;
+  width: 100%;
+  max-width: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 6px;
+  background: var(--list-surface2, #181c28);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+  overflow: hidden;
+}
+
+.mesPlVBarFill {
+  width: 100%;
+  border-radius: 5px 5px 0 0;
+  min-height: 4px;
+  transition: height 0.2s ease;
+}
+
+.mesPlVBarFill--revenue {
+  background: linear-gradient(180deg, rgba(91, 164, 232, 0.9) 0%, rgba(91, 164, 232, 0.45) 100%);
+}
+
+.mesPlVBarFill--cost {
+  background: linear-gradient(180deg, rgba(232, 148, 74, 0.9) 0%, rgba(232, 148, 74, 0.45) 100%);
+}
+
+.mesPlVBarFill--profitPos {
+  background: linear-gradient(180deg, rgba(61, 186, 114, 0.95) 0%, rgba(61, 186, 114, 0.45) 100%);
+}
+
+.mesPlVBarFill--profitNeg {
+  background: linear-gradient(180deg, rgba(232, 93, 93, 0.95) 0%, rgba(232, 93, 93, 0.45) 100%);
+}
+
+.mesPlVBarLabel {
+  font-size: 11px;
+  color: var(--list-muted, #9aa3b2);
+  font-weight: 600;
+}
+
+.mesPlCostStack {
+  display: flex;
+  height: 28px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+}
+
+.mesPlCostSeg {
+  min-width: 2px;
+  transition: flex 0.2s ease;
+}
+
+.mesPlCostSeg--mat {
+  background: linear-gradient(90deg, #7c6fd6 0%, #9b8fe8 100%);
+}
+
+.mesPlCostSeg--labor {
+  background: linear-gradient(90deg, #e8944a 0%, #f0b078 100%);
+}
+
+.mesPlCostSeg--fixed {
+  background: linear-gradient(90deg, #5ba4e8 0%, #7ebef0 100%);
+}
+
+.mesPlCostSeg--product {
+  background: linear-gradient(90deg, #9aa3b2 0%, #b8c0cc 100%);
+}
+
+.mesPlCostLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-top: 12px;
+  font-size: 11px;
+}
+
+.mesPlCostLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mesPlCostLegendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.mesPlHBarChart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.mesPlHBarRow {
+  display: grid;
+  grid-template-columns: minmax(72px, 32%) 1fr auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.mesPlHBarLabel {
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesPlHBarTrack {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--list-surface2, #181c28);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+  overflow: hidden;
+}
+
+.mesPlHBarFill {
+  height: 100%;
+  border-radius: 4px;
+  min-width: 2px;
+}
+
+.mesPlHBarFill--pos {
+  background: linear-gradient(90deg, #2d9f62 0%, #3dba72 100%);
+}
+
+.mesPlHBarFill--neg {
+  background: linear-gradient(90deg, #c44 0%, #e85d5d 100%);
+}
+
+.mesPlHBarVal {
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 4.5rem;
+  text-align: right;
+}
+
+/* 일별 손익 꺾은선 차트 */
+.mesPlTrendSection {
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: var(--list-radius, 12px);
+  background: var(--list-surface, #12151e);
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.08));
+}
+
+.mesPlChartCard--trend .mesPlTrendHead {
+  margin-bottom: 10px;
+}
+
+.mesPlTrendHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.mesPlTrendDesc {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.mesPlTrendFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 12px;
+}
+
+.mesPlLineChart {
+  position: relative;
+}
+
+.mesPlLineChartScroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mesPlLineChartLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: var(--list-muted, #9aa3b2);
+}
+
+.mesPlLineChartLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mesPlLineChartLegendLine {
+  display: inline-block;
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.mesPlLineChartSvg {
+  display: block;
+  flex-shrink: 0;
+  height: 260px;
+  max-width: 100%;
+}
+
+.mesPlLineChartGrid {
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 1;
+}
+
+.mesPlLineChartZero {
+  stroke: rgba(232, 194, 74, 0.55);
+  stroke-width: 1.5;
+}
+
+.mesPlLineChartTick {
+  fill: var(--list-muted, #9aa3b2);
+  font-size: 10px;
+}
+
+.mesPlLineChartPath {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mesPlLineChartHit {
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.mesPlLineChartHoverLine {
+  stroke: rgba(232, 194, 74, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+}
+
+.mesPlLineChartXLabel {
+  fill: var(--list-muted, #9aa3b2);
+  font-size: 11px;
+}
+
+.mesPlLineChartXLabel--today {
+  fill: var(--list-accent, #e8c24a);
+  font-weight: 700;
+}
+
+.mesPlLineChartTooltip {
+  position: absolute;
+  top: 36px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 140px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--list-border, rgba(255, 255, 255, 0.12));
+  background: rgba(18, 21, 30, 0.96);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  z-index: 2;
+  font-size: 12px;
+  color: var(--list-muted, #9aa3b2);
+}
+
+.mesPlLineChartTooltip strong {
+  font-size: 12px;
+  color: var(--list-text, #eef1f6);
+}
+
+.mesPlLineChartTooltipProfit {
+  color: #3dba72;
+  font-weight: 600;
+}
+
+.mesPlLineChartTooltipBaseline {
+  color: #9aa3b2;
+}
+
+.mesPlLineChartTooltipExtra {
+  font-weight: 700;
+}

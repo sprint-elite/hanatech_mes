@@ -50,6 +50,7 @@ type InventoryTxRow = {
   locationId: number | null
   transactionType: MovementType | 'MOVE' | 'ADJUST'
   qty: number
+  unitPrice: number | null
   refType: 'WO' | 'LOT' | 'SHIPMENT' | 'OUTSOURCING' | 'ADJUST' | null
   refId: number | null
   remark: string | null
@@ -97,6 +98,9 @@ const fmtWhen = (iso: string) => {
   if (Number.isNaN(d.getTime())) return iso
   return d.toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' })
 }
+
+const canEditUnitPrice = (r: InventoryTxRow) =>
+  r.transactionType === 'IN' || (r.transactionType === 'OUT' && r.refType === 'ADJUST')
 
 const txRemark = (r: InventoryTxRow) => {
   if (r.remark && r.remark.trim() !== '') return r.remark
@@ -175,6 +179,15 @@ function IconReset() {
   )
 }
 
+function IconPencil() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  )
+}
+
 function IconTrash() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
@@ -238,12 +251,17 @@ export function StockMovementsPage() {
   const [locationId, setLocationId] = useState<string>('')
   const [lotChoice, setLotChoice] = useState<string>('')
   const [materialLotNo, setMaterialLotNo] = useState<string>('')
+  const [unitPrice, setUnitPrice] = useState<string>('')
+  const [suggestedUnitPrice, setSuggestedUnitPrice] = useState<number | null>(null)
   const [remark, setRemark] = useState<string>('')
 
   const [filters, setFilters] = useState<Filters>(emptyFilters)
   const [draftFilters, setDraftFilters] = useState<Filters>(emptyFilters)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
+  const [editingTx, setEditingTx] = useState<InventoryTxRow | null>(null)
+  const [editUnitPrice, setEditUnitPrice] = useState('')
+  const [editSaving, setEditSaving] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -273,6 +291,18 @@ export function StockMovementsPage() {
   useEffect(() => {
     void load()
   }, [load])
+
+  useEffect(() => {
+    if (movementType !== 'IN' || !selectedProductId) {
+      setSuggestedUnitPrice(null)
+      return
+    }
+    const pid = Number(selectedProductId)
+    if (!Number.isFinite(pid) || pid < 1) return
+    void apiJson<{ ok: boolean; suggestedUnitPrice: number | null }>(`/api/products/${pid}/inbound-unit-price`)
+      .then((r) => setSuggestedUnitPrice(r.suggestedUnitPrice))
+      .catch(() => setSuggestedUnitPrice(null))
+  }, [movementType, selectedProductId])
 
   const tabProducts = useMemo(
     () => products.filter((p) => normalizeItemTypeToCode(p.itemType) === itemType).sort((a, b) => a.productCode.localeCompare(b.productCode)),
@@ -436,11 +466,13 @@ export function StockMovementsPage() {
           lotId: isRawIn ? undefined : selectedLot?.kind === 'P' ? selectedLot.id : undefined,
           materialLotId: isRawIn ? undefined : selectedLot?.kind === 'M' ? selectedLot.id : undefined,
           materialLotNo: isRawIn ? materialLotNo.trim() : undefined,
+          unitPrice: movementType === 'IN' && unitPrice.trim() !== '' ? Number(unitPrice) : undefined,
           remark: remark.trim() || undefined,
         }),
       })
       setOkMsg(`${movementType === 'IN' ? '입고' : '출고'} 처리 완료`)
       setQty('1')
+      setUnitPrice('')
       if (isRawIn) setMaterialLotNo('')
       setRemark('')
       await load()
@@ -459,6 +491,43 @@ export function StockMovementsPage() {
       await load()
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
+    }
+  }
+
+  const openEditUnitPrice = (row: InventoryTxRow) => {
+    setEditingTx(row)
+    setEditUnitPrice(row.unitPrice != null ? String(row.unitPrice) : '')
+    setErr(null)
+  }
+
+  const closeEditUnitPrice = () => {
+    if (editSaving) return
+    setEditingTx(null)
+    setEditUnitPrice('')
+  }
+
+  const saveEditUnitPrice = async () => {
+    if (!editingTx) return
+    const trimmed = editUnitPrice.trim()
+    const parsed = trimmed === '' ? null : Number(trimmed)
+    if (trimmed !== '' && (!Number.isFinite(parsed) || (parsed as number) < 0)) {
+      setErr('단가는 0 이상 숫자여야 합니다.')
+      return
+    }
+    setEditSaving(true)
+    setErr(null)
+    try {
+      await apiJson(`/api/transactions/stock-movements/${editingTx.id}/unit-price`, {
+        method: 'PATCH',
+        body: JSON.stringify({ unitPrice: parsed }),
+      })
+      setOkMsg('단가를 수정했습니다.')
+      closeEditUnitPrice()
+      await load()
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'unknown error')
+    } finally {
+      setEditSaving(false)
     }
   }
 
@@ -571,6 +640,24 @@ export function StockMovementsPage() {
                 <span className="mesSmFieldLabel">수량</span>
                 <input className="mesSmInput" value={qty} onChange={(ev) => setQty(ev.target.value)} />
               </label>
+              {movementType === 'IN' ? (
+                <label className="mesSmField">
+                  <span className="mesSmFieldLabel">
+                    입고 단가
+                    {suggestedUnitPrice != null ? (
+                      <span className="muted" style={{ marginLeft: 6, fontWeight: 400 }}>
+                        (비우면 {suggestedUnitPrice.toLocaleString('ko-KR')}원 자동)
+                      </span>
+                    ) : null}
+                  </span>
+                  <input
+                    className="mesSmInput mono"
+                    value={unitPrice}
+                    placeholder={suggestedUnitPrice != null ? String(suggestedUnitPrice) : '입고 단가'}
+                    onChange={(ev) => setUnitPrice(ev.target.value)}
+                  />
+                </label>
+              ) : null}
               <label className="mesSmField">
                 <span className="mesSmFieldLabel">위치(선택)</span>
                 <select className="mesSmSelect" value={locationId} onChange={(ev) => setLocationId(ev.target.value)}>
@@ -773,6 +860,7 @@ export function StockMovementsPage() {
                 <th>구분</th>
                 <th>품목</th>
                 <th>수량</th>
+                <th>단가</th>
                 <th>비고</th>
                 <th>전→후</th>
                 <th className="mesSmThActions">작업</th>
@@ -781,19 +869,19 @@ export function StockMovementsPage() {
             <tbody>
               {!selectedProductId ? (
                 <tr>
-                  <td colSpan={7} className="mesSmEmpty">
+                  <td colSpan={8} className="mesSmEmpty">
                     품목을 선택하세요.
                   </td>
                 </tr>
               ) : loading ? (
                 <tr>
-                  <td colSpan={7} className="mesSmEmpty">
+                  <td colSpan={8} className="mesSmEmpty">
                     로딩 중…
                   </td>
                 </tr>
               ) : filteredTxRows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="mesSmEmpty">
+                  <td colSpan={8} className="mesSmEmpty">
                     {productTxRows.length === 0 ? '이력이 없습니다.' : '필터 조건에 맞는 이력이 없습니다.'}
                   </td>
                 </tr>
@@ -812,20 +900,33 @@ export function StockMovementsPage() {
                     </td>
                     <td>{r.product ? `${r.product.productCode} · ${r.product.productName}` : `품목#${r.productId}`}</td>
                     <td>{r.qty}</td>
+                    <td className="mono">{r.unitPrice != null ? Number(r.unitPrice).toLocaleString('ko-KR') : '—'}</td>
                     <td>{txRemark(r)}</td>
                     <td className="muted small mono">
                       {`${r.computedBeforeQty} → ${r.computedAfterQty}`}
                     </td>
                     <td className="mesSmTdActions">
-                      <button
-                        type="button"
-                        className="mesSmBtn mesSmBtn--danger"
-                        disabled={r.refType !== 'ADJUST'}
-                        onClick={() => void removeMovement(r.id)}
-                      >
-                        <IconTrash />
-                        삭제
-                      </button>
+                      <div className="mesSmActionGroup">
+                        {canEditUnitPrice(r) ? (
+                          <button
+                            type="button"
+                            className="mesSmBtn mesSmBtn--edit"
+                            onClick={() => openEditUnitPrice(r)}
+                          >
+                            <IconPencil />
+                            단가
+                          </button>
+                        ) : null}
+                        <button
+                          type="button"
+                          className="mesSmBtn mesSmBtn--danger"
+                          disabled={r.refType !== 'ADJUST'}
+                          onClick={() => void removeMovement(r.id)}
+                        >
+                          <IconTrash />
+                          삭제
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -906,6 +1007,53 @@ export function StockMovementsPage() {
           </div>
         </footer>
       </section>
+
+      {editingTx ? (
+        <div className="mesModalRoot" role="presentation">
+          <button type="button" className="mesModalBackdrop" aria-label="닫기" onClick={closeEditUnitPrice} />
+          <div className="mesModalDialog" role="dialog" aria-modal="true" aria-labelledby="mes-sm-unit-price-title">
+            <div className="mesModalHead">
+              <div>
+                <h2 className="mesModalTitle" id="mes-sm-unit-price-title">
+                  입출고 단가 수정
+                </h2>
+                <div className="mesModalMeta muted">
+                  {movementLabel(editingTx.transactionType)} ·{' '}
+                  {editingTx.product
+                    ? `${editingTx.product.productCode} · ${editingTx.product.productName}`
+                    : `품목#${editingTx.productId}`}{' '}
+                  · 수량 {editingTx.qty}
+                </div>
+              </div>
+            </div>
+            <div className="mesModalBody">
+              <label className="mesLabel">
+                단가 (원)
+                <input
+                  className="mesInput mono"
+                  value={editUnitPrice}
+                  onChange={(e) => setEditUnitPrice(e.target.value)}
+                  placeholder="비우면 단가 없음"
+                  autoFocus
+                />
+              </label>
+              {editingTx.transactionType === 'IN' ? (
+                <p className="muted mesSmEditHint">
+                  입고 단가 수정 시 자재 LOT·품목 평균 입고단가가 함께 갱신됩니다.
+                </p>
+              ) : null}
+            </div>
+            <div className="mesModalFoot">
+              <button type="button" className="mesBtnSecondary" disabled={editSaving} onClick={closeEditUnitPrice}>
+                취소
+              </button>
+              <button type="button" className="mesBtnPrimary" disabled={editSaving} onClick={() => void saveEditUnitPrice()}>
+                {editSaving ? '저장 중…' : '저장'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

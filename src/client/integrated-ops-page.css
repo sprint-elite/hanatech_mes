@@ -141,13 +141,21 @@
 
 .mesPageOps .mesOpsV2SummaryStrip {
   display: grid;
-  grid-template-columns: minmax(96px, 0.85fr) minmax(220px, 2.6fr) repeat(4, minmax(68px, 0.65fr));
+  grid-template-columns:
+    minmax(96px, 0.85fr)
+    minmax(180px, 2.2fr)
+    minmax(76px, 0.75fr)
+    minmax(88px, 0.7fr)
+    minmax(88px, 0.7fr)
+    minmax(88px, 0.7fr);
   align-items: stretch;
   margin-bottom: 16px;
   border-radius: var(--opsv2-radius);
   background: var(--opsv2-surface);
   border: 1px solid var(--opsv2-border);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mesPageOps .mesOpsV2SummaryItem {
@@ -167,6 +175,7 @@
 .mesPageOps .mesOpsV2SummaryItem--narrow {
   padding: 16px 10px;
   gap: 8px;
+  min-width: max-content;
 }
 
 .mesPageOps .mesOpsV2SummaryItem--narrow .mesOpsV2SummaryIcon {
@@ -181,10 +190,20 @@
 
 .mesPageOps .mesOpsV2SummaryItem--narrow .mesOpsV2SummaryLabel {
   font-size: 11px;
+  white-space: nowrap;
 }
 
 .mesPageOps .mesOpsV2SummaryItem--narrow .mesOpsV2SummaryVal {
   font-size: 13px;
+  white-space: nowrap;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--itemType {
+  min-width: 4.75rem;
+}
+
+.mesPageOps .mesOpsV2SummaryItem--itemType .mesOpsV2SummaryVal {
+  white-space: nowrap;
 }
 
 .mesPageOps .mesOpsV2SummaryItem:not(:first-child)::before {
@@ -713,11 +732,14 @@
 /* —— 작업지시 탭 —— */
 .mesPageOps .mesOpsV2SummaryStrip--wo {
   grid-template-columns:
-    minmax(80px, 0.65fr)
-    minmax(200px, 2.2fr)
-    minmax(108px, 1.15fr)
-    repeat(2, minmax(56px, 0.45fr))
-    repeat(3, minmax(56px, 0.48fr));
+    minmax(88px, 0.7fr)
+    minmax(160px, 1.9fr)
+    minmax(100px, 1fr)
+    minmax(76px, 0.7fr)
+    minmax(52px, 0.4fr)
+    minmax(88px, 0.65fr)
+    minmax(88px, 0.65fr)
+    minmax(88px, 0.65fr);
 }
 
 .mesPageOps .mesOpsV2SummaryItem--plan {
@@ -873,13 +895,14 @@
 
 .mesPageOps .mesOpsV2SummaryStrip--lot {
   grid-template-columns:
-    minmax(80px, 0.65fr)
-    minmax(180px, 1.75fr)
-    minmax(108px, 1.1fr)
-    repeat(2, minmax(56px, 0.45fr))
-    minmax(64px, 0.55fr)
-    minmax(72px, 0.8fr)
-    minmax(64px, 0.55fr);
+    minmax(88px, 0.7fr)
+    minmax(150px, 1.6fr)
+    minmax(100px, 1fr)
+    minmax(76px, 0.7fr)
+    minmax(52px, 0.4fr)
+    minmax(80px, 0.55fr)
+    minmax(80px, 0.7fr)
+    minmax(80px, 0.55fr);
 }
 
 /* —— 재고현황 탭 —— */

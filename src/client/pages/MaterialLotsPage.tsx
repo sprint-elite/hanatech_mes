@@ -11,6 +11,7 @@ type Row = {
   productId: number
   supplier: string | null
   receivedQty: string
+  unitPrice: string | null
   remainQty: string
   receivedDate: string
   status: string
@@ -185,6 +186,7 @@ export function MaterialLotsPage() {
   const [productId, setProductId] = useState('')
   const [supplier, setSupplier] = useState('')
   const [receivedQty, setReceivedQty] = useState('1')
+  const [unitPrice, setUnitPrice] = useState('')
   const [remainQty, setRemainQty] = useState('')
   const [receivedDate, setReceivedDate] = useState('')
   const [status, setStatus] = useState<(typeof statuses)[number]>('AVAILABLE')
@@ -267,6 +269,7 @@ export function MaterialLotsPage() {
     setProductId('')
     setSupplier('')
     setReceivedQty('1')
+    setUnitPrice('')
     setRemainQty('')
     setReceivedDate('')
     setStatus('AVAILABLE')
@@ -328,6 +331,7 @@ export function MaterialLotsPage() {
           productId: pid,
           supplier: supplier.trim() || null,
           receivedQty,
+          unitPrice: unitPrice.trim() === '' ? null : unitPrice.trim(),
           remainQty: remainQty.trim() === '' ? undefined : remainQty.trim(),
           receivedDate,
           status,
@@ -594,6 +598,10 @@ export function MaterialLotsPage() {
                   <input className="mesInput" value={receivedQty} onChange={(ev) => setReceivedQty(ev.target.value)} />
                 </label>
                 <label className="mesLabel">
+                  입고 단가 (비우면 자동)
+                  <input className="mesInput mono" value={unitPrice} onChange={(ev) => setUnitPrice(ev.target.value)} placeholder="자동" />
+                </label>
+                <label className="mesLabel">
                   잔량 (비우면 입고수량과 동일)
                   <input className="mesInput" value={remainQty} onChange={(ev) => setRemainQty(ev.target.value)} />
                 </label>
@@ -680,6 +688,7 @@ export function MaterialLotsPage() {
                 <th className="mesMatLotColBarcode">바코드</th>
                 <th>품목</th>
                 <th>입고수량</th>
+                <th>입고단가</th>
                 <th>잔량</th>
                 <th>입고일</th>
                 <th>상태</th>
@@ -689,13 +698,13 @@ export function MaterialLotsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="mesMatLotEmpty">
+                  <td colSpan={9} className="mesMatLotEmpty">
                     로딩 중…
                   </td>
                 </tr>
               ) : filteredItems.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="mesMatLotEmpty">
+                  <td colSpan={9} className="mesMatLotEmpty">
                     {items.length === 0 ? (
                       <>
                         데이터가 없습니다. <strong>신규 등록</strong>으로 추가하세요.
@@ -735,6 +744,7 @@ export function MaterialLotsPage() {
                     </td>
                     <td>{r.product ? `${r.product.productCode} · ${r.product.productName}` : `품목#${r.productId}`}</td>
                     <td className="mono">{r.receivedQty}</td>
+                    <td className="mono">{r.unitPrice != null && r.unitPrice !== '' ? Number(r.unitPrice).toLocaleString('ko-KR') : '—'}</td>
                     <td className="mono">{r.remainQty}</td>
                     <td>{String(r.receivedDate).slice(0, 10)}</td>
                     <td>

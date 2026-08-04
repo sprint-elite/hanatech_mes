@@ -55,11 +55,12 @@ const listSelect = {
     select: {
       id: true,
       userName: true,
+      signatureDataUrl: true,
       worker: { select: { team: true, position: true } },
     },
   },
-  managerBy: { select: { userName: true } },
-  ceoBy: { select: { userName: true } },
+  managerBy: { select: { userName: true, signatureDataUrl: true } },
+  ceoBy: { select: { userName: true, signatureDataUrl: true } },
   lines: {
     orderBy: { sortOrder: 'asc' as const },
     select: {
@@ -85,9 +86,14 @@ type ListRow = {
   ceoAt: Date | null
   rejectReason: string | null
   createdAt: Date
-  user: { id: number; userName: string; worker: { team: string | null; position: string | null } | null }
-  managerBy: { userName: string } | null
-  ceoBy: { userName: string } | null
+  user: {
+    id: number
+    userName: string
+    signatureDataUrl: string | null
+    worker: { team: string | null; position: string | null } | null
+  }
+  managerBy: { userName: string; signatureDataUrl: string | null } | null
+  ceoBy: { userName: string; signatureDataUrl: string | null } | null
   lines: { id: number; vendor: string; description: string; amount: number; sortOrder: number }[]
 }
 
@@ -96,6 +102,7 @@ function serializeReport(row: ListRow, includeReceipt = false) {
     id: row.id,
     userId: row.userId,
     userName: row.user.userName,
+    userSignatureUrl: row.user.signatureDataUrl,
     dept: row.user.worker?.team ?? '—',
     position: row.user.worker?.position ?? '—',
     reportDate: ymd(row.reportDate),
@@ -107,7 +114,9 @@ function serializeReport(row: ListRow, includeReceipt = false) {
     managerAt: row.managerAt?.toISOString() ?? null,
     ceoAt: row.ceoAt?.toISOString() ?? null,
     managerByName: row.managerBy?.userName ?? null,
+    managerSignatureUrl: row.managerBy?.signatureDataUrl ?? null,
     ceoByName: row.ceoBy?.userName ?? null,
+    ceoSignatureUrl: row.ceoBy?.signatureDataUrl ?? null,
     rejectReason: row.rejectReason,
     createdAt: row.createdAt.toISOString(),
     lines: row.lines.map((l) => ({

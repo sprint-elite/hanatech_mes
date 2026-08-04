@@ -13,6 +13,8 @@ export function RolesPage() {
   const [err, setErr] = useState<string | null>(null)
   const [form, setForm] = useState<FormState>(empty())
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalErr, setModalErr] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
   const load = useCallback(async () => {
@@ -33,21 +35,46 @@ export function RolesPage() {
     void load()
   }, [load])
 
+  const openCreate = () => {
+    setEditingId(null)
+    setForm(empty())
+    setModalErr(null)
+    setModalOpen(true)
+  }
+
+  const openEdit = (r: Row) => {
+    setEditingId(r.id)
+    setForm({ roleName: r.roleName, description: r.description ?? '' })
+    setModalErr(null)
+    setModalOpen(true)
+  }
+
+  const closeModal = () => {
+    if (saving) return
+    setModalOpen(false)
+    setEditingId(null)
+    setForm(empty())
+    setModalErr(null)
+  }
+
   const save = async () => {
     setSaving(true)
-    setErr(null)
+    setModalErr(null)
     try {
       const body = { roleName: form.roleName.trim(), description: form.description.trim() || null }
+      if (!body.roleName) {
+        setModalErr('역할명을 입력하세요.')
+        return
+      }
       if (editingId == null) {
         await apiJson('/api/roles', { method: 'POST', body: JSON.stringify(body) })
       } else {
         await apiJson(`/api/roles/${editingId}`, { method: 'PATCH', body: JSON.stringify(body) })
       }
       await load()
-      setEditingId(null)
-      setForm(empty())
+      closeModal()
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'unknown error')
+      setModalErr(e instanceof Error ? e.message : 'unknown error')
     } finally {
       setSaving(false)
     }
@@ -58,10 +85,7 @@ export function RolesPage() {
     try {
       await apiJson(`/api/roles/${id}`, { method: 'DELETE' })
       await load()
-      if (editingId === id) {
-        setEditingId(null)
-        setForm(empty())
-      }
+      if (editingId === id) closeModal()
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'unknown error')
     }
@@ -79,37 +103,12 @@ export function RolesPage() {
           <button type="button" className="mesListBtn mesListBtn--secondary" onClick={() => void load()}>
             새로고침
           </button>
-          <button
-            type="button"
-            className="mesListBtn mesListBtn--primary"
-            onClick={() => {
-              setEditingId(null)
-              setForm(empty())
-            }}
-          >
+          <button type="button" className="mesListBtn mesListBtn--primary" onClick={openCreate}>
             새 역할
           </button>
         </div>
       </header>
       {err ? <div className="error mesBanner mesListNotice">{err}</div> : null}
-      <section className="mesListFormCard">
-        <div className="mesCardTitle">{editingId == null ? '등록' : `수정 (ID ${editingId})`}</div>
-        <div className="mesFieldRow">
-          <label className="mesLabel">
-            역할명
-            <input className="mesInput" value={form.roleName} onChange={(ev) => setForm((f) => ({ ...f, roleName: ev.target.value }))} />
-          </label>
-          <label className="mesLabel">
-            설명
-            <input className="mesInput" value={form.description} onChange={(ev) => setForm((f) => ({ ...f, description: ev.target.value }))} />
-          </label>
-        </div>
-        <div className="mesFormActions">
-          <button type="button" className="mesBtnPrimary" disabled={saving} onClick={() => void save()}>
-            {saving ? '저장 중…' : '저장'}
-          </button>
-        </div>
-      </section>
       <div className="mesListTableCard">
         <div className="mesTableWrap mesListTableViewport">
           <table className="mesTable">
@@ -141,14 +140,7 @@ export function RolesPage() {
                     <td>{r.roleName}</td>
                     <td>{r.description ?? '—'}</td>
                     <td className="mesTdActions">
-                      <button
-                        type="button"
-                        className="mesBtnSm"
-                        onClick={() => {
-                          setEditingId(r.id)
-                          setForm({ roleName: r.roleName, description: r.description ?? '' })
-                        }}
-                      >
+                      <button type="button" className="mesBtnSm" onClick={() => openEdit(r)}>
                         수정
                       </button>
                       <button type="button" className="mesBtnSm mesBtnDanger" onClick={() => void remove(r.id)}>
@@ -162,6 +154,42 @@ export function RolesPage() {
           </table>
         </div>
       </div>
+
+      {modalOpen ? (
+        <div className="mesModalRoot" role="presentation">
+          <button type="button" className="mesModalBackdrop" aria-label="닫기" onClick={closeModal} />
+          <div className="mesModalDialog" role="dialog" aria-modal="true" aria-labelledby="roles-modal-title">
+            <div className="mesModalHead">
+              <div>
+                <h2 className="mesModalTitle" id="roles-modal-title">
+                  {editingId == null ? '역할 등록' : `역할 수정 (ID ${editingId})`}
+                </h2>
+              </div>
+            </div>
+            <div className="mesModalBody">
+              {modalErr ? <div className="error mesBanner">{modalErr}</div> : null}
+              <div className="mesFieldRow">
+                <label className="mesLabel">
+                  역할명
+                  <input className="mesInput" value={form.roleName} onChange={(ev) => setForm((f) => ({ ...f, roleName: ev.target.value }))} />
+                </label>
+                <label className="mesLabel mesLabel--wide">
+                  설명
+                  <input className="mesInput" value={form.description} onChange={(ev) => setForm((f) => ({ ...f, description: ev.target.value }))} />
+                </label>
+              </div>
+            </div>
+            <div className="mesModalFoot">
+              <button type="button" className="mesBtnSecondary" disabled={saving} onClick={closeModal}>
+                취소
+              </button>
+              <button type="button" className="mesBtnPrimary" disabled={saving} onClick={() => void save()}>
+                {saving ? '저장 중…' : '저장'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

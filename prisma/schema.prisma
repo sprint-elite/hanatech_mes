@@ -142,6 +142,10 @@ model User {
   workerId     Int?              @unique @map("worker_id")
   email        String?
   phone        String?
+  dept         String?           @db.VarChar(64)
+  position     String?           @db.VarChar(64)
+  businessTeamAddress String?    @map("business_team_address") @db.VarChar(500)
+  signatureDataUrl String?       @map("signature_data_url") @db.MediumText
   status       UserAccountStatus @default(ACTIVE)
   lastLoginAt  DateTime?         @map("last_login_at")
   createdAt    DateTime          @default(now()) @map("created_at")
@@ -205,6 +209,7 @@ model Product {
   unitVolume        Decimal?  @map("unit_volume") @db.Decimal(12, 4)
   safetyStock       Int?      @map("safety_stock")
   maxStock          Int?      @map("max_stock")
+  materialUnitCost  Decimal?  @map("material_unit_cost") @db.Decimal(14, 4)
   barcode           String?   @unique
   specJson          Json?     @map("spec_json")
   status            String    @default("ACTIVE")
@@ -239,6 +244,7 @@ model Product {
   inventoryProfile  ProductInventory?
   outsourcingProfile ProductOutsourcing?
   workerProductWorkTimes WorkerProductWorkTime[]
+  costBasis         ProductionCostBasis?
 
   @@map("products")
 }
@@ -609,6 +615,7 @@ model MaterialLot {
   productId    Int               @map("product_id")
   supplier     String?
   receivedQty  Decimal           @map("received_qty") @db.Decimal(14, 4)
+  unitPrice    Decimal?          @map("unit_price") @db.Decimal(14, 4)
   remainQty    Decimal           @map("remain_qty") @db.Decimal(14, 4)
   receivedDate DateTime          @map("received_date") @db.Date
   status       MaterialLotStatus @default(AVAILABLE)
@@ -751,6 +758,7 @@ model InventoryTransaction {
   locationId      Int?                 @map("location_id")
   transactionType InventoryTxType      @map("transaction_type")
   qty             Int
+  unitPrice       Decimal?             @map("unit_price") @db.Decimal(14, 4)
   refType         InventoryTxRefType?  @map("ref_type")
   refId           Int?                 @map("ref_id")
   fromLocationId  Int?                 @map("from_location_id")
@@ -900,6 +908,26 @@ model ProductionStatus {
 
   @@unique([date, productId])
   @@map("production_status")
+}
+
+/// 손익 산정용 원가·요율 기준 (GLOBAL=전사 기본, PRODUCT=품목별)
+model ProductionCostBasis {
+  id               Int      @id @default(autoincrement())
+  basisType        String   @map("basis_type") @db.VarChar(16)
+  productId        Int?     @unique @map("product_id")
+  materialUnitCost Decimal? @map("material_unit_cost") @db.Decimal(14, 4)
+  productUnitCost  Decimal? @map("product_unit_cost") @db.Decimal(14, 4)
+  sellingPrice     Decimal? @map("selling_price") @db.Decimal(14, 4)
+  laborRatePerSec  Decimal? @map("labor_rate_per_sec") @db.Decimal(14, 6)
+  fixedRatePerSec  Decimal? @map("fixed_rate_per_sec") @db.Decimal(14, 6)
+  memo             String?  @db.VarChar(500)
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([basisType, productId])
+  @@map("production_cost_basis")
 }
 
 model ProcessStatus {

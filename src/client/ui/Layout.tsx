@@ -12,12 +12,14 @@ const navGroups: { label: string; items: NavItem[] }[] = [
     label: '운영',
     items: [
       { to: '/', label: '대시보드', end: true },
+      { to: '/production-daily-pl', label: '당일 생산 손익' },
       { to: '/integrated-ops', label: '통합 생산 운영' },
     ],
   },
   {
     label: '기준정보',
     items: [
+      { to: '/production-cost-basis', label: '생산 원가 기준' },
       { to: '/products', label: '품목' },
       { to: '/customers', label: '고객/업체' },
       { to: '/ebom', label: 'EBOM' },
@@ -41,7 +43,7 @@ const navGroups: { label: string; items: NavItem[] }[] = [
     label: '생산·LOT',
     items: [
       { to: '/lots', label: '생산 LOT' },
-      { to: '/lot-scan', label: 'LOT 스캔 조회' },
+      { to: '/lot-scan', label: '바코드 스캔 조회' },
       { to: '/material-lots', label: '자재 LOT' },
       { to: '/lot-history', label: 'LOT 이력' },
       { to: '/lot-material-usage', label: '자재 투입' },

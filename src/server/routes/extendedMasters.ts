@@ -147,7 +147,7 @@ extendedMastersRouter.delete('/roles/:id', async (req, res) => {
 /* —— users (목록·간단 등록, 비밀번호 평문 저장은 개발용 — 추후 bcrypt) —— */
 extendedMastersRouter.get('/users', async (_req, res) => {
   try {
-    const items = await prisma.user.findMany({
+    const rows = await prisma.user.findMany({
       take: 300,
       orderBy: { id: 'desc' },
       select: {
@@ -158,13 +158,52 @@ extendedMastersRouter.get('/users', async (_req, res) => {
         workerId: true,
         email: true,
         phone: true,
+        dept: true,
+        position: true,
+        businessTeamAddress: true,
+        signatureDataUrl: true,
         status: true,
         lastLoginAt: true,
         createdAt: true,
         role: { select: { roleName: true } },
       },
     })
+    const items = rows.map(({ signatureDataUrl, ...rest }) => ({
+      ...rest,
+      hasSignature: !!signatureDataUrl,
+    }))
     return res.json({ ok: true, items })
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
+extendedMastersRouter.get('/users/:id', async (req, res) => {
+  const id = parsePositiveIntParam(req.params.id)
+  if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
+  try {
+    const item = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        loginId: true,
+        userName: true,
+        roleId: true,
+        workerId: true,
+        email: true,
+        phone: true,
+        dept: true,
+        position: true,
+        businessTeamAddress: true,
+        signatureDataUrl: true,
+        status: true,
+        lastLoginAt: true,
+        createdAt: true,
+        role: { select: { roleName: true } },
+      },
+    })
+    if (!item) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
+    return res.json({ ok: true, item })
   } catch (e) {
     return prismaFail(res, e)
   }
@@ -178,6 +217,10 @@ const userBody = z.object({
   workerId: z.number().int().positive().optional().nullable(),
   email: z.string().email().optional().nullable(),
   phone: z.string().optional().nullable(),
+  dept: z.string().trim().max(64).optional().nullable(),
+  position: z.string().trim().max(64).optional().nullable(),
+  businessTeamAddress: z.string().trim().max(500).optional().nullable(),
+  signatureDataUrl: z.string().max(2_000_000).optional().nullable(),
   status: z.enum(['ACTIVE', 'INACTIVE', 'LOCKED']).optional(),
 })
 
@@ -195,6 +238,10 @@ extendedMastersRouter.post('/users', async (req, res) => {
         workerId: b.workerId ?? undefined,
         email: b.email ?? undefined,
         phone: b.phone ?? undefined,
+        dept: b.dept?.trim() || null,
+        position: b.position?.trim() || null,
+        businessTeamAddress: b.businessTeamAddress?.trim() || null,
+        signatureDataUrl: b.signatureDataUrl ?? undefined,
         status: b.status ?? 'ACTIVE',
       },
       select: {
@@ -203,6 +250,9 @@ extendedMastersRouter.post('/users', async (req, res) => {
         userName: true,
         roleId: true,
         workerId: true,
+        dept: true,
+        position: true,
+        businessTeamAddress: true,
         status: true,
         createdAt: true,
       },
@@ -239,6 +289,10 @@ extendedMastersRouter.patch('/users/:id', async (req, res) => {
         ...(b.workerId !== undefined ? { workerId: b.workerId } : {}),
         ...(b.email !== undefined ? { email: b.email } : {}),
         ...(b.phone !== undefined ? { phone: b.phone } : {}),
+        ...(b.dept !== undefined ? { dept: b.dept?.trim() || null } : {}),
+        ...(b.position !== undefined ? { position: b.position?.trim() || null } : {}),
+        ...(b.businessTeamAddress !== undefined ? { businessTeamAddress: b.businessTeamAddress?.trim() || null } : {}),
+        ...(b.signatureDataUrl !== undefined ? { signatureDataUrl: b.signatureDataUrl || null } : {}),
         ...(b.status !== undefined ? { status: b.status } : {}),
       },
       select: {
@@ -247,6 +301,9 @@ extendedMastersRouter.patch('/users/:id', async (req, res) => {
         userName: true,
         roleId: true,
         workerId: true,
+        dept: true,
+        position: true,
+        businessTeamAddress: true,
         status: true,
         createdAt: true,
       },
@@ -552,6 +609,32 @@ extendedMastersRouter.post('/notices', async (req, res) => {
       },
     })
     return res.status(201).json({ ok: true, item })
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
+extendedMastersRouter.patch('/notices/:id', async (req, res) => {
+  const id = parsePositiveIntParam(req.params.id)
+  if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
+  const p = noticeBody.safeParse(req.body)
+  if (!p.success) return res.status(400).json({ ok: false, error: 'VALIDATION_ERROR', details: p.error.flatten() })
+  const b = p.data
+  try {
+    const item = await prisma.notice.update({
+      where: { id },
+      data: {
+        title: b.title,
+        content: b.content,
+        noticeType: b.noticeType,
+        priority: b.priority ?? 'NORMAL',
+        startDate: new Date(b.startDate),
+        endDate: new Date(b.endDate),
+        isPopup: (b.isPopup as UseYn) ?? UseYn.N,
+        useYn: (b.useYn as UseYn) ?? UseYn.Y,
+      },
+    })
+    return res.json({ ok: true, item })
   } catch (e) {
     return prismaFail(res, e)
   }

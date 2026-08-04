@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { apiJson, ApiError } from '../lib/api'
+import { itemTypeLabel } from '../lib/itemType'
 import '../list-page.css'
 
 type ProductionLot = {
@@ -135,9 +136,49 @@ type MaterialLot = {
   }>
 }
 
+type ProductScan = {
+  id: number
+  productCode: string
+  productName: string
+  itemType: string
+  itemNumber: string | null
+  unit: string
+  safetyStock: number | null
+  maxStock: number | null
+  barcode: string | null
+  status: string
+  createdAt: string
+  updatedAt: string
+  inventoryProfile: { lotControlYn: 'Y' | 'N' } | null
+  stockSummary: { totalQty: number; totalReserved: number; availableQty: number }
+  inventories: Array<{
+    id: number
+    qty: number
+    reservedQty: number
+    status: string
+    updatedAt: string
+    location: { locationCode: string; locationName: string } | null
+    lot: { id: number; lotNo: string } | null
+    materialLot: { id: number; lotNo: string } | null
+  }>
+  inventoryTx: Array<{
+    id: number
+    transactionType: string
+    qty: number
+    remark: string | null
+    createdAt: string
+    fromLocation: { locationCode: string; locationName: string } | null
+    toLocation: { locationCode: string; locationName: string } | null
+    location: { locationCode: string; locationName: string } | null
+    lot: { lotNo: string } | null
+    materialLot: { lotNo: string } | null
+  }>
+}
+
 type ScanResult =
   | { kind: 'production'; lot: ProductionLot }
   | { kind: 'material'; lot: MaterialLot }
+  | { kind: 'product'; product: ProductScan }
 
 function normalizeScannedLotToken(raw: string): string {
   const v = raw.trim()
@@ -169,14 +210,26 @@ function workersLabel(wo: ProductionLot['workOrder'] | null | undefined): string
   return wo.assignedWorkers.map((a) => a.worker.workerName || a.worker.workerCode).join(', ')
 }
 
-function InventoryTable({ items }: { items: ProductionLot['inventory'] }) {
+type InventoryRow = {
+  id: number
+  qty: number
+  reservedQty: number
+  status: string
+  updatedAt: string
+  location: { locationCode: string; locationName: string } | null
+  lot?: { id?: number; lotNo: string } | null
+  materialLot?: { id?: number; lotNo: string } | null
+}
+
+function InventoryTable({ items, showLot = false }: { items: InventoryRow[]; showLot?: boolean }) {
   return (
     <div className="mesCard" style={{ marginTop: 14 }}>
-      <div className="mesCardTitle">재고 (최대 20)</div>
+      <div className="mesCardTitle">재고 (최대 {showLot ? 50 : 20})</div>
       <div className="mesTableWrap mesTableScroll">
         <table className="mesTable">
           <thead>
             <tr>
+              {showLot ? <th>LOT</th> : null}
               <th>위치</th>
               <th>수량</th>
               <th>예약</th>
@@ -187,13 +240,22 @@ function InventoryTable({ items }: { items: ProductionLot['inventory'] }) {
           <tbody>
             {items.length === 0 ? (
               <tr>
-                <td colSpan={5} className="muted">
+                <td colSpan={showLot ? 6 : 5} className="muted">
                   없음
                 </td>
               </tr>
             ) : (
               items.map((inv) => (
                 <tr key={inv.id}>
+                  {showLot ? (
+                    <td className="mono">
+                      {inv.lot
+                        ? `생산 ${inv.lot.lotNo}`
+                        : inv.materialLot
+                          ? `자재 ${inv.materialLot.lotNo}`
+                          : '—'}
+                    </td>
+                  ) : null}
                   <td className="mono">{inv.location ? `${inv.location.locationCode} · ${inv.location.locationName}` : '—'}</td>
                   <td className="mono">{inv.qty}</td>
                   <td className="mono">{inv.reservedQty}</td>
@@ -596,6 +658,83 @@ function MaterialLotModal({ lot, onClose }: { lot: MaterialLot; onClose: () => v
   )
 }
 
+function ProductModal({ product, onClose }: { product: ProductScan; onClose: () => void }) {
+  const invItems = product.inventories.map((inv) => ({
+    id: inv.id,
+    qty: inv.qty,
+    reservedQty: inv.reservedQty,
+    status: inv.status,
+    updatedAt: inv.updatedAt,
+    location: inv.location,
+    lot: inv.lot,
+    materialLot: inv.materialLot,
+  }))
+
+  return (
+    <>
+      <div className="mesModalHead">
+        <div>
+          <h2 className="mesModalTitle" id="mes-lot-scan-title">
+            {product.productCode}
+          </h2>
+          <div className="mesModalMeta muted">
+            품목 · {product.productName} · 등록 {fmt(product.createdAt)}
+          </div>
+        </div>
+      </div>
+
+      <div className="mesModalBody mesLotScanModalBody">
+        <div className="mesFieldRow mesLotScanSummaryGrid">
+          <label className="mesLabel">
+            품목명
+            <input className="mesInput muted" readOnly value={product.productName} />
+          </label>
+          <label className="mesLabel">
+            유형 / 단위
+            <input className="mesInput muted" readOnly value={`${itemTypeLabel(product.itemType)} / ${product.unit}`} />
+          </label>
+          <label className="mesLabel">
+            상태
+            <input className="mesInput muted" readOnly value={product.status} />
+          </label>
+        </div>
+
+        <div className="mesFieldRow mesLotScanSummaryGrid">
+          <label className="mesLabel">
+            재고 합계
+            <input
+              className="mesInput muted"
+              readOnly
+              value={`${product.stockSummary.totalQty} (가용 ${product.stockSummary.availableQty}, 예약 ${product.stockSummary.totalReserved})`}
+            />
+          </label>
+          <label className="mesLabel">
+            현재재고
+            <input
+              className="mesInput muted"
+              readOnly
+              value={`${product.stockSummary.totalQty} ${product.unit}`}
+            />
+          </label>
+          <label className="mesLabel">
+            바코드
+            <input className="mesInput muted mono" readOnly value={product.barcode ?? product.productCode} />
+          </label>
+        </div>
+
+        <InventoryTable items={invItems} showLot />
+        <InventoryTxTable items={product.inventoryTx} />
+      </div>
+
+      <div className="mesModalFoot">
+        <button type="button" className="mesBtnSecondary" onClick={onClose}>
+          닫기
+        </button>
+      </div>
+    </>
+  )
+}
+
 export function LotScanLookupPage() {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [scanValue, setScanValue] = useState('')
@@ -637,8 +776,18 @@ export function LotScanLookupPage() {
           const data = await apiJson<{ ok: true; lot: MaterialLot }>(`/api/material-lots/lookup?value=${q}`)
           setResult({ kind: 'material', lot: data.lot })
         } catch (e2) {
-          setResult(null)
-          setErr(e2 instanceof Error ? e2.message : '생산/자재 LOT를 찾을 수 없습니다.')
+          if (e2 instanceof ApiError && e2.status === 404) {
+            try {
+              const data = await apiJson<{ ok: true; product: ProductScan }>(`/api/products/lookup?value=${q}`)
+              setResult({ kind: 'product', product: data.product })
+            } catch (e3) {
+              setResult(null)
+              setErr(e3 instanceof Error ? e3.message : '생산/자재 LOT·품목을 찾을 수 없습니다.')
+            }
+          } else {
+            setResult(null)
+            setErr(e2 instanceof Error ? e2.message : '생산/자재 LOT를 찾을 수 없습니다.')
+          }
         }
       } else {
         setResult(null)
@@ -653,8 +802,8 @@ export function LotScanLookupPage() {
     <div className="mesPage mesPageWide mesListPage mesLotScanPage">
       <header className="mesListHead">
         <div className="mesListHeadMain">
-          <h1 className="mesListTitle">LOT 스캔 조회</h1>
-          <p className="mesListDesc">바코드를 스캔하면 생산 LOT 또는 자재 LOT에 연결된 정보를 모달로 한 번에 조회합니다.</p>
+          <h1 className="mesListTitle">바코드 스캔 조회</h1>
+          <p className="mesListDesc">바코드를 스캔하면 생산 LOT, 자재 LOT, 품목에 연결된 정보를 모달로 한 번에 조회합니다.</p>
         </div>
         <div className="mesListHeadActions">
           <button type="button" className="mesListBtn mesListBtn--secondary" onClick={reset}>
@@ -665,7 +814,7 @@ export function LotScanLookupPage() {
 
       <div className="mesListFilterCard mesLotScanShell">
         <label className="mesListField mesListField--search">
-          <span className="mesListFieldLabel">스캔 (LOT)</span>
+          <span className="mesListFieldLabel">스캔 (LOT·품목)</span>
           <input
             ref={inputRef}
             className="mesListInput mono mesLotScanInput"
@@ -692,7 +841,8 @@ export function LotScanLookupPage() {
       {loading ? <div className="mesBanner mesBannerInfo mesListNotice">조회 중…</div> : null}
       {lastToken && !loading && !err && result ? (
         <div className="mesBanner mesBannerInfo mesListNotice">
-          스캔: {lastToken} ({result.kind === 'production' ? '생산 LOT' : '자재 LOT'})
+          스캔: {lastToken} (
+          {result.kind === 'production' ? '생산 LOT' : result.kind === 'material' ? '자재 LOT' : '품목'})
         </div>
       ) : null}
 
@@ -702,8 +852,10 @@ export function LotScanLookupPage() {
           <div className="mesModalDialog mesModalDialogWide" role="dialog" aria-modal="true" aria-labelledby="mes-lot-scan-title">
             {result.kind === 'production' ? (
               <ProductionLotModal lot={result.lot} onClose={closeModal} />
-            ) : (
+            ) : result.kind === 'material' ? (
               <MaterialLotModal lot={result.lot} onClose={closeModal} />
+            ) : (
+              <ProductModal product={result.product} onClose={closeModal} />
             )}
           </div>
         </div>

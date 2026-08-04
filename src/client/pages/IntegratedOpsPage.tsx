@@ -1444,7 +1444,7 @@ export function IntegratedOpsPage() {
                 <p className="mesOpsV2SummaryVal">{planTabProduct?.productName ?? '품목을 선택하세요'}</p>
               </div>
             </div>
-            <div className="mesOpsV2SummaryItem mesOpsV2SummaryItem--narrow">
+            <div className="mesOpsV2SummaryItem mesOpsV2SummaryItem--narrow mesOpsV2SummaryItem--itemType">
               <div className="mesOpsV2SummaryIcon"><IconLayers /></div>
               <div className="mesOpsV2SummaryMeta">
                 <p className="mesOpsV2SummaryLabel">제품군</p>
@@ -1501,7 +1501,7 @@ export function IntegratedOpsPage() {
                 <p className="mesOpsV2SummaryVal mono">{woTabSelectedPlan?.planNo ?? '—'}</p>
               </div>
             </div>
-            <div className="mesOpsV2SummaryItem mesOpsV2SummaryItem--narrow">
+            <div className="mesOpsV2SummaryItem mesOpsV2SummaryItem--narrow mesOpsV2SummaryItem--itemType">
               <div className="mesOpsV2SummaryIcon"><IconLayers /></div>
               <div className="mesOpsV2SummaryMeta">
                 <p className="mesOpsV2SummaryLabel">제품군</p>
@@ -1564,7 +1564,7 @@ export function IntegratedOpsPage() {
                 <p className="mesOpsV2SummaryVal mono">{lotTabSelectedWo?.woNo ?? '—'}</p>
               </div>
             </div>
-            <div className="mesOpsV2SummaryItem mesOpsV2SummaryItem--narrow">
+            <div className="mesOpsV2SummaryItem mesOpsV2SummaryItem--narrow mesOpsV2SummaryItem--itemType">
               <div className="mesOpsV2SummaryIcon"><IconLayers /></div>
               <div className="mesOpsV2SummaryMeta">
                 <p className="mesOpsV2SummaryLabel">제품군</p>
@@ -1620,7 +1620,7 @@ export function IntegratedOpsPage() {
                 <p className="mesOpsV2SummaryVal">{invTabProduct?.productName ?? '품목을 선택하세요'}</p>
               </div>
             </div>
-            <div className="mesOpsV2SummaryItem mesOpsV2SummaryItem--narrow">
+            <div className="mesOpsV2SummaryItem mesOpsV2SummaryItem--narrow mesOpsV2SummaryItem--itemType">
               <div className="mesOpsV2SummaryIcon"><IconLayers /></div>
               <div className="mesOpsV2SummaryMeta">
                 <p className="mesOpsV2SummaryLabel">제품군</p>

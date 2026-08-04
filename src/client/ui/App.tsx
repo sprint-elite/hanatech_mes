@@ -23,6 +23,8 @@ import { OutsourcingPage } from '../pages/OutsourcingPage'
 import { ProcessHistoryPage } from '../pages/ProcessHistoryPage'
 import { ProcessResultPage } from '../pages/ProcessResultPage'
 import { ProcessRoutingPage } from '../pages/ProcessRoutingPage'
+import { ProductionCostBasisPage } from '../pages/ProductionCostBasisPage'
+import { ProductionDailyPlPage } from '../pages/ProductionDailyPlPage'
 import { ProductionPlansPage } from '../pages/ProductionPlansPage'
 import { ProductsPage } from '../pages/ProductsPage'
 import { RolesPage } from '../pages/RolesPage'
@@ -79,6 +81,8 @@ export function App() {
           }
         >
           <Route index element={<Dashboard />} />
+          <Route path="production-cost-basis" element={<ProductionCostBasisPage />} />
+          <Route path="production-daily-pl" element={<ProductionDailyPlPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="ebom" element={<EbomPage />} />

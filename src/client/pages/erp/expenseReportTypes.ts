@@ -18,6 +18,7 @@ export type ExpenseRow = {
   id: number
   userId: number
   userName: string
+  userSignatureUrl: string | null
   dept: string
   position: string
   reportDate: string
@@ -27,7 +28,9 @@ export type ExpenseRow = {
   managerDecision: LeaveDecision
   ceoDecision: LeaveDecision
   managerByName: string | null
+  managerSignatureUrl: string | null
   ceoByName: string | null
+  ceoSignatureUrl: string | null
   rejectReason: string | null
   createdAt: string
   lines: ExpenseLine[]

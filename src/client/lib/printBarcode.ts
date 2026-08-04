@@ -478,3 +478,32 @@ export async function printMaterialLotLabel(data: MaterialLotLabelData): Promise
     data.barcodeText || data.lotNo,
   )
 }
+
+export type ProductLabelData = {
+  productId: number
+  productCode: string
+  productName: string
+  barcodeText: string
+  itemType: string
+  unit: string
+  currentStock: number | null
+}
+
+/** 품목 150×100mm 라벨 양식 인쇄 */
+export async function printProductLabel(data: ProductLabelData): Promise<void> {
+  await printLabelFromBarcodeUrl(
+    `/api/products/${data.productId}/barcode-image?view=label`,
+    '품목 라벨',
+    [
+      { key: '품목코드', value: data.productCode, emphasize: true },
+      { key: '품목명', value: data.productName },
+      { key: '유형', value: data.itemType },
+      { key: '단위', value: data.unit },
+      {
+        key: '현재재고',
+        value: data.currentStock != null ? `${data.currentStock}${data.unit ? ` ${data.unit}` : ''}` : '—',
+      },
+    ],
+    data.barcodeText || data.productCode,
+  )
+}

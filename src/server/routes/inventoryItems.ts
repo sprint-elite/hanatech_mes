@@ -13,6 +13,7 @@ const invTxListSelect = {
   locationId: true,
   transactionType: true,
   qty: true,
+  unitPrice: true,
   refType: true,
   refId: true,
   fromLocationId: true,

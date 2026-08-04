@@ -457,7 +457,7 @@ export function AnnualLeavePage() {
 
       {applyOpen && user ? (
         <LeaveApplicationApplyModal
-          applicant={applicant ?? { userName: user.userName, dept: '', position: user.roleName }}
+          applicant={applicant ?? { userName: user.userName, signatureUrl: null, dept: '', position: user.roleName }}
           form={form}
           onChange={(patch) => setForm((f) => ({ ...f, ...patch }))}
           saving={saving}

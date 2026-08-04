@@ -305,6 +305,21 @@
   padding: 0.5mm !important;
 }
 
+.mesErHead__sign .mesApprovalSignImg {
+  max-height: 14mm;
+}
+
+.mesApprovalSignName {
+  font-size: 11pt;
+  font-weight: 700;
+}
+
+.mesApprovalSignReject {
+  color: #b91c1c;
+  font-weight: 800;
+  font-size: 9pt;
+}
+
 .mesErInk {
   font-size: 11pt;
   font-weight: 700;

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { Prisma, UseYn } from '@prisma/client'
+import { BarcodeType, Prisma, UseYn } from '@prisma/client'
 
 import { z } from 'zod'
 
@@ -9,6 +9,23 @@ import { prisma } from '../db/prisma'
 import { prismaFail } from '../lib/prismaError'
 
 import { parsePositiveIntParam } from '../lib/params'
+
+import {
+  renderCode128PngWithMeta,
+  CODE128_LABEL,
+  CODE128_PRINT,
+  CODE128_SCREEN,
+  CODE128_THUMB,
+} from '../lib/barcode/image'
+
+import { resolveInboundUnitPrice, computeWeightedAvgFromLots } from '../lib/inventoryUnitCost'
+
+function normalizeScannedToken(raw: string): string {
+  const v = raw.trim()
+  if (!v) return ''
+  const first = v.split(/[\s,\t|]+/)[0] ?? ''
+  return first.trim()
+}
 
 
 
@@ -204,6 +221,8 @@ const productSelect = {
 
   maxStock: true,
 
+  materialUnitCost: true,
+
   barcode: true,
 
   specJson: true,
@@ -295,6 +314,8 @@ function serializeProduct(p: ProductRow) {
     unitWeight: p.unitWeight != null ? p.unitWeight.toString() : null,
 
     unitVolume: p.unitVolume != null ? p.unitVolume.toString() : null,
+
+    materialUnitCost: p.materialUnitCost != null ? p.materialUnitCost.toString() : null,
 
     purchaseProfile: p.purchaseProfile
 
@@ -500,6 +521,159 @@ productsRouter.get('/products', async (req, res) => {
 
 
 
+productsRouter.get('/products/lookup', async (req, res) => {
+  const rawQ = req.query.value
+  const raw = Array.isArray(rawQ) ? rawQ[0] : rawQ
+  const value = normalizeScannedToken(typeof raw === 'string' ? raw : '')
+  if (!value) return res.status(400).json({ ok: false, error: 'VALUE_REQUIRED' })
+
+  try {
+    let productId: number | null = null
+
+    const byField = await prisma.product.findFirst({
+      where: { OR: [{ productCode: value }, { barcode: value }] },
+      select: { id: true },
+    })
+    if (byField) {
+      productId = byField.id
+    } else {
+      const bc = await prisma.barcode.findFirst({
+        where: {
+          barcodeValue: value,
+          barcodeType: BarcodeType.PRODUCT,
+          status: 'ACTIVE',
+          refTable: 'product',
+        },
+        select: { refId: true },
+      })
+      if (bc) productId = bc.refId
+    }
+
+    if (!productId) {
+      return res.status(404).json({ ok: false, error: 'NOT_FOUND', message: '품목을 찾을 수 없습니다.' })
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: {
+        id: true,
+        productCode: true,
+        productName: true,
+        itemType: true,
+        itemNumber: true,
+        unit: true,
+        safetyStock: true,
+        maxStock: true,
+        barcode: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        inventoryProfile: { select: { lotControlYn: true } },
+        inventories: {
+          take: 50,
+          orderBy: { id: 'desc' },
+          select: {
+            id: true,
+            qty: true,
+            reservedQty: true,
+            status: true,
+            updatedAt: true,
+            location: { select: { locationCode: true, locationName: true } },
+            lot: { select: { id: true, lotNo: true } },
+            materialLot: { select: { id: true, lotNo: true } },
+          },
+        },
+        inventoryTx: {
+          take: 30,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            transactionType: true,
+            qty: true,
+            remark: true,
+            createdAt: true,
+            fromLocation: { select: { locationCode: true, locationName: true } },
+            toLocation: { select: { locationCode: true, locationName: true } },
+            location: { select: { locationCode: true, locationName: true } },
+            lot: { select: { lotNo: true } },
+            materialLot: { select: { lotNo: true } },
+          },
+        },
+      },
+    })
+
+    if (!product) {
+      return res.status(404).json({ ok: false, error: 'NOT_FOUND', message: '품목을 찾을 수 없습니다.' })
+    }
+
+    const totalQty = product.inventories.reduce((s, i) => s + i.qty, 0)
+    const totalReserved = product.inventories.reduce((s, i) => s + i.reservedQty, 0)
+
+    return res.json({
+      ok: true,
+      product: {
+        ...product,
+        stockSummary: {
+          totalQty,
+          totalReserved,
+          availableQty: totalQty - totalReserved,
+        },
+      },
+    })
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
+productsRouter.get('/products/:id/barcode-image', async (req, res) => {
+  const id = parsePositiveIntParam(req.params.id)
+  if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
+  const view = typeof req.query.view === 'string' ? req.query.view : ''
+  const legacyLarge = req.query.large === '1' || req.query.large === 'true'
+  const spec =
+    view === 'label'
+      ? CODE128_LABEL
+      : view === 'print'
+        ? CODE128_PRINT
+        : view === 'screen' || legacyLarge
+          ? CODE128_SCREEN
+          : CODE128_THUMB
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      select: { barcode: true, productCode: true },
+    })
+    if (!product) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
+    const text = product.barcode ?? product.productCode
+    const img = await renderCode128PngWithMeta({ text, ...spec })
+    res.setHeader('Content-Type', 'image/png')
+    res.setHeader('Cache-Control', 'private, max-age=3600')
+    res.setHeader('X-Barcode-Width-Mm', String(img.widthMm))
+    res.setHeader('X-Barcode-Height-Mm', String(img.heightMm))
+    res.setHeader('X-Barcode-Width-Px', String(img.widthPx))
+    res.setHeader('X-Barcode-Height-Px', String(img.heightPx))
+    return res.send(img.buffer)
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
+productsRouter.get('/products/:id/inbound-unit-price', async (req, res) => {
+  const id = parsePositiveIntParam(req.params.id)
+  if (!id) return res.status(400).json({ ok: false, error: 'INVALID_ID' })
+  try {
+    const exists = await prisma.product.findUnique({ where: { id }, select: { id: true } })
+    if (!exists) return res.status(404).json({ ok: false, error: 'NOT_FOUND' })
+    const [suggestedUnitPrice, averageUnitPrice] = await Promise.all([
+      resolveInboundUnitPrice(id, null),
+      computeWeightedAvgFromLots(id),
+    ])
+    return res.json({ ok: true, suggestedUnitPrice, averageUnitPrice })
+  } catch (e) {
+    return prismaFail(res, e)
+  }
+})
+
 productsRouter.get('/products/:id', async (req, res) => {
 
   const id = parsePositiveIntParam(req.params.id)
@@ -554,6 +728,8 @@ productsRouter.post('/products', async (req, res) => {
 
     const item = await prisma.$transaction(async (tx) => {
 
+      const barcodeText = (b.barcode?.trim() || b.productCode).trim()
+
       const created = await tx.product.create({
 
         data: {
@@ -583,7 +759,7 @@ productsRouter.post('/products', async (req, res) => {
 
           maxStock: b.maxStock ?? undefined,
 
-          barcode: b.barcode ?? undefined,
+          barcode: barcodeText,
 
           specJson:
 
@@ -681,7 +857,7 @@ productsRouter.post('/products', async (req, res) => {
 
       })
 
-
+      await syncProductBarcode(tx, created.id, barcodeText)
 
       const row = await tx.product.findUniqueOrThrow({ where: { id: created.id }, select: productSelect })
 
@@ -979,6 +1155,13 @@ productsRouter.patch('/products/:id', async (req, res) => {
 
       const after = await tx.product.findUniqueOrThrow({ where: { id }, select: productSelect })
 
+      const barcodeText = (after.barcode?.trim() || after.productCode).trim()
+      if (barcodeText) {
+        await syncProductBarcode(tx, id, barcodeText)
+      }
+
+      const synced = await tx.product.findUniqueOrThrow({ where: { id }, select: productSelect })
+
       await writeAuditLog(tx, {
 
         tableName: 'product',
@@ -989,7 +1172,7 @@ productsRouter.patch('/products/:id', async (req, res) => {
 
         oldValue: serializeProduct(before),
 
-        newValue: serializeProduct(after),
+        newValue: serializeProduct(synced),
 
         changedBy: actorId,
 
@@ -997,7 +1180,7 @@ productsRouter.patch('/products/:id', async (req, res) => {
 
       })
 
-      return after
+      return synced
 
     })
 

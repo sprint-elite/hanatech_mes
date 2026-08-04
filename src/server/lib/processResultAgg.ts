@@ -21,3 +21,15 @@ export function dedupeProcessResultsForProductTotals(rows: ProcessResultAggRow[]
   }
   return [...best.values()]
 }
+
+/** 생산 LOT당 1건만 집계 (작업자·공정 중복 제외 → 실제 투입수량) */
+export function dedupeProcessResultsByProductionLot(rows: ProcessResultAggRow[]): ProcessResultAggRow[] {
+  const best = new Map<number, ProcessResultAggRow>()
+  for (const r of rows) {
+    const prev = best.get(r.productionLotId)
+    if (!prev || r.processSequence > prev.processSequence) {
+      best.set(r.productionLotId, r)
+    }
+  }
+  return [...best.values()]
+}

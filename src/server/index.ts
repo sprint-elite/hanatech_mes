@@ -20,13 +20,15 @@ import { erpWorkLogsRouter } from './routes/erpWorkLogs'
 import { payStubsRouter } from './routes/payStubs'
 import { payrollItemsRouter } from './routes/payrollItems'
 import { payrollEmployeesRouter } from './routes/payrollEmployees'
+import { productionCostBasisRouter } from './routes/productionCostBasis'
+import { productionDailyPlRouter } from './routes/productionDailyPl'
 import { smartFactoryLogRouter } from './routes/smartFactoryLog'
 import { smartFactoryLogMiddleware } from './middleware/smartFactoryLog'
 import { startSmartFactoryLogFlusher } from './lib/smartFactoryLog/sender'
 
 const app = express()
 app.set('trust proxy', 1)
-app.use(express.json())
+app.use(express.json({ limit: '8mb' }))
 app.use(smartFactoryLogMiddleware)
 
 app.get('/api/health', (_req, res) => {
@@ -43,6 +45,8 @@ app.use('/api', erpWorkLogsRouter)
 app.use('/api', payStubsRouter)
 app.use('/api', payrollItemsRouter)
 app.use('/api', payrollEmployeesRouter)
+app.use('/api', productionCostBasisRouter)
+app.use('/api', productionDailyPlRouter)
 app.use('/api', smartFactoryLogRouter)
 app.use('/api', workCentersRouter)
 app.use('/api', workersRouter)

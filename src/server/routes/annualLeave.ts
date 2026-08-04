@@ -40,6 +40,20 @@ function monthRange(year: number, month: number) {
   return { start, end }
 }
 
+function userDeptPosition(
+  user: {
+    dept: string | null
+    position: string | null
+    worker: { team: string | null; position: string | null } | null
+  },
+  empty = '—',
+) {
+  return {
+    dept: user.dept?.trim() || user.worker?.team?.trim() || empty,
+    position: user.position?.trim() || user.worker?.position?.trim() || empty,
+  }
+}
+
 const listSelect = {
   id: true,
   userId: true,
@@ -60,11 +74,14 @@ const listSelect = {
     select: {
       id: true,
       userName: true,
+      dept: true,
+      position: true,
+      signatureDataUrl: true,
       worker: { select: { team: true, position: true } },
     },
   },
-  managerBy: { select: { userName: true } },
-  ceoBy: { select: { userName: true } },
+  managerBy: { select: { userName: true, signatureDataUrl: true } },
+  ceoBy: { select: { userName: true, signatureDataUrl: true } },
 } as const
 
 function serializeRequest(row: {
@@ -83,16 +100,23 @@ function serializeRequest(row: {
   ceoAt: Date | null
   rejectReason: string | null
   createdAt: Date
-  user: { id: number; userName: string; worker: { team: string | null; position: string | null } | null }
-  managerBy: { userName: string } | null
-  ceoBy: { userName: string } | null
+  user: {
+    id: number
+    userName: string
+    dept: string | null
+    position: string | null
+    signatureDataUrl: string | null
+    worker: { team: string | null; position: string | null } | null
+  }
+  managerBy: { userName: string; signatureDataUrl: string | null } | null
+  ceoBy: { userName: string; signatureDataUrl: string | null } | null
 }) {
   return {
     id: row.id,
     userId: row.userId,
     userName: row.user.userName,
-    dept: row.user.worker?.team ?? '—',
-    position: row.user.worker?.position ?? '—',
+    userSignatureUrl: row.user.signatureDataUrl,
+    ...userDeptPosition(row.user),
     startDate: ymd(row.startDate),
     endDate: ymd(row.endDate),
     days: dec(row.days),
@@ -105,7 +129,9 @@ function serializeRequest(row: {
     managerAt: row.managerAt?.toISOString() ?? null,
     ceoAt: row.ceoAt?.toISOString() ?? null,
     managerByName: row.managerBy?.userName ?? null,
+    managerSignatureUrl: row.managerBy?.signatureDataUrl ?? null,
     ceoByName: row.ceoBy?.userName ?? null,
+    ceoSignatureUrl: row.ceoBy?.signatureDataUrl ?? null,
     rejectReason: row.rejectReason,
     createdAt: row.createdAt.toISOString(),
   }
@@ -143,6 +169,9 @@ annualLeaveRouter.get('/annual-leave/balance', async (req, res) => {
       where: { id: user.id },
       select: {
         userName: true,
+        dept: true,
+        position: true,
+        signatureDataUrl: true,
         worker: { select: { team: true, position: true } },
       },
     })
@@ -165,11 +194,15 @@ annualLeaveRouter.get('/annual-leave/balance', async (req, res) => {
         usedDays: used,
         remainingDays: Math.round((total - used) * 10) / 10,
       },
-      applicant: {
-        userName: dbUser?.userName ?? user.userName,
-        dept: dbUser?.worker?.team ?? '',
-        position: dbUser?.worker?.position ?? user.roleName,
-      },
+      applicant: (() => {
+        const base = dbUser ? userDeptPosition(dbUser, '') : { dept: '', position: '' }
+        return {
+          userName: dbUser?.userName ?? user.userName,
+          signatureUrl: dbUser?.signatureDataUrl ?? null,
+          dept: base.dept,
+          position: base.position || user.roleName,
+        }
+      })(),
     })
   } catch (e) {
     return prismaFail(res, e)

@@ -774,7 +774,7 @@ workersRouter.put('/workers/:id/process-work-time-entries', async (req, res) => 
             workerId: id,
             processId,
             productionLotId: e.productionLotId,
-            workDate: new Date(`${e.workDate}T12:00:00`),
+            workDate: new Date(`${e.workDate}T00:00:00.000Z`),
             inputQty: e.inputQty,
             goodQty: e.goodQty,
             defectQty: e.defectQty,
